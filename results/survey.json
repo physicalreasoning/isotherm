@@ -1,0 +1,1092 @@
+{
+  "generated": "2026-10-04T23:15:10Z",
+  "config": {
+    "events": 40,
+    "max_pages": 40,
+    "seed": 0,
+    "only": null,
+    "out": "results/survey.json"
+  },
+  "results": [
+    {
+      "series": "KXHIGHNY",
+      "listed_settled_events": 1881,
+      "first_event": "2022-12-23",
+      "last_event": "2026-10-04",
+      "sampled_events": 40,
+      "median_event_volume": 62711.0,
+      "median_markets_per_event": 6.0,
+      "median_life_h": 37.983333333333334,
+      "lead0.5": {
+        "two_sided_share": 0.6541666666666667,
+        "contested_obs": 129,
+        "median_spread": 0.08999999999999997,
+        "brier": 0.17725678294573646,
+        "brier_ci": [
+          0.1484747319240196,
+          0.20383128458830732
+        ],
+        "brier_climo": 0.19037317468902104,
+        "brier_climo_ci": [
+          0.1759839965397924,
+          0.20227844262693706
+        ],
+        "ece": 0.0667829457364341,
+        "ece_ci": [
+          0.06016512587412588,
+          0.15067600723140495
+        ],
+        "slope": 0.7199992904330056,
+        "slope_ci": [
+          0.25414714957661766,
+          1.292799198358569
+        ],
+        "brier_skill": 0.06889831912878752
+      },
+      "lead0.9": {
+        "two_sided_share": 0.058333333333333334,
+        "contested_obs": 9,
+        "median_spread": 0.08999999999999997,
+        "brier": 0.021672222222222218,
+        "brier_ci": [
+          0.009105624999999997,
+          0.035967109374999987
+        ],
+        "brier_climo": 0.1728395061728395,
+        "brier_climo_ci": [
+          0.0,
+          0.23140495867768596
+        ],
+        "ece": 0.13111111111111104,
+        "ece_ci": [
+          0.08404687499999992,
+          0.182828125
+        ],
+        "slope": 6.381077656179592,
+        "slope_ci": [
+          4.847478179891408,
+          7.039702236754858
+        ],
+        "brier_skill": 0.8746107142857142
+      },
+      "seconds": 15.1,
+      "listing_truncated": false,
+      "category": "weather",
+      "note": "NYC daily high, bucket ladder"
+    },
+    {
+      "series": "KXHIGHCHI",
+      "listed_settled_events": 1869,
+      "first_event": "2022-12-23",
+      "last_event": "2026-10-04",
+      "sampled_events": 40,
+      "median_event_volume": 39103.5,
+      "median_markets_per_event": 6.0,
+      "median_life_h": 38.483333333333334,
+      "lead0.5": {
+        "two_sided_share": 0.7041666666666667,
+        "contested_obs": 149,
+        "median_spread": 0.09000000000000001,
+        "brier": 0.14104546979865776,
+        "brier_ci": [
+          0.12417869641591876,
+          0.15983203978931998
+        ],
+        "brier_climo": 0.18665825863699834,
+        "brier_climo_ci": [
+          0.1744000646772449,
+          0.19911328610745652
+        ],
+        "ece": 0.06432885906040268,
+        "ece_ci": [
+          0.05474637730227518,
+          0.13235723095898858
+        ],
+        "slope": 1.842607564135849,
+        "slope_ci": [
+          1.2959382023913948,
+          2.7131472571008435
+        ],
+        "brier_skill": 0.24436523286679512
+      },
+      "lead0.9": {
+        "two_sided_share": 0.07083333333333333,
+        "contested_obs": 12,
+        "median_spread": 0.13,
+        "brier": 0.18224791666666665,
+        "brier_ci": [
+          0.050182520833333334,
+          0.3694949687499999
+        ],
+        "brier_climo": 0.24305555555555555,
+        "brier_climo_ci": [
+          0.1875,
+          0.25
+        ],
+        "ece": 0.34041666666666665,
+        "ece_ci": [
+          0.17818181818181814,
+          0.5387604166666665
+        ],
+        "slope": 0.956368123909319,
+        "slope_ci": [
+          -0.10682202743999765,
+          124.99386136526391
+        ],
+        "brier_skill": 0.25018000000000007
+      },
+      "seconds": 11.4,
+      "listing_truncated": false,
+      "category": "weather",
+      "note": "Chicago daily high"
+    },
+    {
+      "series": "KXHIGHLAX",
+      "listed_settled_events": 637,
+      "first_event": "2026-08-15",
+      "last_event": "2026-10-04",
+      "sampled_events": 40,
+      "median_event_volume": 148875.0,
+      "median_markets_per_event": 6.0,
+      "median_life_h": 40.983333333333334,
+      "lead0.5": {
+        "two_sided_share": 0.825,
+        "contested_obs": 147,
+        "median_spread": 0.02999999999999997,
+        "brier": 0.1841362244897959,
+        "brier_ci": [
+          0.1610821456903945,
+          0.21332866645331733
+        ],
+        "brier_climo": 0.1980656208061456,
+        "brier_climo_ci": [
+          0.18828369130967923,
+          0.20940075740699488
+        ],
+        "ece": 0.08234693877551022,
+        "ece_ci": [
+          0.052775789874381446,
+          0.16798702503405194
+        ],
+        "slope": 0.7759565148806986,
+        "slope_ci": [
+          0.31839713854646146,
+          1.3248211132564063
+        ],
+        "brier_skill": 0.07032717873831784
+      },
+      "lead0.9": {
+        "two_sided_share": 0.008333333333333333,
+        "contested_obs": 0,
+        "median_spread": null
+      },
+      "seconds": 11.0,
+      "listing_truncated": false,
+      "category": "weather",
+      "note": "LA daily high"
+    },
+    {
+      "series": "KXHIGHMIA",
+      "listed_settled_events": 1241,
+      "first_event": "2023-05-12",
+      "last_event": "2026-10-04",
+      "sampled_events": 40,
+      "median_event_volume": 37332.0,
+      "median_markets_per_event": 6.0,
+      "median_life_h": 37.983333333333334,
+      "lead0.5": {
+        "two_sided_share": 0.6625,
+        "contested_obs": 129,
+        "median_spread": 0.1,
+        "brier": 0.16487790697674418,
+        "brier_ci": [
+          0.132525475741828,
+          0.1958277468553984
+        ],
+        "brier_climo": 0.18652725196803077,
+        "brier_climo_ci": [
+          0.16940516585931537,
+          0.20091787185599155
+        ],
+        "ece": 0.08279069767441861,
+        "ece_ci": [
+          0.06528402484143761,
+          0.16947156845131145
+        ],
+        "slope": 0.9979186570978631,
+        "slope_ci": [
+          0.5511869456003209,
+          1.690366465757319
+        ],
+        "brier_skill": 0.11606531894329908
+      },
+      "lead0.9": {
+        "two_sided_share": 0.020833333333333332,
+        "contested_obs": 5,
+        "median_spread": 0.19
+      },
+      "seconds": 10.6,
+      "listing_truncated": false,
+      "category": "weather",
+      "note": "Miami daily high"
+    },
+    {
+      "series": "KXRAINNYC",
+      "listed_settled_events": 869,
+      "first_event": null,
+      "last_event": null,
+      "sampled_events": 40,
+      "median_event_volume": 1986.0,
+      "median_markets_per_event": 1.0,
+      "median_life_h": 37.983333333333334,
+      "lead0.5": {
+        "two_sided_share": 0.525,
+        "contested_obs": 19,
+        "median_spread": 0.09000000000000008,
+        "brier": 0.13260789473684212,
+        "brier_ci": [
+          0.06565184210526315,
+          0.21247467105263157
+        ],
+        "brier_climo": 0.21606648199445985,
+        "brier_climo_ci": [
+          0.09418282548476453,
+          0.2493074792243768
+        ],
+        "ece": 0.2536842105263158,
+        "ece_ci": [
+          0.1742105263157895,
+          0.3668552631578947
+        ],
+        "slope": 1.6303188165999634,
+        "slope_ci": [
+          0.8445695993419197,
+          250.78357334393274
+        ],
+        "brier_skill": 0.3862634615384616
+      },
+      "lead0.9": {
+        "two_sided_share": 0.375,
+        "contested_obs": 9,
+        "median_spread": 0.12000000000000001,
+        "brier": 0.21047500000000002,
+        "brier_ci": [
+          0.022284097222222226,
+          0.41501583333333336
+        ],
+        "brier_climo": 0.1728395061728395,
+        "brier_climo_ci": [
+          0.0,
+          0.2469135802469136
+        ],
+        "ece": 0.20611111111111113,
+        "ece_ci": [
+          0.07219444444444444,
+          0.4878194444444442
+        ],
+        "slope": -0.3795050758105894,
+        "slope_ci": [
+          -4.33861494903918,
+          9.871192268670523
+        ],
+        "brier_skill": -0.21774821428571456
+      },
+      "seconds": 17.8,
+      "listing_truncated": false,
+      "category": "weather",
+      "note": "NYC rain, monthly/daily"
+    },
+    {
+      "series": "KXWTI",
+      "listed_settled_events": 849,
+      "first_event": "2022-12-21",
+      "last_event": "2026-10-01",
+      "sampled_events": 40,
+      "median_event_volume": 999.0,
+      "median_markets_per_event": 15.0,
+      "median_life_h": 22.0,
+      "lead0.5": {
+        "two_sided_share": 0.3333333333333333,
+        "contested_obs": 72,
+        "median_spread": 0.04000000000000001,
+        "brier": 0.1845388888888889,
+        "brier_ci": [
+          0.15030972568943765,
+          0.21614466469270166
+        ],
+        "brier_climo": 0.16493055555555555,
+        "brier_climo_ci": [
+          0.10630258179654967,
+          0.2082945144714526
+        ],
+        "ece": 0.1909722222222222,
+        "ece_ci": [
+          0.11791231343283581,
+          0.32159271130104455
+        ],
+        "slope": 0.39171381257103083,
+        "slope_ci": [
+          -0.5326286897775301,
+          1.036486250397291
+        ],
+        "brier_skill": -0.11888842105263153
+      },
+      "lead0.9": {
+        "two_sided_share": 0.4017094017094017,
+        "contested_obs": 77,
+        "median_spread": 0.04999999999999999,
+        "brier": 0.22079577922077923,
+        "brier_ci": [
+          0.1676688671875,
+          0.28675081223628696
+        ],
+        "brier_climo": 0.19227525721032215,
+        "brier_climo_ci": [
+          0.15435220420702053,
+          0.227202552900943
+        ],
+        "ece": 0.16694805194805196,
+        "ece_ci": [
+          0.11646778644842025,
+          0.31017445984286307
+        ],
+        "slope": 0.32049450204184526,
+        "slope_ci": [
+          -0.18301668836216875,
+          0.9113303748801732
+        ],
+        "brier_skill": -0.1483317324561404
+      },
+      "seconds": 12.0,
+      "listing_truncated": false,
+      "category": "commodities",
+      "note": "WTI daily range"
+    },
+    {
+      "series": "KXGOLDD",
+      "listed_settled_events": 107,
+      "first_event": "2026-05-26",
+      "last_event": "2026-10-01",
+      "sampled_events": 40,
+      "median_event_volume": 138891.74,
+      "median_markets_per_event": 40.0,
+      "median_life_h": 36.0,
+      "lead0.5": {
+        "two_sided_share": 1.0,
+        "contested_obs": 222,
+        "median_spread": 0.029999999999999916,
+        "brier": 0.2953475225225225,
+        "brier_ci": [
+          0.25852960776255707,
+          0.34315825467590483
+        ],
+        "brier_climo": 0.23926629332034743,
+        "brier_climo_ci": [
+          0.2140278824745841,
+          0.2486687099935365
+        ],
+        "ece": 0.18968468468468475,
+        "ece_ci": [
+          0.1428659090909091,
+          0.3169313953488372
+        ],
+        "slope": 0.14325798153930333,
+        "slope_ci": [
+          -0.08029582570341405,
+          0.4003250366809792
+        ],
+        "brier_skill": -0.23438833955223837
+      },
+      "lead0.9": {
+        "two_sided_share": 0.9875,
+        "contested_obs": 215,
+        "median_spread": 0.03,
+        "brier": 0.21263744186046513,
+        "brier_ci": [
+          0.17659580871006303,
+          0.25150893326881074
+        ],
+        "brier_climo": 0.2417739318550568,
+        "brier_climo_ci": [
+          0.22419591849080767,
+          0.24975366486356051
+        ],
+        "ece": 0.15832558139534886,
+        "ece_ci": [
+          0.0983706046312178,
+          0.23854271740328445
+        ],
+        "slope": 0.882111615882485,
+        "slope_ci": [
+          0.5369660991491682,
+          1.4889335504433696
+        ],
+        "brier_skill": 0.12051129652827486
+      },
+      "seconds": 11.5,
+      "listing_truncated": false,
+      "category": "commodities",
+      "note": "Gold daily"
+    },
+    {
+      "series": "KXGOLD15M",
+      "listed_settled_events": 4449,
+      "first_event": "2026-07-31",
+      "last_event": "2026-10-04",
+      "sampled_events": 40,
+      "median_event_volume": 312369.56,
+      "median_markets_per_event": 1.0,
+      "median_life_h": 0.25,
+      "lead0.5": {
+        "two_sided_share": 1.0,
+        "contested_obs": 40,
+        "median_spread": 0.010000000000000009,
+        "brier": 0.20053719374999995,
+        "brier_ci": [
+          0.14260525140625,
+          0.2676841314062499
+        ],
+        "brier_climo": 0.24750000000000005,
+        "brier_climo_ci": [
+          0.21000000000000002,
+          0.25
+        ],
+        "ece": 0.14103749999999998,
+        "ece_ci": [
+          0.11240000000000001,
+          0.30562718749999995
+        ],
+        "slope": 0.9204216993379987,
+        "slope_ci": [
+          0.319062567766067,
+          1.6446651765417606
+        ],
+        "brier_skill": 0.18974871212121247
+      },
+      "lead0.9": {
+        "two_sided_share": 1.0,
+        "contested_obs": 22,
+        "median_spread": 0.010000000000000009,
+        "brier": 0.15936288636363635,
+        "brier_ci": [
+          0.07748508522727272,
+          0.2648465548295452
+        ],
+        "brier_climo": 0.2479338842975206,
+        "brier_climo_ci": [
+          0.18641528925619838,
+          0.25
+        ],
+        "ece": 0.19081818181818183,
+        "ece_ci": [
+          0.1420278409090909,
+          0.35916363636363624
+        ],
+        "slope": 1.0090141425648012,
+        "slope_ci": [
+          0.3494533732282237,
+          50.10923992463149
+        ],
+        "brier_skill": 0.3572363583333332
+      },
+      "seconds": 38.8,
+      "listing_truncated": false,
+      "category": "commodities",
+      "note": "Gold 15-minute up/down"
+    },
+    {
+      "series": "KXMLBGAME",
+      "listed_settled_events": 4657,
+      "first_event": null,
+      "last_event": null,
+      "sampled_events": 40,
+      "median_event_volume": 3166296.035,
+      "median_markets_per_event": 2.0,
+      "median_life_h": 74.70013888888889,
+      "lead0.5": {
+        "two_sided_share": 1.0,
+        "contested_obs": 80,
+        "median_spread": 0.019999999999999962,
+        "brier": 0.23559312500000001,
+        "brier_ci": [
+          0.21378678906249998,
+          0.260580703125
+        ],
+        "brier_climo": 0.25,
+        "brier_climo_ci": [
+          0.25,
+          0.25
+        ],
+        "ece": 0.04999999999999995,
+        "ece_ci": [
+          0.017062499999999984,
+          0.20011406249999988
+        ],
+        "slope": 1.8112736574231725,
+        "slope_ci": [
+          -0.5706996060384005,
+          4.4366484445629375
+        ],
+        "brier_skill": 0.05762749999999994
+      },
+      "lead0.9": {
+        "two_sided_share": 1.0,
+        "contested_obs": 80,
+        "median_spread": 0.010000000000000009,
+        "brier": 0.23010031250000001,
+        "brier_ci": [
+          0.2091331328125,
+          0.2517075546875
+        ],
+        "brier_climo": 0.25,
+        "brier_climo_ci": [
+          0.25,
+          0.25
+        ],
+        "ece": 0.1040625,
+        "ece_ci": [
+          0.032320312499999976,
+          0.247109375
+        ],
+        "slope": 2.382313784737629,
+        "slope_ci": [
+          0.3130147833331908,
+          5.317007293047603
+        ],
+        "brier_skill": 0.07959874999999994
+      },
+      "seconds": 20.7,
+      "listing_truncated": false,
+      "category": "sports",
+      "note": "MLB game winner"
+    },
+    {
+      "series": "KXNBAGAME",
+      "listed_settled_events": 1449,
+      "first_event": null,
+      "last_event": null,
+      "sampled_events": 40,
+      "median_event_volume": 5409934.5,
+      "median_markets_per_event": 2.0,
+      "median_life_h": 58.58291666666667,
+      "lead0.5": {
+        "two_sided_share": 1.0,
+        "contested_obs": 80,
+        "median_spread": 0.019999999999999962,
+        "brier": 0.20960625,
+        "brier_ci": [
+          0.15354893749999998,
+          0.26868896875
+        ],
+        "brier_climo": 0.25,
+        "brier_climo_ci": [
+          0.25,
+          0.25
+        ],
+        "ece": 0.11775000000000002,
+        "ece_ci": [
+          0.07182656250000001,
+          0.25756718749999996
+        ],
+        "slope": 0.8985044377314582,
+        "slope_ci": [
+          0.30526234544285513,
+          1.7759092692646241
+        ],
+        "brier_skill": 0.16157500000000002
+      },
+      "lead0.9": {
+        "two_sided_share": 1.0,
+        "contested_obs": 80,
+        "median_spread": 0.010000000000000009,
+        "brier": 0.1853934375,
+        "brier_ci": [
+          0.140412390625,
+          0.23286092187499996
+        ],
+        "brier_climo": 0.25,
+        "brier_climo_ci": [
+          0.25,
+          0.25
+        ],
+        "ece": 0.03681250000000002,
+        "ece_ci": [
+          0.05218125000000001,
+          0.20627499999999996
+        ],
+        "slope": 1.17847277976174,
+        "slope_ci": [
+          0.6513556828671135,
+          2.181381143096536
+        ],
+        "brier_skill": 0.25842624999999997
+      },
+      "seconds": 11.5,
+      "listing_truncated": false,
+      "category": "sports",
+      "note": "NBA game winner"
+    },
+    {
+      "series": "KXATPMATCH",
+      "listed_settled_events": 4781,
+      "first_event": null,
+      "last_event": null,
+      "sampled_events": 39,
+      "median_event_volume": 2005680.8599999999,
+      "median_markets_per_event": 2.0,
+      "median_life_h": 33.42583333333334,
+      "lead0.5": {
+        "two_sided_share": 1.0,
+        "contested_obs": 77,
+        "median_spread": 0.010000000000000009,
+        "brier": 0.18325779220779223,
+        "brier_ci": [
+          0.13439377456425156,
+          0.23354786955128204
+        ],
+        "brier_climo": 0.24995783437341884,
+        "brier_climo_ci": [
+          0.24959999999999993,
+          0.25
+        ],
+        "ece": 0.13948051948051954,
+        "ece_ci": [
+          0.08173525641025643,
+          0.2726934731934732
+        ],
+        "slope": 1.3765080616355565,
+        "slope_ci": [
+          0.5146037985619323,
+          4.693684056441432
+        ],
+        "brier_skill": 0.26684517543859654
+      },
+      "lead0.9": {
+        "two_sided_share": 1.0,
+        "contested_obs": 76,
+        "median_spread": 0.010000000000000009,
+        "brier": 0.18608421052631577,
+        "brier_ci": [
+          0.14066322368421055,
+          0.2387504194078947
+        ],
+        "brier_climo": 0.25,
+        "brier_climo_ci": [
+          0.25,
+          0.25
+        ],
+        "ece": 0.10644736842105267,
+        "ece_ci": [
+          0.05493421052631575,
+          0.24384868421052627
+        ],
+        "slope": 1.4199544463731737,
+        "slope_ci": [
+          0.48657763595392156,
+          3.9673262517153685
+        ],
+        "brier_skill": 0.2556631578947369
+      },
+      "seconds": 15.3,
+      "listing_truncated": false,
+      "category": "sports",
+      "note": "ATP match winner"
+    },
+    {
+      "series": "KXFEDDECISION",
+      "listed_settled_events": 28,
+      "first_event": "2023-05-03",
+      "last_event": "2026-09-16",
+      "sampled_events": 28,
+      "median_event_volume": 2648581.5,
+      "median_markets_per_event": 5.0,
+      "median_life_h": 1178.9166666666667,
+      "lead0.5": {
+        "two_sided_share": 0.5175438596491229,
+        "contested_obs": 42,
+        "median_spread": 0.019999999999999955,
+        "brier": 0.07035654761904764,
+        "brier_ci": [
+          0.03397005931803896,
+          0.13321437500000002
+        ],
+        "brier_climo": 0.24489795918367344,
+        "brier_climo_ci": [
+          0.23818525519848785,
+          0.2493074792243768
+        ],
+        "ece": 0.1313095238095238,
+        "ece_ci": [
+          0.09625312499999998,
+          0.22565282738095213
+        ],
+        "slope": 2.1016964434589287,
+        "slope_ci": [
+          1.172917087639386,
+          45.66737764999332
+        ],
+        "brier_skill": 0.7127107638888888
+      },
+      "lead0.9": {
+        "two_sided_share": 0.40350877192982454,
+        "contested_obs": 17,
+        "median_spread": 0.010000000000000009,
+        "brier": 0.057916176470588235,
+        "brier_ci": [
+          0.006163536764705884,
+          0.14186989583333331
+        ],
+        "brier_climo": 0.24221453287197234,
+        "brier_climo_ci": [
+          0.20408163265306123,
+          0.25
+        ],
+        "ece": 0.1608823529411765,
+        "ece_ci": [
+          0.07223214285714284,
+          0.2827463235294118
+        ],
+        "slope": 1.7173207896289595,
+        "slope_ci": [
+          1.0904117655422194,
+          6.638920562408155
+        ],
+        "brier_skill": 0.7608889285714286
+      },
+      "seconds": 12.7,
+      "listing_truncated": false,
+      "category": "economics",
+      "note": "FOMC decision"
+    },
+    {
+      "series": "KXCPIYOY",
+      "listed_settled_events": 46,
+      "first_event": null,
+      "last_event": null,
+      "sampled_events": 40,
+      "median_event_volume": 167611.5,
+      "median_markets_per_event": 11.0,
+      "median_life_h": 1362.9833333333333,
+      "lead0.5": {
+        "two_sided_share": 0.7387387387387387,
+        "contested_obs": 144,
+        "median_spread": 0.040000000000000036,
+        "brier": 0.1592420138888889,
+        "brier_ci": [
+          0.11579928413120566,
+          0.2141608697463768
+        ],
+        "brier_climo": 0.24184992283950615,
+        "brier_climo_ci": [
+          0.2199307839326207,
+          0.24991981681953285
+        ],
+        "ece": 0.12347222222222223,
+        "ece_ci": [
+          0.11347115384615383,
+          0.20029796296296296
+        ],
+        "slope": 1.0367635287858985,
+        "slope_ci": [
+          0.6097674321678095,
+          1.7282475839792322
+        ],
+        "brier_skill": 0.3415668195413758
+      },
+      "lead0.9": {
+        "two_sided_share": 0.8333333333333334,
+        "contested_obs": 145,
+        "median_spread": 0.040000000000000036,
+        "brier": 0.12494327586206896,
+        "brier_ci": [
+          0.09906563209115807,
+          0.15430302515645586
+        ],
+        "brier_climo": 0.24475624256837097,
+        "brier_climo_ci": [
+          0.23062500679040293,
+          0.2499549929315188
+        ],
+        "ece": 0.07837931034482756,
+        "ece_ci": [
+          0.0671464603539646,
+          0.1470510563380281
+        ],
+        "slope": 1.3042928916159373,
+        "slope_ci": [
+          0.9599804122787569,
+          1.8625001260722835
+        ],
+        "brier_skill": 0.48951955402254177
+      },
+      "seconds": 13.5,
+      "listing_truncated": false,
+      "category": "economics",
+      "note": "CPI YoY"
+    },
+    {
+      "series": "KXAAAGASD",
+      "listed_settled_events": 217,
+      "first_event": "2023-09-18",
+      "last_event": "2026-10-04",
+      "sampled_events": 40,
+      "median_event_volume": 137775.305,
+      "median_markets_per_event": 17.0,
+      "median_life_h": 15.316666666666666,
+      "lead0.5": {
+        "two_sided_share": 0.813953488372093,
+        "contested_obs": 143,
+        "median_spread": 0.03999999999999998,
+        "brier": 0.14743444055944058,
+        "brier_ci": [
+          0.11823961570105619,
+          0.17540745829559176
+        ],
+        "brier_climo": 0.24998777446329892,
+        "brier_climo_ci": [
+          0.23416046980201569,
+          0.24998778439204347
+        ],
+        "ece": 0.07681818181818181,
+        "ece_ci": [
+          0.07163469880504172,
+          0.15467470394568933
+        ],
+        "slope": 1.2595008460172257,
+        "slope_ci": [
+          0.9495384737713073,
+          1.8918594548249161
+        ],
+        "brier_skill": 0.4102333969092331
+      },
+      "lead0.9": {
+        "two_sided_share": 0.7348837209302326,
+        "contested_obs": 116,
+        "median_spread": 0.03,
+        "brier": 0.12187241379310348,
+        "brier_ci": [
+          0.09550223318713451,
+          0.14966682734289713
+        ],
+        "brier_climo": 0.24732461355529137,
+        "brier_climo_ci": [
+          0.2277622599451303,
+          0.25
+        ],
+        "ece": 0.09784482758620688,
+        "ece_ci": [
+          0.08224796626984128,
+          0.1799339285714285
+        ],
+        "slope": 1.5881708333290019,
+        "slope_ci": [
+          1.255840781040079,
+          2.3814500621092187
+        ],
+        "brier_skill": 0.5072370192307691
+      },
+      "seconds": 10.0,
+      "listing_truncated": false,
+      "category": "economics",
+      "note": "AAA gas daily up/down"
+    },
+    {
+      "series": "KXINX",
+      "listed_settled_events": 1129,
+      "first_event": "2022-12-21",
+      "last_event": "2026-10-02",
+      "sampled_events": 40,
+      "median_event_volume": 89205.29000000001,
+      "median_markets_per_event": 30.0,
+      "median_life_h": 24.0,
+      "lead0.5": {
+        "two_sided_share": 0.5041666666666667,
+        "contested_obs": 105,
+        "median_spread": 0.11000000000000001,
+        "brier": 0.17411690476190478,
+        "brier_ci": [
+          0.1468976997324159,
+          0.19830400943396226
+        ],
+        "brier_climo": 0.15419501133786848,
+        "brier_climo_ci": [
+          0.12969726483240002,
+          0.17433731464056137
+        ],
+        "ece": 0.14747619047619048,
+        "ece_ci": [
+          0.10374352433281005,
+          0.21707429245283014
+        ],
+        "slope": 0.05182466947844252,
+        "slope_ci": [
+          -0.5185616648193463,
+          0.6243790749905346
+        ],
+        "brier_skill": -0.12919933823529428
+      },
+      "lead0.9": {
+        "two_sided_share": 0.65,
+        "contested_obs": 127,
+        "median_spread": 0.04,
+        "brier": 0.1811511811023622,
+        "brier_ci": [
+          0.15316625325520836,
+          0.20854490615685545
+        ],
+        "brier_climo": 0.19232438464876928,
+        "brier_climo_ci": [
+          0.17588737458644196,
+          0.20863257684573402
+        ],
+        "ece": 0.07779527559055119,
+        "ece_ci": [
+          0.05490007747933886,
+          0.16696137873754144
+        ],
+        "slope": 0.6447441689827351,
+        "slope_ci": [
+          0.2410213111986784,
+          1.1329982622744117
+        ],
+        "brier_skill": 0.0580956157317859
+      },
+      "seconds": 11.8,
+      "listing_truncated": false,
+      "category": "financials",
+      "note": "S&P 500 daily range"
+    },
+    {
+      "series": "KXINXU",
+      "listed_settled_events": 3285,
+      "first_event": "2023-06-23",
+      "last_event": "2026-10-02",
+      "sampled_events": 40,
+      "median_event_volume": 99594.67000000001,
+      "median_markets_per_event": 400.0,
+      "median_life_h": 1.5,
+      "lead0.5": {
+        "two_sided_share": 0.9,
+        "contested_obs": 200,
+        "median_spread": 0.050000000000000044,
+        "brier": 0.23197924999999997,
+        "brier_ci": [
+          0.192235901689057,
+          0.2676590017581528
+        ],
+        "brier_climo": 0.24509999999999998,
+        "brier_climo_ci": [
+          0.22650943158001055,
+          0.249971606084446
+        ],
+        "ece": 0.15005000000000002,
+        "ece_ci": [
+          0.09979271250384969,
+          0.23868762195121943
+        ],
+        "slope": 0.6714090434377118,
+        "slope_ci": [
+          0.3879585325883866,
+          1.3062670631582378
+        ],
+        "brier_skill": 0.053532231742146164
+      },
+      "lead0.9": {
+        "two_sided_share": 0.775,
+        "contested_obs": 159,
+        "median_spread": 0.050000000000000044,
+        "brier": 0.18718757861635224,
+        "brier_ci": [
+          0.15016673346432674,
+          0.22816324907594085
+        ],
+        "brier_climo": 0.2471421225426209,
+        "brier_climo_ci": [
+          0.234375,
+          0.2499903553103661
+        ],
+        "ece": 0.1058805031446541,
+        "ece_ci": [
+          0.08052829939668174,
+          0.19455804085155348
+        ],
+        "slope": 1.043079347005947,
+        "slope_ci": [
+          0.7126918772316634,
+          1.5956145488022577
+        ],
+        "brier_skill": 0.2425913612355951
+      },
+      "seconds": 16.9,
+      "listing_truncated": false,
+      "category": "financials",
+      "note": "S&P 500 hourly above/below"
+    },
+    {
+      "series": "KXBTCD",
+      "listed_settled_events": 8000,
+      "first_event": "2025-09-22",
+      "last_event": "2026-10-04",
+      "sampled_events": 40,
+      "median_event_volume": 1610096.165,
+      "median_markets_per_event": 188.0,
+      "median_life_h": 1.0,
+      "lead0.5": {
+        "two_sided_share": 0.9666666666666667,
+        "contested_obs": 193,
+        "median_spread": 0.010000000000000009,
+        "brier": 0.1693681347150259,
+        "brier_ci": [
+          0.1366586239214993,
+          0.20099444194231467
+        ],
+        "brier_climo": 0.2491878976616822,
+        "brier_climo_ci": [
+          0.23762069468100727,
+          0.24999342537804078
+        ],
+        "ece": 0.07264248704663209,
+        "ece_ci": [
+          0.062360237983684244,
+          0.14763516942827276
+        ],
+        "slope": 1.0509958166724636,
+        "slope_ci": [
+          0.77594565639924,
+          1.5368712452595805
+        ],
+        "brier_skill": 0.3203195809092868
+      },
+      "lead0.9": {
+        "two_sided_share": 0.6416666666666667,
+        "contested_obs": 100,
+        "median_spread": 0.010000000000000009,
+        "brier": 0.1277775,
+        "brier_ci": [
+          0.10522916586538462,
+          0.15517852561274506
+        ],
+        "brier_climo": 0.24909999999999993,
+        "brier_climo_ci": [
+          0.23728634336238336,
+          0.25
+        ],
+        "ece": 0.10379999999999998,
+        "ece_ci": [
+          0.08867052601486564,
+          0.18523506987064486
+        ],
+        "slope": 1.3787460036618555,
+        "slope_ci": [
+          1.0434552872712053,
+          1.9937471082519382
+        ],
+        "brier_skill": 0.48704335608189475
+      },
+      "seconds": 25.6,
+      "listing_truncated": true,
+      "category": "crypto",
+      "note": "BTC hourly above/below (pm-jepa control)"
+    }
+  ]
+}
