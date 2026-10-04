@@ -1,0 +1,210 @@
+"""Kalshi public market-data client.
+
+Adapted from physicalreasoning/pm-jepa `data/kalshi.py`. Everything here uses the
+UNAUTHENTICATED host, which serves market rows, candlesticks, trades and
+settlement for free. We never place orders, so no key is needed.
+
+What changed since pm-jepa (verified against the live API on 2026-10-04):
+
+  - The rolling purge pm-jepa raced is gone. Markets settled before
+    `GET /historical/cutoff` (2026-08-05 at time of writing) moved to
+    `/historical/markets`, `/historical/markets/{t}/candlesticks` and
+    `/historical/trades`, back to the first event of each series (2021 for
+    KXHIGHNY). History is now a query, not a snapshot job.
+  - Historical candles use un-suffixed field names (`close`, `open_interest`)
+    where live candles use `close_dollars`, `open_interest_fp`. `candle_quote`
+    reads both.
+  - Trades carry `taker_side`, so trade direction is observed, not inferred.
+"""
+from __future__ import annotations
+
+import calendar
+import gzip
+import hashlib
+import http.client
+import json
+import os
+import pathlib
+import threading
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+from typing import Dict, Iterator, List, Optional, Tuple
+
+BASE = "https://api.elections.kalshi.com/trade-api/v2"
+MIN_INTERVAL = 0.12          # seconds between requests; we are anonymous, stay polite
+MAX_RETRIES = 6
+
+CACHE = pathlib.Path(os.environ.get("PMDECIDE_CACHE",
+                                   pathlib.Path(__file__).resolve().parents[2] / "data_cache" / "http"))
+
+_lock = threading.Lock()
+_last_call = [0.0]
+_cutoff_ts: List[Optional[int]] = [None]
+
+
+def _throttle() -> None:
+    with _lock:
+        dt = time.time() - _last_call[0]
+        if dt < MIN_INTERVAL:
+            time.sleep(MIN_INTERVAL - dt)
+        _last_call[0] = time.time()
+
+
+def get(path: str, _cache: bool = False, **params) -> Dict:
+    """GET with throttling and bounded exponential backoff on 429/5xx.
+
+    `_cache=True` only for responses that cannot change: anything about a market
+    that has already settled. Keyed on the full URL, gzipped, written atomically.
+    """
+    q = urllib.parse.urlencode({k: v for k, v in params.items() if v is not None}, safe=",")
+    url = "{}/{}{}".format(BASE, path.lstrip("/"), ("?" + q) if q else "")
+    if _cache:
+        f = CACHE / hashlib.sha256(url.encode()).hexdigest()[:2] / (
+            hashlib.sha256(url.encode()).hexdigest()[:24] + ".json.gz")
+        if f.exists():
+            try:
+                return json.loads(gzip.decompress(f.read_bytes()), strict=True)
+            except (OSError, ValueError):
+                f.unlink(missing_ok=True)
+        out = _fetch(url)
+        f.parent.mkdir(parents=True, exist_ok=True)
+        tmp = f.with_suffix(".tmp{}".format(threading.get_ident()))
+        tmp.write_bytes(gzip.compress(json.dumps(out).encode()))
+        tmp.replace(f)
+        return out
+    return _fetch(url)
+
+
+def _fetch(url: str) -> Dict:
+    delay = 1.0
+    for attempt in range(MAX_RETRIES):
+        _throttle()
+        try:
+            with urllib.request.urlopen(url, timeout=45) as r:
+                # strict=True: Kalshi rule text contains raw control characters
+                return json.loads(r.read().decode(), strict=True)
+        except urllib.error.HTTPError as e:
+            if e.code in (429, 500, 502, 503, 504) and attempt < MAX_RETRIES - 1:
+                time.sleep(delay)
+                delay *= 2
+                continue
+            raise
+        except (urllib.error.URLError, TimeoutError, http.client.IncompleteRead,
+                ConnectionError):
+            if attempt < MAX_RETRIES - 1:
+                time.sleep(delay)
+                delay *= 2
+                continue
+            raise
+    raise RuntimeError("unreachable")
+
+
+def ts(iso: str) -> int:
+    """ISO8601 (UTC) -> unix seconds."""
+    return calendar.timegm(time.strptime(iso[:19], "%Y-%m-%dT%H:%M:%S"))
+
+
+def to_float(x) -> Optional[float]:
+    try:
+        return float(x)
+    except (TypeError, ValueError):
+        return None
+
+
+def cutoff_ts() -> int:
+    """Markets settled before this live under /historical/*."""
+    if _cutoff_ts[0] is None:
+        _cutoff_ts[0] = ts(get("historical/cutoff")["market_settled_ts"])
+    return _cutoff_ts[0]
+
+
+def is_historical(market: Dict) -> bool:
+    return ts(market["close_time"]) < cutoff_ts()
+
+
+# ---------------------------------------------------------------- listing
+
+def _paginate(path: str, key: str, max_pages: int, **params) -> Iterator[Dict]:
+    cursor = None
+    for _ in range(max_pages):
+        d = get(path, cursor=cursor, **params)
+        rows = d.get(key, []) or []
+        yield from rows
+        cursor = d.get("cursor")
+        if not cursor or not rows:
+            return
+
+
+def settled_events(series: str, max_pages: int = 200) -> List[Dict]:
+    """All settled events of a series, live and historical. /events is not purged."""
+    return list(_paginate("events", "events", max_pages, series_ticker=series,
+                          status="settled", limit=200))
+
+
+def event_markets(event_ticker: str) -> List[Dict]:
+    """Market rows of one event, from the live endpoint or the historical one."""
+    rows = get("markets", event_ticker=event_ticker, limit=1000).get("markets", [])
+    if rows and all(r.get("result") in ("yes", "no") for r in rows):
+        return rows
+    hist = get("historical/markets", _cache=True, event_ticker=event_ticker,
+               limit=1000).get("markets", [])
+    return hist or rows
+
+
+def series_markets(series: str, historical: bool, max_pages: int = 500) -> Iterator[Dict]:
+    path = "historical/markets" if historical else "markets"
+    params = {"series_ticker": series, "limit": 1000}
+    if not historical:
+        params["status"] = "settled"
+    return _paginate(path, "markets", max_pages, **params)
+
+
+# ---------------------------------------------------------------- prices
+
+def candles(market: Dict, interval: int = 60,
+            start_ts: Optional[int] = None, end_ts: Optional[int] = None) -> List[Dict]:
+    """OHLC of yes_bid / yes_ask plus volume and OI. interval in minutes (1, 60, 1440)."""
+    s = start_ts if start_ts is not None else ts(market["open_time"])
+    e = end_ts if end_ts is not None else ts(market["close_time"])
+    t = market["ticker"]
+    if is_historical(market):
+        path = "historical/markets/{}/candlesticks".format(t)
+    else:
+        series = market.get("series_ticker") or t.split("-")[0]
+        path = "series/{}/markets/{}/candlesticks".format(series, t)
+    settled = market.get("result") in ("yes", "no")
+    return get(path, _cache=settled, start_ts=s, end_ts=e,
+               period_interval=interval).get("candlesticks", []) or []
+
+
+def _ohlc(c: Dict, side: str, field: str = "close") -> Optional[float]:
+    d = c.get(side) or {}
+    v = d.get(field + "_dollars", d.get(field))
+    return to_float(v)
+
+
+def candle_quote(c: Dict) -> Tuple[Optional[float], Optional[float]]:
+    """(bid, ask) in dollars at the close of a candle, either schema."""
+    return _ohlc(c, "yes_bid"), _ohlc(c, "yes_ask")
+
+
+def candle_volume(c: Dict) -> float:
+    return to_float(c.get("volume_fp", c.get("volume"))) or 0.0
+
+
+def trades(market: Dict, max_pages: int = 50) -> List[Dict]:
+    path = "historical/trades" if is_historical(market) else "markets/trades"
+    return list(_paginate(path, "trades", max_pages, ticker=market["ticker"], limit=1000))
+
+
+# ---------------------------------------------------------------- rows
+
+def volume(row: Dict) -> float:
+    return to_float(row.get("volume_fp", row.get("volume"))) or 0.0
+
+
+def result_yes(row: Dict) -> Optional[int]:
+    r = row.get("result")
+    return 1 if r == "yes" else 0 if r == "no" else None
