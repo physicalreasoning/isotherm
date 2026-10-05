@@ -252,3 +252,45 @@ worse than the market. No taker or maker cell passes (DSR ≤ 0.14, PBO 0.34-0.4
 3h maker at +$3,826, has a Sharpe CI including zero and was negative in 2026 H2. With 1¢ spreads and
 about 1.2M contracts per game, MLB on Kalshi prices everything free public data can see. The
 survey's prediction (§1: "the most efficient category on the exchange") holds.
+
+## 12 · Same-day reads with finer data, and a better maker policy (2026-10-05)
+
+New inputs: a 14:00 read; the day's max so far from the IEM ASOS 1-minute archive at 5-minute
+sampling (10-minute reporting lag; the settled high is at or above round(5-minute max) − 1 on
+99.8-99.9% of days); and NBM's forecast max over the rest of the climate day from the latest run
+public at the read. Day-before reads see none of these (verified: zero rows with same-day inputs).
+Caveat: IEM receives the 1-minute archive with a delay, so a live system needs a real-time
+5-minute feed to use this.
+
+LadderNet, Δ log score vs market (`results/benchmark_g2.md`):
+
+| Read | all periods | last 12 months | ECE | control |
+|---|---|---|---|---|
+| 16:00 day before | +0.044 [+0.035, +0.053] | +0.014 [+0.006, +0.022] | 0.003 | −0.000 |
+| 08:00 | +0.070 [+0.061, +0.080] | +0.009 [+0.001, +0.017] | 0.004 | −0.001 |
+| 12:00 | +0.035 [+0.029, +0.041] | +0.010 [+0.004, +0.015] | 0.005 | +0.000 |
+| **14:00** | **+0.053 [+0.045, +0.061]** | **+0.017 [+0.010, +0.025]** | 0.005 | +0.001 |
+
+The 14:00 read carries the largest recent gain of any read, and LadderNet is positive in every
+half-year at every read.
+
+Maker execution now also tries pulling quotes when the next GFS MOS run goes public, and every
+maker headline reports the same picks under at-touch fills as an upper bound
+(`results/backtest_g2.md`). Queue position itself is not estimable without order-book depth
+history, which Kalshi does not publish.
+
+| Read · execution | Nested PnL | Sharpe | DSR | PBO | maker at-touch bound |
+|---|---:|---:|---:|---:|---:|
+| 16:00 day before · taker | +$22,311 | 2.06 | 0.865 | 0.24 | |
+| 16:00 day before · maker | +$2,985 | 0.42 | 0.000 | 0.40 | +$4,820 |
+| 08:00 · taker | +$16,071 | 1.51 | 0.540 | 0.45 | |
+| 08:00 · maker | +$10,108 | 0.82 | 0.023 | 0.21 | +$15,843 |
+| 12:00 · taker | +$727 | 0.37 | 0.211 | 0.48 | |
+| 14:00 · taker | +$2,316 | 1.14 | 0.421 | 0.12 | |
+| 12:00 and 14:00 · maker | −$23,991, −$30,573 | | | | −$21,312, −$26,753 |
+
+**Reading.** Finer same-day information sharpens the probabilities most at 14:00, but trading
+barely moves: late-day books are thin (322 taker trades in three years at 14:00) and resting
+orders in the afternoon are still picked off. The day-before taker strategy remains the only
+candidate, essentially unchanged. The cancel-on-new-run policy was selected in one quarter of one
+read; it is not the fix for adverse selection here.
