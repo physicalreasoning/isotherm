@@ -108,6 +108,12 @@ def _throttle() -> None:
         _last_call[0] = time.time()
 
 
+def _cache_path(path: str, params: Dict) -> pathlib.Path:
+    q = urllib.parse.urlencode(sorted(params.items()))
+    h = hashlib.sha256("{}?{}".format(path, q).encode()).hexdigest()
+    return CACHE / "listing" / h[:2] / (h[:24] + ".json.gz")
+
+
 def get(path: str, _cache: bool = False, **params) -> Dict:
     """GET with throttling and bounded exponential backoff on 429/5xx.
 
@@ -204,8 +210,21 @@ def settled_events(series: str, max_pages: int = 200) -> List[Dict]:
 
 def event_markets(event_ticker: str) -> List[Dict]:
     """Market rows of one event, from the live endpoint or the historical one."""
+    # A listing whose markets have all settled can never change, so it is cached; anything
+    # still live is fetched fresh every time.
+    url_key = {"event_ticker": event_ticker, "limit": 1000, "_settled": 1}
+    f = _cache_path("markets", url_key)
+    if f.exists():
+        try:
+            return json.loads(gzip.decompress(f.read_bytes()), strict=False)
+        except (OSError, ValueError):
+            f.unlink(missing_ok=True)
     rows = get("markets", event_ticker=event_ticker, limit=1000).get("markets", [])
     if rows and all(r.get("result") in ("yes", "no") for r in rows):
+        f.parent.mkdir(parents=True, exist_ok=True)
+        tmp = f.with_suffix(".tmp{}".format(threading.get_ident()))
+        tmp.write_bytes(gzip.compress(json.dumps(rows).encode()))
+        tmp.replace(f)
         return rows
     hist = get("historical/markets", _cache=True, event_ticker=event_ticker, limit=1000).get("markets", [])
     return hist or rows
