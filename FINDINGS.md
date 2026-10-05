@@ -1,6 +1,8 @@
 # Findings
 
 Each finding states what was measured, on what data, and what it does and does not license.
+The learned model is called isotherm here; raw result files from before the rename label it
+`LadderNet`, its working name.
 Corrections are added beside the original, never in place of it.
 
 ## 1 · Market selection: weather highs (2026-10-04)
@@ -138,9 +140,9 @@ style turns these probabilities into a robust, deflated-Sharpe-significant strat
 (G2: intraday observations, time-varying weights, a nonlinear learner) has to buy more than a tick
 of edge to change that, and the backtest now exists to say whether it does.
 
-## 8 · G2: LadderNet, observations, time-varying weights (2026-10-04)
+## 8 · G2: isotherm, observations, time-varying weights (2026-10-04)
 
-**Model.** `isotherm.model.LadderNet`: per-bucket score = learned log-pool of every causal source
+**Model.** `isotherm.model.isotherm`: per-bucket score = learned log-pool of every causal source
 (market, EMOS-GFS, EMOS-NBM, EMOS-NBM conditioned on today's observed max, climatology) plus an
 MLP correction over bucket and context features; softmax over the ladder; trained on the log score
 with sample weights halving every 365 days; initialised to equal the market; 5-seed ensemble.
@@ -155,13 +157,13 @@ resolution-independent conversion and regression tests.
 
 **Benchmark** (`results/benchmark_g2.md`), Δ log score vs market:
 
-| Read | LadderNet, all periods | best simple pool | LadderNet, last 12 months | Control |
+| Read | isotherm, all periods | best simple pool | isotherm, last 12 months | Control |
 |---|---|---|---|---|
 | 08:00 | **+0.071** [+0.062, +0.081] | +0.054 | +0.011 [+0.002, +0.018] | −0.002 |
 | 12:00 | **+0.033** [+0.027, +0.039] | +0.018 | +0.009 [+0.003, +0.014] | +0.001 |
 | 16:00 day before | **+0.045** [+0.036, +0.054] | +0.039 | +0.015 [+0.007, +0.022] | −0.001 |
 
-LadderNet is the best model at every read and the best calibrated (debiased ECE 0.004-0.007 vs the
+isotherm is the best model at every read and the best calibrated (debiased ECE 0.004-0.007 vs the
 market's 0.013-0.020), and unlike every pool it is positive in **every** half-year, though the
 2026 H1 gain is thin (+0.006 to +0.013). The control, the same network trained on labels sampled
 from the market's own distribution, scores within ±0.002 of the market, so the gain is learned from
@@ -208,7 +210,7 @@ Company (2026-08-14) and the one Miami day that settled 5°F from the NWS value.
 - *Consistent but underpowered:* PnL > 0, t ≤ 1.645.
 - *Fail:* PnL ≤ 0.
 
-Secondary, reported regardless: PnL at +1¢ slippage; LadderNet Δ log score vs market at this read,
+Secondary, reported regardless: PnL at +1¢ slippage; isotherm Δ log score vs market at this read,
 CI by date; engine checks (oracle never loses, in-spread market never trades) and matched-turnover
 noise. About 95 days and ~640 ladders: the interval will be wide, and a pass on this sample is
 evidence, not proof.
@@ -225,7 +227,7 @@ evidence, not proof.
 | +1¢ slippage | +$462 |
 | EV vs realised per contract | +2.2¢ vs +1.3¢ |
 | Engine checks | oracle 0 losing trades; in-spread market 0 trades; matched-turnover noise −$2,703 |
-| Scoring, Δ log score vs market | market+GFS pool **+0.014 [+0.001, +0.027]**; LadderNet +0.013 [−0.004, +0.027]; control −0.001 |
+| Scoring, Δ log score vs market | market+GFS pool **+0.014 [+0.001, +0.027]**; isotherm +0.013 [−0.004, +0.027]; control −0.001 |
 
 By city: six of seven positive (NY +$666, MIA +$374, CHI +$339, PHIL +$219, LAX +$210, AUS +$67),
 DEN −$22. **By month: July +$1,029, August +$517, September +$246** (October, 3 days: +$60). By
@@ -262,7 +264,7 @@ public at the read. Day-before reads see none of these (verified: zero rows with
 Caveat: IEM receives the 1-minute archive with a delay, so a live system needs a real-time
 5-minute feed to use this.
 
-LadderNet, Δ log score vs market (`results/benchmark_g2.md`):
+isotherm, Δ log score vs market (`results/benchmark_g2.md`):
 
 | Read | all periods | last 12 months | ECE | control |
 |---|---|---|---|---|
@@ -271,7 +273,7 @@ LadderNet, Δ log score vs market (`results/benchmark_g2.md`):
 | 12:00 | +0.035 [+0.029, +0.041] | +0.010 [+0.004, +0.015] | 0.005 | +0.000 |
 | **14:00** | **+0.053 [+0.045, +0.061]** | **+0.017 [+0.010, +0.025]** | 0.005 | +0.001 |
 
-The 14:00 read carries the largest recent gain of any read, and LadderNet is positive in every
+The 14:00 read carries the largest recent gain of any read, and isotherm is positive in every
 half-year at every read.
 
 Maker execution now also tries pulling quotes when the next GFS MOS run goes public, and every
@@ -350,7 +352,7 @@ matches the real market's log score gap to EMOS-NBM (−0.110 vs −0.109), its 
 
 The gate (PLAN §6) fails on both clauses: pretrained on 50% of real data is 0.009 worse than no
 pretraining on 100%, and at 100% pretraining slightly hurts. Pretraining is not added to
-LadderNet. It is worth keeping for new contracts with little history, where it doubles the gain at
+isotherm. It is worth keeping for new contracts with little history, where it doubles the gain at
 10% data. Caveat: the pretrained control is +0.005, not zero, so up to that much of any pretrained
 gain may come from the synthetic stage rather than real outcomes; it can only flatter the
 pretrained arms, so it does not change the verdict.

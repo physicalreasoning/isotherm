@@ -118,7 +118,7 @@ def main():
     print("  by month:", {k_: round(v) for k_, v in res.get("by_month", {}).items()})
     print("  by regime:", {k_: round(v) for k_, v in res.get("by_regime", {}).items()})
     print("  engine checks:", res["engine_checks"], "| noise:", res["noise_matched_turnover"])
-    for name in ("LadderNet", "pool · market+GFS", "LadderNet · market-sampled labels (control)"):
+    for name in ("isotherm", "pool · market+GFS", "isotherm · market-sampled labels (control)"):
         v = res["scores"][name]
         print(
             "  score {:46s} Δ vs market {:+.4f} [{:+.4f}, {:+.4f}]".format(

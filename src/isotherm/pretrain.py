@@ -1,4 +1,4 @@
-"""G3: synthetic pretraining for LadderNet at the 16:00 day-before read.
+"""G3: synthetic pretraining for IsothermNet at the 16:00 day-before read.
 
 Physics corpus  ASOS stations other than the seven Kalshi settlement stations, with real
                 GFS MOS, NBM and NWS CLI highs from IEM. Real forecasts, real outcomes,
@@ -32,7 +32,7 @@ from . import dataset
 from .dataset import LadderSet, _attach_gaussians, _normalise
 from .emos import interval_probs
 from .metrics import log_score
-from .model import LadderNet, _Net
+from .model import IsothermNet, _Net
 from .weather import City
 
 # 55 airports across climates. None is a Kalshi settlement station (KNYC KMDW KMIA KAUS KLAX
@@ -267,7 +267,7 @@ def _temper(p, y, mask):
 def pretrain(syn: LadderSet, seeds=3, hidden=64, epochs=25, batch=1024, lr=3e-3, wd=1e-3, patience=4,
              market_labels=False, seed0=0):  # fmt: skip
     """Mini-batch log-score training on synthetic ladders. Returns (state_dicts, feature stats)."""
-    shell = LadderNet(hidden=hidden)
+    shell = IsothermNet(hidden=hidden)
     x, c, lp, mk = shell._prep(syn)
     stats = shell.stats
     y = torch.from_numpy(syn.y.astype(np.int64))
@@ -323,14 +323,14 @@ def subsample(train: LadderSet, frac: float, seed: int = 0) -> LadderSet:
 
 
 class Subsampled:
-    """LadderNet trained on a fraction of the real training dates."""
+    """isotherm trained on a fraction of the real training dates."""
 
     def __init__(self, frac, seeds=3, name=None):
         self.frac, self.seeds = frac, seeds
-        self.name = name or "LadderNet · {:.0%} real".format(frac)
+        self.name = name or "isotherm · {:.0%} real".format(frac)
 
     def fit(self, train):
-        self.net = LadderNet(seeds=self.seeds).fit(subsample(train, self.frac))
+        self.net = IsothermNet(seeds=self.seeds).fit(subsample(train, self.frac))
         return self
 
     def predict(self, test):
@@ -343,7 +343,7 @@ class Pretrained:
     def __init__(self, corpus: LadderSet, frac, seeds=3, max_rows=30_000, market_labels=False, name=None):
         self.corpus, self.frac, self.seeds = corpus, frac, seeds
         self.max_rows, self.market_labels = max_rows, market_labels
-        self.name = name or "LadderNet · pretrained · {:.0%} real".format(frac)
+        self.name = name or "isotherm · pretrained · {:.0%} real".format(frac)
         self.log = []
 
     def fit(self, train):
@@ -356,7 +356,7 @@ class Pretrained:
         sim = MarketSim().fit_empirical(sub).calibrate(base)
         syn = sim.simulate(base, rng)
         states, stats = pretrain(syn, seeds=self.seeds, market_labels=self.market_labels)
-        self.net = LadderNet(seeds=self.seeds, init_states=states, init_stats=stats,
+        self.net = IsothermNet(seeds=self.seeds, init_states=states, init_stats=stats,
                              market_labels=self.market_labels).fit(sub)  # fmt: skip
         self.log.append({"cutoff": str(cutoff.date()), "real_rows": len(sub), "synthetic_rows": len(syn),
                          "tau": sim.tau, "lam": sim.lam, "gap_real": sim.gap_real})  # fmt: skip

@@ -1,7 +1,7 @@
 # Model card
 
 Two models live in this repo. The **served model** is small and frozen, and is the one the lockbox
-tested, the shadow record tracks and the API serves. **LadderNet** is the research model: better
+tested, the shadow record tracks and the API serves. **isotherm** is the research model: better
 probabilities, not yet frozen or live.
 
 ## Served model: `pool · market+GFS` (frozen)
@@ -50,7 +50,7 @@ distribution and stays consistent with the bucket prices.
 Engine checks held in every run: the oracle never loses, a coherent in-spread market never trades,
 and noise with matched turnover loses. Full record: `FINDINGS.md` §8-10.
 
-## Research model: LadderNet
+## Research model: isotherm
 
 | | |
 |---|---|

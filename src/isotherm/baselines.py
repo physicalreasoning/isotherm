@@ -113,13 +113,13 @@ class TemperedMarket(LogPool):
 
 def g2_suite():
     """G1 plus observation-aware and time-varying pools, and the learned model with its control."""
-    from .model import LadderNet
+    from .model import IsothermNet
 
     return default_suite() + [
         LogPool(["market", "emos_gfs", "emos_nbm_obs"], "pool · market+GFS+obs"),
         LogPool(["market", "emos_gfs", "emos_nbm_obs"], "pool · market+GFS+obs · 365d", window_days=365),
-        LadderNet("LadderNet"),
-        LadderNet("LadderNet · market-sampled labels (control)", market_labels=True, seeds=3),
+        IsothermNet("isotherm"),
+        IsothermNet("isotherm · market-sampled labels (control)", market_labels=True, seeds=3),
     ]
 
 

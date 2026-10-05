@@ -5,7 +5,7 @@ import pandas as pd
 
 from isotherm import pretrain as P
 from isotherm.dataset import LadderSet
-from isotherm.model import LadderNet
+from isotherm.model import IsothermNet
 from isotherm.weather import CITIES, bucket_contains, is_partition
 
 
@@ -80,7 +80,7 @@ def test_pretrained_hook_is_used_when_real_data_is_too_small():
     real = _base(n=600)
     states, stats = P.pretrain(real, seeds=2, epochs=2)
     tiny = real.take(np.arange(50))
-    m = LadderNet(seeds=2, init_states=states, init_stats=stats).fit(tiny)
+    m = IsothermNet(seeds=2, init_states=states, init_stats=stats).fit(tiny)
     assert len(m.nets) == 2  # falls back to the pretrained nets instead of the market
     assert not np.allclose(m.predict(real.take(np.arange(10))), real.probs["market"][:10])
-    assert len(LadderNet(seeds=2).fit(tiny).nets) == 0  # default behaviour unchanged
+    assert len(IsothermNet(seeds=2).fit(tiny).nets) == 0  # default behaviour unchanged
