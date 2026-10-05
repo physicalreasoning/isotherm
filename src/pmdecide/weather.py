@@ -17,6 +17,7 @@ not guarantee.
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Dict, Optional, Tuple
 
@@ -60,6 +61,58 @@ def bucket_interval(strike_type: str, floor: Optional[float],
     if strike_type == "between":
         return float(floor) - 0.5, float(cap) + 0.5
     raise ValueError("unknown strike_type {!r}".format(strike_type))
+
+
+_RULE_PATTERNS = [
+    # (regex on rules_primary, strike_type, which groups are floor / cap)
+    (re.compile(r"is between (\d+)\s*(?:-|and)\s*(\d+)"), "between"),
+    (re.compile(r"is (?:strictly )?(?:greater than|above) (\d+)"), "greater"),
+    (re.compile(r"is (?:strictly )?(?:less than|below) (\d+)"), "less"),
+]
+
+
+def normalise_strikes(df: pd.DataFrame) -> pd.DataFrame:
+    """Fill strike_type / floor / cap from the rules text where Kalshi left them empty.
+
+    Every 2021-22 market and a few weeks of early 2025 carry no strike fields;
+    the bounds exist only in `rules_primary` ("is between 42-43°", "is greater
+    than 44°", "is less than 38°"). Dropping them would bias the sample toward
+    recent, more liquid markets. Parsed rows are verified downstream by the
+    same label-arithmetic check as every other row (scripts/check_labels.py).
+    Rows that match no pattern keep a NaN strike_type and are dropped there.
+    """
+    df = df.copy()
+    miss = df["strike_type"].isna()
+    for i in np.flatnonzero(miss.to_numpy()):
+        rules = str(df["rules"].iat[i])
+        for rx, st in _RULE_PATTERNS:
+            m = rx.search(rules)
+            if not m:
+                continue
+            df.iat[i, df.columns.get_loc("strike_type")] = st
+            if st == "between":
+                df.iat[i, df.columns.get_loc("floor")] = float(m.group(1))
+                df.iat[i, df.columns.get_loc("cap")] = float(m.group(2))
+            elif st == "greater":
+                df.iat[i, df.columns.get_loc("floor")] = float(m.group(1))
+            else:
+                df.iat[i, df.columns.get_loc("cap")] = float(m.group(1))
+            break
+    df["strike_source"] = np.where(miss, "rules_text", "api")
+    return df
+
+
+def is_partition(intervals) -> bool:
+    """True if sorted intervals tile the whole line: (-inf, a), [a, b), ..., [z, inf).
+
+    Early (2021-22) events listed single thresholds or overlapping thresholds
+    rather than ladders. Normalising those into a "distribution" would be
+    meaningless, so they are excluded from every bucket-level score.
+    """
+    iv = sorted(intervals)
+    if len(iv) < 2 or iv[0][0] != -np.inf or iv[-1][1] != np.inf:
+        return False
+    return all(a[1] == b[0] for a, b in zip(iv[:-1], iv[1:], strict=True))
 
 
 def bucket_contains(strike_type: str, floor, cap, value: float) -> bool:
