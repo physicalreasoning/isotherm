@@ -1,0 +1,139 @@
+{
+  "NY": {
+    "markets": 1770,
+    "ladders": 295,
+    "non_ladders": 0,
+    "unparsed": 0,
+    "arithmetic_agreement": 1.0,
+    "contradictions": [],
+    "one_yes_share": 1.0,
+    "cli_nws_cli": {
+      "days": 229,
+      "agree": 1.0,
+      "diffs": {}
+    },
+    "cli_twc": {
+      "days": 51,
+      "agree": 1.0,
+      "diffs": {}
+    }
+  },
+  "CHI": {
+    "markets": 1776,
+    "ladders": 296,
+    "non_ladders": 0,
+    "unparsed": 0,
+    "arithmetic_agreement": 1.0,
+    "contradictions": [],
+    "one_yes_share": 1.0,
+    "cli_nws_cli": {
+      "days": 229,
+      "agree": 1.0,
+      "diffs": {}
+    },
+    "cli_twc": {
+      "days": 52,
+      "agree": 1.0,
+      "diffs": {}
+    }
+  },
+  "MIA": {
+    "markets": 1762,
+    "ladders": 293,
+    "non_ladders": 1,
+    "unparsed": 0,
+    "arithmetic_agreement": 1.0,
+    "contradictions": [],
+    "one_yes_share": 1.0,
+    "cli_nws_cli": {
+      "days": 228,
+      "agree": 1.0,
+      "diffs": {}
+    },
+    "cli_twc": {
+      "days": 52,
+      "agree": 1.0,
+      "diffs": {}
+    }
+  },
+  "AUS": {
+    "markets": 1776,
+    "ladders": 296,
+    "non_ladders": 0,
+    "unparsed": 0,
+    "arithmetic_agreement": 1.0,
+    "contradictions": [],
+    "one_yes_share": 1.0,
+    "cli_nws_cli": {
+      "days": 222,
+      "agree": 0.9954954954954955,
+      "diffs": {
+        "-3.0": 1
+      }
+    },
+    "cli_twc": {
+      "days": 52,
+      "agree": 1.0,
+      "diffs": {}
+    }
+  },
+  "LAX": {
+    "markets": 1770,
+    "ladders": 295,
+    "non_ladders": 0,
+    "unparsed": 0,
+    "arithmetic_agreement": 1.0,
+    "contradictions": [],
+    "one_yes_share": 1.0,
+    "cli_nws_cli": {
+      "days": 233,
+      "agree": 1.0,
+      "diffs": {}
+    },
+    "cli_twc": {
+      "days": 51,
+      "agree": 1.0,
+      "diffs": {}
+    }
+  },
+  "DEN": {
+    "markets": 1776,
+    "ladders": 296,
+    "non_ladders": 0,
+    "unparsed": 0,
+    "arithmetic_agreement": 1.0,
+    "contradictions": [],
+    "one_yes_share": 1.0,
+    "cli_nws_cli": {
+      "days": 226,
+      "agree": 1.0,
+      "diffs": {}
+    },
+    "cli_twc": {
+      "days": 52,
+      "agree": 1.0,
+      "diffs": {}
+    }
+  },
+  "PHIL": {
+    "markets": 1776,
+    "ladders": 296,
+    "non_ladders": 0,
+    "unparsed": 0,
+    "arithmetic_agreement": 1.0,
+    "contradictions": [],
+    "one_yes_share": 1.0,
+    "cli_nws_cli": {
+      "days": 231,
+      "agree": 1.0,
+      "diffs": {}
+    },
+    "cli_twc": {
+      "days": 52,
+      "agree": 0.9807692307692307,
+      "diffs": {
+        "-3.0": 1
+      }
+    }
+  }
+}
