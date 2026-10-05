@@ -1,0 +1,1335 @@
+{
+  "config": {
+    "cities": null,
+    "reads": null,
+    "boot": 1000,
+    "execution": [
+      "taker"
+    ],
+    "out": "results/backtest_taker"
+  },
+  "git": "c626ba5",
+  "cities": [
+    "AUS",
+    "CHI",
+    "DEN",
+    "LAX",
+    "MIA",
+    "NY",
+    "PHIL"
+  ],
+  "results": {
+    "d0_08 \u00b7 taker": {
+      "execution": "taker",
+      "configs": 28,
+      "picks": [
+        {
+          "fold": "2023-07-01..2023-09-30",
+          "config": "pool \u00b7 all \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2023-10-01..2023-12-31",
+          "config": "pool \u00b7 all \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2024-01-01..2024-03-31",
+          "config": "pool \u00b7 market+NBM \u00b7 \u03b8 0.02"
+        },
+        {
+          "fold": "2024-04-01..2024-06-30",
+          "config": "pool \u00b7 market+NBM \u00b7 \u03b8 0.01"
+        },
+        {
+          "fold": "2024-07-01..2024-09-30",
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2024-10-01..2024-12-31",
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2025-01-01..2025-03-31",
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2025-04-01..2025-06-30",
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.02"
+        },
+        {
+          "fold": "2025-07-01..2025-09-30",
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.02"
+        },
+        {
+          "fold": "2025-10-01..2025-12-31",
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.02"
+        },
+        {
+          "fold": "2026-01-01..2026-03-31",
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.01"
+        },
+        {
+          "fold": "2026-04-01..2026-06-30",
+          "config": "market (tempered) \u00b7 kelly 0.50"
+        }
+      ],
+      "selected": {
+        "days": 1095,
+        "pnl": -10049.059999999998,
+        "mean_daily": -9.177223744292235,
+        "sharpe_ann": -1.0149790348965697,
+        "sharpe_ann_ci": [
+          -2.357648456979568,
+          0.2625773163751878
+        ],
+        "nw_t": -1.5477043655436975,
+        "max_drawdown": 18745.79,
+        "trades": 5941,
+        "active_days": 1022,
+        "contracts": 1057361.0,
+        "outlay": 439264.06,
+        "hit_rate": 0.6648712337990237,
+        "return_on_outlay": -0.022877036650801798,
+        "ev_per_contract": 0.06619288625295222,
+        "realised_per_contract": -0.009503906423633933,
+        "attribution": {
+          "alpha_vs_mid": 13783.085000000001,
+          "spread_paid": -14896.384999999998,
+          "fees": -8935.759999999998
+        }
+      },
+      "deflated_sharpe": {
+        "sr_daily": -0.05312643077923919,
+        "sr0_daily": 0.1109536628954839,
+        "dsr": 3.632799089904478e-08,
+        "skew": 0.21828912687170826,
+        "kurtosis": 7.069437570271089,
+        "n_trials": 28,
+        "t": 1095
+      },
+      "pbo": {
+        "pbo": 0.2619047619047619,
+        "splits": 924,
+        "blocks": 12,
+        "median_logit": 0.49247648509779424,
+        "oos_sr_best_minus_median": 0.016504917174927247
+      },
+      "edge_realisation": {
+        "by_bin": [
+          {
+            "ev": 0.005013183895331221,
+            "realised": -0.003046073552872049,
+            "trades": 1189.0
+          },
+          {
+            "ev": 0.01776052293842338,
+            "realised": -0.04074029475542592,
+            "trades": 1188.0
+          },
+          {
+            "ev": 0.03299664392209418,
+            "realised": -0.00450521287353115,
+            "trades": 1188.0
+          },
+          {
+            "ev": 0.052635386607281974,
+            "realised": -0.007942829805047244,
+            "trades": 1188.0
+          },
+          {
+            "ev": 0.15795165850254816,
+            "realised": 0.005587601986764076,
+            "trades": 1188.0
+          }
+        ],
+        "slope": 0.029677407873397704
+      },
+      "all_configs": [
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.01",
+          "pnl": 1908.7900000000004,
+          "sharpe_ann": 0.43350911534819064,
+          "trades": 2721
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.50",
+          "pnl": 1614.9300000000057,
+          "sharpe_ann": 0.4207093933242375,
+          "trades": 7545
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.02",
+          "pnl": 1058.97,
+          "sharpe_ann": 0.3214994739545338,
+          "trades": 1638
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.25",
+          "pnl": 519.0400000000025,
+          "sharpe_ann": 0.24181164016982942,
+          "trades": 7515
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.10",
+          "pnl": -49.09999999999923,
+          "sharpe_ann": -0.04597045650515778,
+          "trades": 7413
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.08",
+          "pnl": -277.30000000000024,
+          "sharpe_ann": -0.18820619390040916,
+          "trades": 559
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.01",
+          "pnl": -3004.329999999998,
+          "sharpe_ann": -0.20384329586270528,
+          "trades": 7194
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.02",
+          "pnl": -2857.45,
+          "sharpe_ann": -0.23436307623150107,
+          "trades": 4969
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.04",
+          "pnl": -2123.330000000001,
+          "sharpe_ann": -0.26744175119467783,
+          "trades": 2737
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 \u03b8 0.08",
+          "pnl": -1906.530000000001,
+          "sharpe_ann": -0.4753730104411311,
+          "trades": 924
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.04",
+          "pnl": -1124.24,
+          "sharpe_ann": -0.4928552128697643,
+          "trades": 1072
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.08",
+          "pnl": -2696.9100000000017,
+          "sharpe_ann": -0.6378454891563194,
+          "trades": 903
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 \u03b8 0.02",
+          "pnl": -15043.039999999997,
+          "sharpe_ann": -1.2255008604261708,
+          "trades": 4995
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.10",
+          "pnl": -2990.369999999998,
+          "sharpe_ann": -1.270209286813209,
+          "trades": 9405
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 \u03b8 0.04",
+          "pnl": -10909.27,
+          "sharpe_ann": -1.339076713102014,
+          "trades": 2737
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.25",
+          "pnl": -7935.7499999999945,
+          "sharpe_ann": -1.4134527800018761,
+          "trades": 9478
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.08",
+          "pnl": -36224.99000000001,
+          "sharpe_ann": -1.418783654780763,
+          "trades": 9810
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.04",
+          "pnl": -49419.57000000001,
+          "sharpe_ann": -1.628563651301876,
+          "trades": 14099
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.02",
+          "pnl": -55392.22,
+          "sharpe_ann": -1.6416287398716738,
+          "trades": 16882
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.50",
+          "pnl": -17625.929999999993,
+          "sharpe_ann": -1.6445252958364418,
+          "trades": 9501
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.01",
+          "pnl": -62532.22000000001,
+          "sharpe_ann": -1.7915308992631895,
+          "trades": 18452
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 \u03b8 0.01",
+          "pnl": -27578.13,
+          "sharpe_ann": -1.9991396499194947,
+          "trades": 7106
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 kelly 0.10",
+          "pnl": -5068.059999999998,
+          "sharpe_ann": -2.078275669171421,
+          "trades": 9332
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 kelly 0.25",
+          "pnl": -13430.439999999993,
+          "sharpe_ann": -2.329421393203064,
+          "trades": 9416
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 kelly 0.50",
+          "pnl": -83504.51000000001,
+          "sharpe_ann": -2.412610786643898,
+          "trades": 17017
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 kelly 0.50",
+          "pnl": -27870.32999999999,
+          "sharpe_ann": -2.555643959296135,
+          "trades": 9441
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 kelly 0.25",
+          "pnl": -55809.670000000006,
+          "sharpe_ann": -2.5574215085236602,
+          "trades": 16998
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 kelly 0.10",
+          "pnl": -34397.29,
+          "sharpe_ann": -3.222404006207948,
+          "trades": 16951
+        }
+      ],
+      "by_period": {
+        "2023H2": {
+          "pnl": 828.8,
+          "trades": 518,
+          "per_contract": 0.0667203348897118
+        },
+        "2024H1": {
+          "pnl": 69.74000000000001,
+          "trades": 555,
+          "per_contract": 0.003347894964235995
+        },
+        "2024H2": {
+          "pnl": 2169.19,
+          "trades": 284,
+          "per_contract": 0.03940829154857932
+        },
+        "2025H1": {
+          "pnl": 2536.739999999999,
+          "trades": 876,
+          "per_contract": 0.013074901039089554
+        },
+        "2025H2": {
+          "pnl": -5416.759999999999,
+          "trades": 1301,
+          "per_contract": -0.017785877053002094
+        },
+        "2026H1": {
+          "pnl": -10236.769999999999,
+          "trades": 2407,
+          "per_contract": -0.021757493188010898
+        }
+      },
+      "by_city": {
+        "AUS": {
+          "pnl": -685.5399999999993,
+          "trades": 1222,
+          "per_contract": -0.004777481985309485
+        },
+        "CHI": {
+          "pnl": 500.91999999999916,
+          "trades": 1299,
+          "per_contract": 0.0020136677922495544
+        },
+        "DEN": {
+          "pnl": -2433.7500000000005,
+          "trades": 637,
+          "per_contract": -0.021121901687148514
+        },
+        "LAX": {
+          "pnl": -1749.7799999999995,
+          "trades": 715,
+          "per_contract": -0.013120627469800012
+        },
+        "MIA": {
+          "pnl": 821.5900000000006,
+          "trades": 844,
+          "per_contract": 0.0069935052222099316
+        },
+        "NY": {
+          "pnl": -4089.44,
+          "trades": 664,
+          "per_contract": -0.0236830096019088
+        },
+        "PHIL": {
+          "pnl": -2413.0599999999995,
+          "trades": 560,
+          "per_contract": -0.019095347751426375
+        }
+      },
+      "robustness_config": "pool \u00b7 all \u00b7 \u03b8 0.02",
+      "robustness": [
+        {
+          "scenario": "base",
+          "pnl": -2857.45,
+          "sharpe_ann": -0.23436307623150107,
+          "trades": 4969
+        },
+        {
+          "scenario": "slip +1\u00a2",
+          "pnl": -8569.710000000006,
+          "sharpe_ann": -0.8846706532820252,
+          "trades": 3675
+        },
+        {
+          "scenario": "slip +2\u00a2",
+          "pnl": -13500.480000000007,
+          "sharpe_ann": -1.8116144262308094,
+          "trades": 2763
+        },
+        {
+          "scenario": "fees \u00d71.5",
+          "pnl": -3949.0699999999997,
+          "sharpe_ann": -0.35466161116078687,
+          "trades": 4253
+        },
+        {
+          "scenario": "participation 1%",
+          "pnl": -2357.629999999999,
+          "sharpe_ann": -0.2923030827561481,
+          "trades": 4865
+        },
+        {
+          "scenario": "participation 20%",
+          "pnl": -14289.02,
+          "sharpe_ann": -1.0492558256513915,
+          "trades": 5001
+        },
+        {
+          "scenario": "size \u00d710",
+          "pnl": -24697.92999999998,
+          "sharpe_ann": -0.4013855202844108,
+          "trades": 4969
+        }
+      ],
+      "placebos": {
+        "oracle (must never lose)": {
+          "trades": 24685,
+          "pnl": 1194528.69,
+          "losing_trades": 0
+        },
+        "in-spread market (must not trade)": {
+          "trades": 0,
+          "pnl": 0.0,
+          "losing_trades": 0
+        },
+        "normalised mid": {
+          "trades": 3586,
+          "pnl": -13001.300000000003,
+          "losing_trades": 1555
+        },
+        "noise_matched_turnover": {
+          "trades": 4988,
+          "pnl": -14027.04,
+          "losing_trades": 2218,
+          "sigma": 0.2
+        },
+        "arbitrage_ladders": {
+          "trades": 718,
+          "pnl": 0.0,
+          "losing_trades": 0
+        }
+      }
+    },
+    "d0_12 \u00b7 taker": {
+      "execution": "taker",
+      "configs": 28,
+      "picks": [
+        {
+          "fold": "2023-07-01..2023-09-30",
+          "config": "pool \u00b7 all \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2023-10-01..2023-12-31",
+          "config": "pool \u00b7 all \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2024-01-01..2024-03-31",
+          "config": "pool \u00b7 market+NBM \u00b7 \u03b8 0.02"
+        },
+        {
+          "fold": "2024-04-01..2024-06-30",
+          "config": "market (tempered) \u00b7 kelly 0.50"
+        },
+        {
+          "fold": "2024-07-01..2024-09-30",
+          "config": "market (tempered) \u00b7 kelly 0.50"
+        },
+        {
+          "fold": "2024-10-01..2024-12-31",
+          "config": "EMOS \u00b7 NBM \u00b7 kelly 0.50"
+        },
+        {
+          "fold": "2025-01-01..2025-03-31",
+          "config": "EMOS \u00b7 NBM \u00b7 kelly 0.50"
+        },
+        {
+          "fold": "2025-04-01..2025-06-30",
+          "config": "EMOS \u00b7 NBM \u00b7 kelly 0.50"
+        },
+        {
+          "fold": "2025-07-01..2025-09-30",
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.08"
+        },
+        {
+          "fold": "2025-10-01..2025-12-31",
+          "config": "market (tempered) \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2026-01-01..2026-03-31",
+          "config": "market (tempered) \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2026-04-01..2026-06-30",
+          "config": "market (tempered) \u00b7 \u03b8 0.04"
+        }
+      ],
+      "selected": {
+        "days": 1095,
+        "pnl": 11070.779999999995,
+        "mean_daily": 10.11030136986301,
+        "sharpe_ann": 0.4705818325092029,
+        "sharpe_ann_ci": [
+          -0.842480938885838,
+          1.5599055075127388
+        ],
+        "nw_t": 0.6989282889766232,
+        "max_drawdown": 16502.23999999998,
+        "trades": 7034,
+        "active_days": 717,
+        "contracts": 1607889.0,
+        "outlay": 398612.22,
+        "hit_rate": 0.26599374466875175,
+        "return_on_outlay": 0.02777330810380072,
+        "ev_per_contract": 0.22265814261932118,
+        "realised_per_contract": 0.006885288723288732,
+        "attribution": {
+          "alpha_vs_mid": 63302.24500000001,
+          "spread_paid": -38663.384999999995,
+          "fees": -13568.080000000002
+        }
+      },
+      "deflated_sharpe": {
+        "sr_daily": 0.024631378867165793,
+        "sr0_daily": 0.0980794876408856,
+        "dsr": 0.005095143942565264,
+        "skew": 4.536608181904028,
+        "kurtosis": 38.99723284828481,
+        "n_trials": 28,
+        "t": 1095
+      },
+      "pbo": {
+        "pbo": 0.1958874458874459,
+        "splits": 924,
+        "blocks": 12,
+        "median_logit": 1.5686159179138452,
+        "oos_sr_best_minus_median": 0.060095107005581384
+      },
+      "edge_realisation": {
+        "by_bin": [
+          {
+            "ev": 0.026847664129217748,
+            "realised": -0.02720513850406083,
+            "trades": 1407.0
+          },
+          {
+            "ev": 0.07687402534238318,
+            "realised": 0.014304148346396478,
+            "trades": 1407.0
+          },
+          {
+            "ev": 0.1263786962539144,
+            "realised": 0.01292829147542675,
+            "trades": 1406.0
+          },
+          {
+            "ev": 0.1932573739929109,
+            "realised": -0.018251719973854184,
+            "trades": 1407.0
+          },
+          {
+            "ev": 0.4191927296805833,
+            "realised": 0.02609368327633391,
+            "trades": 1407.0
+          }
+        ],
+        "slope": 0.1079609109987362
+      },
+      "all_configs": [
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.04",
+          "pnl": 2042.8700000000001,
+          "sharpe_ann": 1.308150897163218,
+          "trades": 513
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.08",
+          "pnl": 690.8799999999999,
+          "sharpe_ann": 1.1602125081657337,
+          "trades": 241
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.25",
+          "pnl": 1366.900000000002,
+          "sharpe_ann": 0.8846009600871473,
+          "trades": 4708
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.50",
+          "pnl": 2521.5400000000036,
+          "sharpe_ann": 0.8814423662052475,
+          "trades": 4736
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.10",
+          "pnl": 577.6300000000006,
+          "sharpe_ann": 0.8045692800795959,
+          "trades": 4625
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.02",
+          "pnl": 1822.66,
+          "sharpe_ann": 0.7107220468700711,
+          "trades": 897
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.01",
+          "pnl": 1101.3899999999999,
+          "sharpe_ann": 0.28653952175578457,
+          "trades": 1706
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 \u03b8 0.01",
+          "pnl": -581.1000000000008,
+          "sharpe_ann": -0.043940679542484956,
+          "trades": 3290
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 \u03b8 0.02",
+          "pnl": -1304.0900000000006,
+          "sharpe_ann": -0.10916417588773726,
+          "trades": 2101
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.02",
+          "pnl": -2923.9700000000003,
+          "sharpe_ann": -0.26600337616241965,
+          "trades": 2113
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.01",
+          "pnl": -4543.4800000000005,
+          "sharpe_ann": -0.3696220281131201,
+          "trades": 3313
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.08",
+          "pnl": -15189.950000000004,
+          "sharpe_ann": -0.4780241093952572,
+          "trades": 12149
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.04",
+          "pnl": -17253.130000000005,
+          "sharpe_ann": -0.48926436772836995,
+          "trades": 15659
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.02",
+          "pnl": -19259.89000000001,
+          "sharpe_ann": -0.517431232504489,
+          "trades": 17845
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.08",
+          "pnl": -1098.5799999999997,
+          "sharpe_ann": -0.5384137654600211,
+          "trades": 333
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.01",
+          "pnl": -21128.040000000008,
+          "sharpe_ann": -0.5508184391834464,
+          "trades": 19028
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 kelly 0.50",
+          "pnl": -24143.84,
+          "sharpe_ann": -0.6808568679410019,
+          "trades": 16323
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 \u03b8 0.08",
+          "pnl": -1844.1200000000003,
+          "sharpe_ann": -0.9003107761460131,
+          "trades": 328
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 kelly 0.25",
+          "pnl": -25825.290000000008,
+          "sharpe_ann": -1.0675944287811012,
+          "trades": 16315
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 \u03b8 0.04",
+          "pnl": -5661.509999999998,
+          "sharpe_ann": -1.1832517246451726,
+          "trades": 1049
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 kelly 0.10",
+          "pnl": -1954.4499999999985,
+          "sharpe_ann": -1.2804334585874553,
+          "trades": 5215
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.10",
+          "pnl": -1983.7199999999991,
+          "sharpe_ann": -1.3550755462634616,
+          "trades": 5132
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 kelly 0.10",
+          "pnl": -21075.400000000005,
+          "sharpe_ann": -1.392608087008152,
+          "trades": 16274
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 kelly 0.25",
+          "pnl": -5146.819999999997,
+          "sharpe_ann": -1.3981896179414706,
+          "trades": 5270
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.25",
+          "pnl": -5094.599999999998,
+          "sharpe_ann": -1.4571618586453194,
+          "trades": 5193
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 kelly 0.50",
+          "pnl": -10523.209999999995,
+          "sharpe_ann": -1.4858453504331177,
+          "trades": 5292
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.50",
+          "pnl": -10633.879999999996,
+          "sharpe_ann": -1.5939267820519514,
+          "trades": 5215
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.04",
+          "pnl": -7718.08,
+          "sharpe_ann": -1.7771097200138268,
+          "trades": 1057
+        }
+      ],
+      "by_period": {
+        "2023H2": {
+          "pnl": 414.14000000000004,
+          "trades": 348,
+          "per_contract": 0.07193677262463088
+        },
+        "2024H1": {
+          "pnl": 87.49,
+          "trades": 221,
+          "per_contract": 0.012462962962962962
+        },
+        "2024H2": {
+          "pnl": 20684.79,
+          "trades": 1408,
+          "per_contract": 0.042471808370840046
+        },
+        "2025H1": {
+          "pnl": -3444.760000000001,
+          "trades": 3793,
+          "per_contract": -0.004081154887360572
+        },
+        "2025H2": {
+          "pnl": -7074.189999999999,
+          "trades": 1222,
+          "per_contract": -0.027488274859822883
+        },
+        "2026H1": {
+          "pnl": 403.3100000000002,
+          "trades": 42,
+          "per_contract": 0.06046626686656674
+        }
+      },
+      "by_city": {
+        "AUS": {
+          "pnl": 8988.009999999998,
+          "trades": 1390,
+          "per_contract": 0.03043224026138922
+        },
+        "CHI": {
+          "pnl": 1439.0199999999995,
+          "trades": 1130,
+          "per_contract": 0.0053362653336695475
+        },
+        "DEN": {
+          "pnl": -2131.090000000001,
+          "trades": 932,
+          "per_contract": -0.010420009876832965
+        },
+        "LAX": {
+          "pnl": 384.5099999999993,
+          "trades": 718,
+          "per_contract": 0.0025345400374403412
+        },
+        "MIA": {
+          "pnl": -2506.2300000000005,
+          "trades": 826,
+          "per_contract": -0.011489826980735907
+        },
+        "NY": {
+          "pnl": 3791.0800000000013,
+          "trades": 1235,
+          "per_contract": 0.01125473885459992
+        },
+        "PHIL": {
+          "pnl": 1105.4799999999996,
+          "trades": 803,
+          "per_contract": 0.008395200486026728
+        }
+      },
+      "robustness_config": "EMOS \u00b7 NBM \u00b7 kelly 0.50",
+      "robustness": [
+        {
+          "scenario": "base",
+          "pnl": -24143.84,
+          "sharpe_ann": -0.6808568679410019,
+          "trades": 16323
+        },
+        {
+          "scenario": "slip +1\u00a2",
+          "pnl": -82326.90000000002,
+          "sharpe_ann": -2.3833186537031508,
+          "trades": 14883
+        },
+        {
+          "scenario": "slip +2\u00a2",
+          "pnl": -126174.92000000003,
+          "sharpe_ann": -3.7028325061771294,
+          "trades": 13662
+        },
+        {
+          "scenario": "fees \u00d71.5",
+          "pnl": -35652.78000000001,
+          "sharpe_ann": -1.0259775714071648,
+          "trades": 15980
+        },
+        {
+          "scenario": "participation 1%",
+          "pnl": 9845.489999999996,
+          "sharpe_ann": 0.5421354549142055,
+          "trades": 15484
+        },
+        {
+          "scenario": "participation 20%",
+          "pnl": -117934.79000000001,
+          "sharpe_ann": -2.4283684900716915,
+          "trades": 16621
+        },
+        {
+          "scenario": "size \u00d710",
+          "pnl": 47529.01999999999,
+          "sharpe_ann": 0.5233715770241524,
+          "trades": 16336
+        }
+      ],
+      "placebos": {
+        "oracle (must never lose)": {
+          "trades": 18914,
+          "pnl": 939953.46,
+          "losing_trades": 0
+        },
+        "in-spread market (must not trade)": {
+          "trades": 2,
+          "pnl": 740.4300000000001,
+          "losing_trades": 1
+        },
+        "normalised mid": {
+          "trades": 2169,
+          "pnl": 3577.239999999996,
+          "losing_trades": 1228
+        },
+        "noise_matched_turnover": {
+          "trades": 6341,
+          "pnl": -3994.499999999998,
+          "losing_trades": 3005,
+          "sigma": 0.3
+        },
+        "arbitrage_ladders": {
+          "trades": 378,
+          "pnl": 0.0,
+          "losing_trades": 0
+        }
+      }
+    },
+    "d1_16 \u00b7 taker": {
+      "execution": "taker",
+      "configs": 28,
+      "picks": [
+        {
+          "fold": "2023-07-01..2023-09-30",
+          "config": "pool \u00b7 all \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2023-10-01..2023-12-31",
+          "config": "pool \u00b7 all \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2024-01-01..2024-03-31",
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.08"
+        },
+        {
+          "fold": "2024-04-01..2024-06-30",
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.08"
+        },
+        {
+          "fold": "2024-07-01..2024-09-30",
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.08"
+        },
+        {
+          "fold": "2024-10-01..2024-12-31",
+          "config": "pool \u00b7 market+NBM \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2025-01-01..2025-03-31",
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.02"
+        },
+        {
+          "fold": "2025-04-01..2025-06-30",
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.02"
+        },
+        {
+          "fold": "2025-07-01..2025-09-30",
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.02"
+        },
+        {
+          "fold": "2025-10-01..2025-12-31",
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.01"
+        },
+        {
+          "fold": "2026-01-01..2026-03-31",
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.01"
+        },
+        {
+          "fold": "2026-04-01..2026-06-30",
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.01"
+        }
+      ],
+      "selected": {
+        "days": 1089,
+        "pnl": 37458.51000000001,
+        "mean_daily": 34.39716253443527,
+        "sharpe_ann": 1.6667892290631268,
+        "sharpe_ann_ci": [
+          0.6012595889764757,
+          2.673878818446578
+        ],
+        "nw_t": 2.843324331575524,
+        "max_drawdown": 4795.400000000001,
+        "trades": 10720,
+        "active_days": 1048,
+        "contracts": 2171062.0,
+        "outlay": 774187.49,
+        "hit_rate": 0.5267723880597015,
+        "return_on_outlay": 0.04838428737720886,
+        "ev_per_contract": 0.08411379231253943,
+        "realised_per_contract": 0.01725354227562364,
+        "attribution": {
+          "alpha_vs_mid": 95867.25999999998,
+          "spread_paid": -37326.229999999996,
+          "fees": -21082.519999999997
+        }
+      },
+      "deflated_sharpe": {
+        "sr_daily": 0.08724373564073401,
+        "sr0_daily": 0.07867459097814392,
+        "dsr": 0.6190588588190151,
+        "skew": 1.6811623748674498,
+        "kurtosis": 9.835496912992868,
+        "n_trials": 28,
+        "t": 1089
+      },
+      "pbo": {
+        "pbo": 0.27380952380952384,
+        "splits": 924,
+        "blocks": 12,
+        "median_logit": 1.1451323043030024,
+        "oos_sr_best_minus_median": 0.03428211495541812
+      },
+      "edge_realisation": {
+        "by_bin": [
+          {
+            "ev": 0.016808288985515972,
+            "realised": 0.016392154173935792,
+            "trades": 2144.0
+          },
+          {
+            "ev": 0.03243331242063437,
+            "realised": 0.0122483645230576,
+            "trades": 2144.0
+          },
+          {
+            "ev": 0.056918931978987834,
+            "realised": 0.023369101271969804,
+            "trades": 2144.0
+          },
+          {
+            "ev": 0.09425970220829329,
+            "realised": 0.024285739640169574,
+            "trades": 2144.0
+          },
+          {
+            "ev": 0.20944008028388678,
+            "realised": 0.010672734765009635,
+            "trades": 2144.0
+          }
+        ],
+        "slope": -0.02038571288877658
+      },
+      "all_configs": [
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.01",
+          "pnl": 36627.98,
+          "sharpe_ann": 2.0650962560919077,
+          "trades": 8453
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.50",
+          "pnl": 6035.100000000006,
+          "sharpe_ann": 1.6936551837011815,
+          "trades": 7117
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.02",
+          "pnl": 21878.350000000002,
+          "sharpe_ann": 1.5082250571079145,
+          "trades": 5793
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.10",
+          "pnl": 4396.000000000002,
+          "sharpe_ann": 1.4890859667023106,
+          "trades": 10862
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.25",
+          "pnl": 10025.530000000006,
+          "sharpe_ann": 1.4109736404545687,
+          "trades": 10990
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.25",
+          "pnl": 2915.740000000003,
+          "sharpe_ann": 1.390245949553753,
+          "trades": 7083
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.08",
+          "pnl": 8666.939999999999,
+          "sharpe_ann": 1.354417861422616,
+          "trades": 855
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.04",
+          "pnl": 13155.270000000002,
+          "sharpe_ann": 1.2851359037739987,
+          "trades": 2878
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.01",
+          "pnl": 4850.4800000000005,
+          "sharpe_ann": 1.2501561776278665,
+          "trades": 2381
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.50",
+          "pnl": 15481.840000000004,
+          "sharpe_ann": 1.1429965379540015,
+          "trades": 11040
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.02",
+          "pnl": 3106.27,
+          "sharpe_ann": 1.1108547674596454,
+          "trades": 1722
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 \u03b8 0.04",
+          "pnl": 10100.75,
+          "sharpe_ann": 0.9572322303352707,
+          "trades": 2941
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 \u03b8 0.02",
+          "pnl": 10357.8,
+          "sharpe_ann": 0.7730143229229657,
+          "trades": 5723
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.08",
+          "pnl": 18802.909999999996,
+          "sharpe_ann": 0.6909748632160391,
+          "trades": 8187
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.04",
+          "pnl": 23198.109999999997,
+          "sharpe_ann": 0.6859440112186056,
+          "trades": 13606
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 \u03b8 0.08",
+          "pnl": 3893.1499999999996,
+          "sharpe_ann": 0.6552043298889659,
+          "trades": 855
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 kelly 0.10",
+          "pnl": 1711.8300000000017,
+          "sharpe_ann": 0.6142441823330328,
+          "trades": 10988
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.04",
+          "pnl": 991.32,
+          "sharpe_ann": 0.6061334258896837,
+          "trades": 1150
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.02",
+          "pnl": 21914.340000000004,
+          "sharpe_ann": 0.5752626626278214,
+          "trades": 17311
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 kelly 0.25",
+          "pnl": 3625.800000000005,
+          "sharpe_ann": 0.5434333635150901,
+          "trades": 11122
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 \u03b8 0.01",
+          "pnl": 8242.100000000006,
+          "sharpe_ann": 0.5289345376043141,
+          "trades": 8423
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.10",
+          "pnl": 463.880000000001,
+          "sharpe_ann": 0.41773760302687685,
+          "trades": 6955
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.08",
+          "pnl": 481.8699999999999,
+          "sharpe_ann": 0.37615786329452244,
+          "trades": 586
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.01",
+          "pnl": 10352.910000000003,
+          "sharpe_ann": 0.26524014803404644,
+          "trades": 19533
+        },
+        {
+          "config": "pool \u00b7 market+NBM \u00b7 kelly 0.50",
+          "pnl": 3276.4600000000087,
+          "sharpe_ann": 0.2578210873595131,
+          "trades": 11167
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 kelly 0.50",
+          "pnl": -14400.849999999995,
+          "sharpe_ann": -0.387009975288438,
+          "trades": 18444
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 kelly 0.25",
+          "pnl": -15605.96,
+          "sharpe_ann": -0.7014450903367365,
+          "trades": 18421
+        },
+        {
+          "config": "EMOS \u00b7 NBM \u00b7 kelly 0.10",
+          "pnl": -13914.819999999998,
+          "sharpe_ann": -1.363717685394677,
+          "trades": 18337
+        }
+      ],
+      "by_period": {
+        "2023H2": {
+          "pnl": 220.4099999999999,
+          "trades": 847,
+          "per_contract": 0.009303532987210329
+        },
+        "2024H1": {
+          "pnl": 2333.49,
+          "trades": 647,
+          "per_contract": 0.06597184133894998
+        },
+        "2024H2": {
+          "pnl": 3151.039999999999,
+          "trades": 479,
+          "per_contract": 0.04339737498106294
+        },
+        "2025H1": {
+          "pnl": 12345.86,
+          "trades": 3862,
+          "per_contract": 0.014235657809925409
+        },
+        "2025H2": {
+          "pnl": 14010.849999999999,
+          "trades": 2511,
+          "per_contract": 0.02179730513909135
+        },
+        "2026H1": {
+          "pnl": 5396.8600000000015,
+          "trades": 2374,
+          "per_contract": 0.010195007962400094
+        }
+      },
+      "by_city": {
+        "AUS": {
+          "pnl": 8835.6,
+          "trades": 1537,
+          "per_contract": 0.03008970106456161
+        },
+        "CHI": {
+          "pnl": 2135.8700000000017,
+          "trades": 1753,
+          "per_contract": 0.006140592476741383
+        },
+        "DEN": {
+          "pnl": 3327.469999999999,
+          "trades": 1241,
+          "per_contract": 0.013223451520859656
+        },
+        "LAX": {
+          "pnl": 2235.1200000000003,
+          "trades": 1399,
+          "per_contract": 0.005660838974873303
+        },
+        "MIA": {
+          "pnl": 6533.97,
+          "trades": 1821,
+          "per_contract": 0.02243600352989249
+        },
+        "NY": {
+          "pnl": 5494.42,
+          "trades": 1715,
+          "per_contract": 0.01584694189514245
+        },
+        "PHIL": {
+          "pnl": 8896.060000000001,
+          "trades": 1254,
+          "per_contract": 0.0362846794521442
+        }
+      },
+      "robustness_config": "EMOS \u00b7 NBM \u00b7 \u03b8 0.02",
+      "robustness": [
+        {
+          "scenario": "base",
+          "pnl": 21914.340000000004,
+          "sharpe_ann": 0.5752626626278214,
+          "trades": 17311
+        },
+        {
+          "scenario": "slip +1\u00a2",
+          "pnl": -31242.610000000015,
+          "sharpe_ann": -0.9463746629538344,
+          "trades": 15370
+        },
+        {
+          "scenario": "slip +2\u00a2",
+          "pnl": -68330.05000000002,
+          "sharpe_ann": -2.423842372351093,
+          "trades": 13598
+        },
+        {
+          "scenario": "fees \u00d71.5",
+          "pnl": 3868.510000000002,
+          "sharpe_ann": 0.10515117256364197,
+          "trades": 16472
+        },
+        {
+          "scenario": "participation 1%",
+          "pnl": 13308.600000000004,
+          "sharpe_ann": 0.6451786454015885,
+          "trades": 17126
+        },
+        {
+          "scenario": "participation 20%",
+          "pnl": -85028.39,
+          "sharpe_ann": -1.863512358751845,
+          "trades": 17385
+        },
+        {
+          "scenario": "size \u00d710",
+          "pnl": -50966.55999999997,
+          "sharpe_ann": -0.408494789048277,
+          "trades": 17311
+        }
+      ],
+      "placebos": {
+        "oracle (must never lose)": {
+          "trades": 29204,
+          "pnl": 1569263.23,
+          "losing_trades": 0
+        },
+        "in-spread market (must not trade)": {
+          "trades": 0,
+          "pnl": 0.0,
+          "losing_trades": 0
+        },
+        "normalised mid": {
+          "trades": 3446,
+          "pnl": -6726.67,
+          "losing_trades": 1238
+        },
+        "noise_matched_turnover": {
+          "trades": 8944,
+          "pnl": -24416.260000000002,
+          "losing_trades": 3976,
+          "sigma": 0.3
+        },
+        "arbitrage_ladders": {
+          "trades": 548,
+          "pnl": 0.0,
+          "losing_trades": 0
+        }
+      }
+    }
+  },
+  "seconds": 124.0
+}
