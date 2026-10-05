@@ -107,7 +107,7 @@ def cli(station: str, year: int) -> pd.DataFrame:
     url = "{}/json/cli.py?station={}&year={}".format(BASE, station, year)
     closed = year < pd.Timestamp.now(tz="UTC").year
     body = _cached(url, cache=closed)
-    rows = json.loads(body, strict=True).get("results", [])
+    rows = json.loads(body, strict=False).get("results", [])
     df = pd.DataFrame(rows)
     if df.empty:
         return df
