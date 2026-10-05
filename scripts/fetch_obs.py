@@ -27,7 +27,21 @@ def main():
     ap.add_argument("--cities", nargs="+", default=list(CITIES))
     ap.add_argument("--start", type=int, default=2023)
     ap.add_argument("--end", type=int, default=pd.Timestamp.now().year)
+    ap.add_argument("--five-min", action="store_true", help="1-minute archive at 5-minute sampling")
     a = ap.parse_args()
+    if a.five_min:
+        iem.MIN_INTERVAL = 5.0  # shared with other IEM users; be slow
+        for k in a.cities:
+            c = CITIES[k]
+            qs = pd.date_range("{}-01-01".format(a.start), "{}-01-01".format(a.end + 1), freq="QS")
+            parts = [
+                iem.asos1min(c.asos, str(x.date()), str(y.date()))
+                for x, y in zip(qs[:-1], qs[1:], strict=True)
+            ]
+            df = pd.concat([p for p in parts if len(p)], ignore_index=True)
+            df.to_parquet(OUT / "{}_5min.parquet".format(c.station), index=False)
+            print("{} {} 5-min: {} obs".format(k, c.asos, len(df)), flush=True)
+        return
     OUT.mkdir(parents=True, exist_ok=True)
     for k in a.cities:
         c = CITIES[k]
