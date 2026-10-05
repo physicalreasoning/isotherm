@@ -128,6 +128,8 @@ class LadderNet:
         weight_decay=1e-3,
         patience=15,
         market_labels=False,
+        init_states=None,
+        init_stats=None,
     ):
         self.name = name
         self.half_life, self.seeds, self.hidden = half_life_days, seeds, hidden
@@ -136,6 +138,9 @@ class LadderNet:
         # possible fit to those is the market itself, so this model must score like the
         # market on real outcomes; a gain here would mean the pipeline leaks the outcome.
         self.market_labels = market_labels
+        # G3 hook: start every seed from pretrained weights and keep the pretraining feature
+        # normalisation. Both default to None, which leaves training unchanged.
+        self.init_states, self.init_stats = init_states, init_stats
         self.nets, self.stats = [], None
 
     def _prep(self, ls):
@@ -150,9 +155,19 @@ class LadderNet:
         c = ((c - cm) / cs).astype(np.float32)
         return (torch.from_numpy(x), torch.from_numpy(c), torch.from_numpy(logp), torch.from_numpy(ls.mask))
 
+    def _init_net(self, f, cdim, s, seed):
+        net = _Net(f, cdim, s, self.hidden)
+        if self.init_states:
+            net.load_state_dict(self.init_states[seed % len(self.init_states)])
+        return net
+
     def fit(self, train: LadderSet):
-        self.stats, self.nets = None, []
+        self.stats, self.nets = self.init_stats, []
         if len(train) < 200:
+            if self.init_states:  # too little real data to fine-tune: use the pretrained nets
+                st = self.init_states[0]
+                s, width = st["pool"].shape[0], st["mlp.0.weight"].shape[1]
+                self.nets = [self._init_net(width - s, 0, s, i).eval() for i in range(self.seeds)]
             return self
         days = train.meta["day"].to_numpy("datetime64[D]").astype(float)
         age = days.max() - days
@@ -172,7 +187,7 @@ class LadderNet:
                 yy = torch.from_numpy(
                     (cum < rng.random((len(cum), 1))).sum(1).clip(0, train.mask.sum(1) - 1).astype(np.int64)
                 )
-            net = _Net(x.shape[-1], c.shape[-1], lp.shape[-1], self.hidden)
+            net = self._init_net(x.shape[-1], c.shape[-1], lp.shape[-1], seed)
             opt = torch.optim.AdamW(net.parameters(), lr=self.lr, weight_decay=self.wd)
             best, best_state, bad = np.inf, None, 0
             itr, iva = torch.from_numpy(np.flatnonzero(tr)), torch.from_numpy(np.flatnonzero(va))
