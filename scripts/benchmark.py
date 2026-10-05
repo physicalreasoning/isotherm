@@ -100,7 +100,8 @@ def run(ls, suite, lockbox, boot):
         # lockbox, overall and city by city, because the pooled period cannot see decay.
         recent = (ev.meta["day"] >= RECENT_FROM).to_numpy()
         rec = {}
-        for name in list(GATE0) + [best]:
+        # Gate 0 blends only exist in the G1/G2 suites; other suites report the best model alone.
+        for name in [g for g in GATE0 if g in losses] + [best]:
             d = ref - losses[name]
             row = {
                 "n": int(recent.sum()),
@@ -136,6 +137,8 @@ def gate0(results):
                     "dm_p": row["dm_vs_market"]["p"],
                 }
         for name, fc in GATE0.items():
+            if name not in r["recent"]:
+                continue
             x = r["recent"][name]
             cities = [c for c, v in x["by_city"].items() if v["ci"][0] > 0]
             amended.setdefault(read, {})[fc] = {
