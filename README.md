@@ -18,13 +18,15 @@ distribution, so answers to different question types cannot contradict each othe
 
 Pre-registered plan in [docs/PLAN.md](docs/PLAN.md); domain choice and the survey behind it in
 [docs/01-market-selection.md](docs/01-market-selection.md); evaluation protocol in
-[docs/EVALS.md](docs/EVALS.md); latest leaderboard in [results/benchmark.md](results/benchmark.md).
+[docs/EVALS.md](docs/EVALS.md); latest leaderboard in [results/benchmark.md](results/benchmark.md),
+backtests in [results/backtest_taker.md](results/backtest_taker.md).
 
 | Gate | | Status |
 |---|---|---|
 | Survey | which market is worth modelling | **done:** weather highs, 7 cities, ~8,200 city-days |
 | Labels | settlement, strikes, ladder structure | **clean** on NY: 100% arithmetic agreement, CLI = settlement 1,545/1,546 days |
-| G0 | does a free forecast add information the market lacks | **NY: passes as written, fails on the last 12 months.** The edge was +0.22 nats in 2023 H2 and is zero since 2025. Six cities pending. [FINDINGS §3](FINDINGS.md) |
+| G0 | does a free forecast add information the market lacks | **7 cities: the market now prices NBM fully but still underweights GFS MOS** (+0.009 to +0.020 nats on the last 12 months, CIs > 0 at every read). [FINDINGS §5](FINDINGS.md) |
+| Backtest | does it survive fees, spread, capacity | **taker: ~1 tick of edge at the day-before read** (Sharpe 1.67, fails DSR/PBO, dies at +1¢ slippage). Maker run pending. [FINDINGS §6](FINDINGS.md) |
 | G1-G5 | baselines, model, synthetic pretraining, backtest, live shadow | not started |
 
 ## Reproduce
@@ -34,7 +36,10 @@ uv sync
 uv run scripts/survey_markets.py --events 40   # market selection, ~5 min cold, seconds cached
 uv run scripts/fetch_forecasts.py              # GFS MOS, NBM, NWS CLI from IEM (slow, polite)
 uv run scripts/build_weather_panel.py          # point-in-time Kalshi ladders, ~50k calls, hours
+uv run scripts/check_labels.py                 # label validation, fails loudly
 uv run scripts/benchmark.py                    # G0 verdict + baseline leaderboard
+uv run scripts/fetch_trades.py                 # every print, for the maker fill model
+uv run scripts/backtest.py                     # taker + maker, nested selection, DSR, PBO
 uv run pytest
 ```
 
@@ -54,6 +59,9 @@ src/pmdecide/
   splits.py           walk-forward folds, embargo, lockbox
   metrics.py          log score, RPS, Brier, debiased ECE, date-block bootstrap, Diebold-Mariano
   baselines.py        Source, TemperedMarket, LogPool: the bar the model must clear
+  evaluation.py       the one walk-forward out-of-sample path both benchmark and backtest use
+  backtest.py         taker + maker execution, Kalshi fees, ladder Kelly, trade ledger
+  stats.py            stationary bootstrap, Newey-West, Deflated Sharpe, PBO (CSCV)
   api.py              typed Choice / Noul / Score interface over one distribution
 scripts/              survey, data builds, label checks, benchmark; each writes results/
 tests/                label arithmetic, no-leak invariants, scoring rules, API coherence

@@ -57,3 +57,56 @@ it cannot see decay. Added criterion: the gain must also be positive, CI excludi
 forecasts in a two-parameter pool are the weakest form of the information; the six other cities
 (wider spreads, less volume), intraday observations, NBM's spread, and a nonlinear model are all
 untested. Those are next, and this result moves the prior against them.
+
+## 4 · Labels on all seven cities (2026-10-04)
+
+7,722 scored ladders across NY, CHI, MIA, AUS, LAX, DEN and PHIL: bucket arithmetic agrees with
+Kalshi's `result` on 100% of ladder markets, every ladder settles exactly one bucket, zero failed
+fetches. Two Kalshi records contradict themselves (`HIGHCHI-22APR02-T45`: settlement 47, ">45"
+resolved NO; `HIGHCHI-21OCT01-T84`: settlement 84, ">84" resolved YES), likely post-settlement NWS
+revisions. `result` is what paid, so it is the label; both are 2021-22 non-ladders and unscored.
+One post-switch Miami day settled 5°F away from the NWS CLI value: the Weather Company regime is
+not identical to CLI, and stays a monitored slice.
+
+## 5 · Gate 0 on seven cities: the market priced in NBM, not GFS MOS (2026-10-04)
+
+`scripts/benchmark.py`, 6,063-6,095 ladders per read time, walk-forward 2023-07 to 2026-06.
+
+The decay seen on NY holds everywhere. Best pool vs market at 08:00, by half-year: +0.182, +0.113,
++0.089, then −0.012, −0.004, −0.021 from 2025 H1 on.
+
+**On the last 12 months the two forecasts split:**
+
+| Read | market + NBM | market + GFS MOS |
+|---|---|---|
+| 08:00 | −0.021 [−0.033, −0.010] | **+0.012 [+0.004, +0.020]** |
+| 12:00 | −0.000 [−0.007, +0.007] | **+0.009 [+0.005, +0.014]** |
+| 16:00 day before | −0.004 [−0.016, +0.007] | **+0.020 [+0.012, +0.026]** |
+
+Reading: the market now fully prices the National Blend of Models, the guidance behind the public
+weather.gov point forecast, and still underweights GFS MOS. The crowd anchors on the forecast it
+can see. The amended gate passes on the pooled GFS result alone, at all three read times, so the
+verdict does not rest on the lenient "any city" clause (42 per-city tests, where one false pass is
+expected). The surviving gain is about a tenth of the 2023 edge.
+
+## 6 · Taker backtest: an edge of about one tick, not robust (2026-10-04)
+
+`scripts/backtest.py --execution taker`, 28 configurations (4 models × 7 sizings), nested
+walk-forward selection, fixed $10k bankroll. Full tables: `results/backtest_taker.md`.
+
+| Read | Nested PnL | Sharpe [95% CI] | Deflated Sharpe | PBO |
+|---|---:|---|---:|---:|
+| 08:00 | −$10,049 | −1.01 | 0.000 | 0.26 |
+| 12:00 | +$11,071 | 0.47 | 0.005 | 0.20 |
+| 16:00 day before | **+$37,459** | **1.67 [0.60, 2.67]** | 0.619 | 0.27 |
+
+The day-before result is real in several ways: positive in every half-year (most of it in 2025-26,
+matching §5), positive in all seven cities, Newey-West t = 2.84, every engine check passes, and
+matched-turnover noise loses $24,416 over the same days. Attribution: +$95,867 alpha vs mid, −$37,326
+spread, −$21,083 fees.
+
+It is not believable as a strategy. **One tick of slippage turns +$21,914 into −$31,243**; 20%
+participation or 10× size turn it deeply negative; realised edge is +1.7¢ per contract against +8.4¢
+predicted (winner's curse); and it misses both overfitting bars (DSR 0.62 < 0.95, PBO 0.27 > 0.2).
+The information is there; crossing the spread to act on it costs about all of it. The next test is
+the one that stops paying the spread: maker execution with trade-through fills.
