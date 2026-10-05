@@ -12,6 +12,7 @@ every city and season:
     d1_16   16:00 the day before (after the 12Z MOS run is public)
     d0_08   08:00 on the day
     d0_12   12:00 on the day (intraday observations start to bind)
+    d0_14   14:00 on the day (most daily highs are close to set)
 
     uv run scripts/build_weather_panel.py --cities NY CHI
 """
@@ -30,7 +31,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 from pmdecide import kalshi  # noqa: E402
 from pmdecide.weather import CITIES  # noqa: E402
 
-READ_TIMES = {"d1_16": (-1, 16), "d0_08": (0, 8), "d0_12": (0, 12)}
+READ_TIMES = {"d1_16": (-1, 16), "d0_08": (0, 8), "d0_12": (0, 12), "d0_14": (0, 14)}
 OUT = pathlib.Path("data/panel")
 
 
