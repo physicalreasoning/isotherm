@@ -82,3 +82,27 @@ def test_vectorised_forecast_join_matches_reference():
         ref = mos_daytime_max(mos, d, t)
         assert got["fcst"].iloc[i] == ref["fcst"]
         assert got["runtime"].iloc[i] == ref["runtime"]
+
+
+def test_partition_rejects_single_and_overlapping_thresholds():
+    from pmdecide.weather import is_partition
+    ladder = [bucket_interval("less", None, 80), bucket_interval("between", 80, 81),
+              bucket_interval("greater", 81, None)]
+    assert is_partition(ladder)
+    assert not is_partition([bucket_interval("greater", 77, None)])          # 2021 single market
+    assert not is_partition([bucket_interval("greater", 77, None),
+                             bucket_interval("greater", 80, None)])          # overlapping
+    assert not is_partition(ladder[:2])                                     # missing upper tail
+
+
+def test_rules_text_strikes_parse_to_kalshi_semantics():
+    from pmdecide.weather import normalise_strikes
+    df = pd.DataFrame({"strike_type": [None, None, None, "between"],
+                       "floor": [np.nan, np.nan, np.nan, 1.0], "cap": [np.nan, np.nan, np.nan, 2.0],
+                       "rules": ["... is between 42-43°, then", "... is greater than 44°, the",
+                                 "... is less than 38°, then", "api row"]})
+    out = normalise_strikes(df)
+    assert list(out.strike_type) == ["between", "greater", "less", "between"]
+    assert bucket_contains("greater", out["floor"][1], None, 45)
+    assert not bucket_contains("greater", out["floor"][1], None, 44)
+    assert list(out.strike_source) == ["rules_text"] * 3 + ["api"]
