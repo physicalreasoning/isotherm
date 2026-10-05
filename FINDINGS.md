@@ -399,3 +399,18 @@ capacity, the extra machinery has little to work with.
 
 The one clear difference falls at the read the trading strategy uses. Acting on it now would be
 selection after seeing the result; it can only become a new pre-registered test of its own.
+
+## 18 · A larger transformer: pre-registration (2026-10-05)
+
+§17 leaves open whether the transformer was too small. This scales it up about eightfold (width
+128, four layers, feed-forward 256; roughly 0.5M parameters against 0.07M) and keeps everything
+else fixed: same features, rows, walk-forward folds, five seeds, learning rate and early stopping.
+Suite `transformer-large`, scored by `scripts/transformer_gate.py --large`.
+
+**Gate.** Identical to §16: transformer-L minus isotherm, paired, last 12 months before the
+lockbox, 95% date-block bootstrap. Pass needs the CI above zero at 3 or more of the 4 read times,
+with transformer-L's market-label control within ±0.005 of the market. The lockbox is not used.
+
+This is the second architecture tried on the same out-of-sample rows, so a pass would count as
+weaker evidence than §16's would have, and would need confirming on data after 2026-10-05 before
+the MLP is replaced.
