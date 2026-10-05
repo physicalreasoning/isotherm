@@ -54,7 +54,10 @@ def features(ls: LadderSet):
     mu_g, sg_g = col("mu_gfs", np.nan), col("sigma_gfs", 3.0)
     mu_n = np.where(np.isfinite(mu_n), mu_n, np.nanmean(cen, 1))
     mu_g = np.where(np.isfinite(mu_g), mu_g, mu_n)
-    obs = m["obs_max"].to_numpy(float) if "obs_max" in m else np.full(n, np.nan)
+    obs = col("obs_best", np.nan) if "obs_best" in m else col("obs_max", np.nan)
+    rest = m["nbm_rest_max"].to_numpy(float) if "nbm_rest_max" in m else np.full(n, np.nan)
+    has_rest = np.isfinite(rest)
+    rest0 = np.where(has_rest, rest, 0.0)
     has_obs = np.isfinite(obs)
     obs0 = np.where(has_obs, obs, 0.0)
     bid, ask = ls.quotes["bid"], ls.quotes["ask"]
@@ -68,6 +71,7 @@ def features(ls: LadderSet):
             (bid + ask) / 2,
             (~np.isfinite(ls.lo)).astype(float),
             (~np.isfinite(ls.hi)).astype(float),
+            np.where(has_rest[:, None], np.clip((cen - rest0[:, None]) / 5, -3, 3), 0.0),
         ],
         -1,
     )
@@ -88,6 +92,8 @@ def features(ls: LadderSet):
             col("obs_n") / 24,
             np.where(has_obs, np.clip((col("obs_last") - obs0) / 5, -3, 3), 0.0),
             np.log1p(col("cum_volume")) / 10,
+            has_rest.astype(float),
+            np.where(has_rest & has_obs, np.clip((rest0 - obs0) / 5, -3, 3), 0.0),
         ]
     )
     return x.astype(np.float32), c.astype(np.float32), logp.astype(np.float32)
