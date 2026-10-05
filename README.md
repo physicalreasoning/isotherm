@@ -57,6 +57,19 @@ Everything uses unauthenticated public endpoints: Kalshi's market-data API (incl
 key only raises the rate limit (see `src/pmdecide/kalshi.py`, `scripts/kalshi_auth_check.py`). Settled responses are
 cached immutably under `data_cache/`, so reruns are free.
 
+## Serve
+
+```bash
+uv run uvicorn pmdecide.serve:app --port 8000
+curl -X POST localhost:8000/decide -H 'content-type: application/json' -d '{
+  "city": "NY", "questions": [
+    {"kind": "noul", "set": {"lo": 70}},
+    {"kind": "score", "stat": "interval", "coverage": 0.8}]}'
+```
+
+Serves the frozen model on the live ladder. What it is, what it was tested on and what it should
+not be used for: [docs/MODEL_CARD.md](docs/MODEL_CARD.md).
+
 ## Layout
 
 ```
@@ -72,7 +85,8 @@ src/pmdecide/
   evaluation.py       the one walk-forward out-of-sample path both benchmark and backtest use
   backtest.py         taker + maker execution, Kalshi fees, ladder Kelly, trade ledger
   stats.py            stationary bootstrap, Newey-West, Deflated Sharpe, PBO (CSCV)
-  shadow.py           live scoring of the frozen strategy, settlement, running report
+  shadow.py           live scoring of the frozen strategy, settlement, decay monitor
+  serve.py            HTTP service: typed questions in, calibrated typed answers out
   sports/             the same pipeline on MLB game winners
   api.py              typed Choice / Noul / Score interface over one distribution
 scripts/              survey, data builds, label checks, benchmark; each writes results/
