@@ -5,6 +5,7 @@
 [[Findings]](FINDINGS.md)
 [[Model card]](docs/MODEL_CARD.md)
 [[Evaluation protocol]](docs/EVALS.md)
+[[DOI]](https://doi.org/10.5281/zenodo.23167633)
 
 isotherm is a calibrated decision model for prediction markets. Given a market state, it returns one
 probability distribution over the outcome and answers typed questions from it. We evaluate it on
@@ -92,7 +93,8 @@ exists. A rolling decay alarm flags when the edge is gone. Nothing here is inves
 
 ## Citation
 
-Use **Cite this repository** in the sidebar ([CITATION.cff](CITATION.cff)). The typed-question design
+Use **Cite this repository** in the sidebar ([CITATION.cff](CITATION.cff)), or cite the archived
+release: [10.5281/zenodo.23167633](https://doi.org/10.5281/zenodo.23167633). The typed-question design
 follows TypeSafe AI's Jev (2026); isotherm is independent and not affiliated with TypeSafe. Data:
 Kalshi public market data; Iowa Environmental Mesonet, Iowa State University.
 
