@@ -66,13 +66,20 @@ def _private_key():
 
 
 def sign(private_key, method: str, url: str, ts_ms: str) -> str:
-    """Kalshi request signature: RSA-PSS(SHA256) over timestamp + METHOD + path (no query)."""
+    """Kalshi request signature over timestamp + METHOD + path (no query string).
+
+    RSA keys sign with PSS(SHA256, salt = digest length); Ed25519 keys, which
+    Kalshi issues as of 2026-10, sign the same message directly.
+    """
     from cryptography.hazmat.primitives import hashes
-    from cryptography.hazmat.primitives.asymmetric import padding
+    from cryptography.hazmat.primitives.asymmetric import ed25519, padding
     msg = (ts_ms + method + urllib.parse.urlparse(url).path).encode()
-    sig = private_key.sign(msg, padding.PSS(mgf=padding.MGF1(hashes.SHA256()),
-                                            salt_length=padding.PSS.DIGEST_LENGTH),
-                           hashes.SHA256())
+    if isinstance(private_key, ed25519.Ed25519PrivateKey):
+        sig = private_key.sign(msg)
+    else:
+        sig = private_key.sign(msg, padding.PSS(mgf=padding.MGF1(hashes.SHA256()),
+                                                salt_length=padding.PSS.DIGEST_LENGTH),
+                               hashes.SHA256())
     return b64encode(sig).decode()
 
 

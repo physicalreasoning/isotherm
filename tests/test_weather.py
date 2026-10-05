@@ -132,3 +132,14 @@ def test_kalshi_json_tolerates_control_characters_in_rules_text():
     from pmdecide import iem, kalshi
     for mod in (kalshi, iem):
         assert "strict=True" not in inspect.getsource(mod).replace("zip(", "")
+
+
+def test_kalshi_signature_supports_ed25519_keys():
+    from base64 import b64decode
+
+    from cryptography.hazmat.primitives.asymmetric import ed25519
+
+    from pmdecide.kalshi import BASE, sign
+    key = ed25519.Ed25519PrivateKey.generate()
+    sig = sign(key, "GET", BASE + "/portfolio/balance?x=1", "1700000000000")
+    key.public_key().verify(b64decode(sig), b"1700000000000GET/trade-api/v2/portfolio/balance")
