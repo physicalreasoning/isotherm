@@ -137,3 +137,55 @@ liquidity pays the spread away; providing it pays it away to adverse selection. 
 style turns these probabilities into a robust, deflated-Sharpe-significant strategy. A better model
 (G2: intraday observations, time-varying weights, a nonlinear learner) has to buy more than a tick
 of edge to change that, and the backtest now exists to say whether it does.
+
+## 8 · G2: LadderNet, observations, time-varying weights (2026-10-04)
+
+**Model.** `pmdecide.model.LadderNet`: per-bucket score = learned log-pool of every causal source
+(market, EMOS-GFS, EMOS-NBM, EMOS-NBM conditioned on today's observed max, climatology) plus an
+MLP correction over bucket and context features; softmax over the ladder; trained on the log score
+with sample weights halving every 365 days; initialised to equal the market; 5-seed ensemble.
+New inputs: hourly METAR maximum so far in the NWS climate day (midnight-midnight local *standard*
+time), which bounds the settled high from below (CLI ≥ round(hourly max) − 1 on every day with a
+settlement value); rolling 365-day pools.
+
+**Bug caught before it reached a result.** pandas 3 stores datetimes in microseconds, so
+`astype("int64") // 10**9` produced timestamps 1000× too small and the observation window spanned
+all of history (100% observation coverage at the day-before read, which must be 0%). Fixed with a
+resolution-independent conversion and regression tests.
+
+**Benchmark** (`results/benchmark_g2.md`), Δ log score vs market:
+
+| Read | LadderNet, all periods | best simple pool | LadderNet, last 12 months | Control |
+|---|---|---|---|---|
+| 08:00 | **+0.071** [+0.062, +0.081] | +0.054 | +0.011 [+0.002, +0.018] | −0.002 |
+| 12:00 | **+0.033** [+0.027, +0.039] | +0.018 | +0.009 [+0.003, +0.014] | +0.001 |
+| 16:00 day before | **+0.045** [+0.036, +0.054] | +0.039 | +0.015 [+0.007, +0.022] | −0.001 |
+
+LadderNet is the best model at every read and the best calibrated (debiased ECE 0.004-0.007 vs the
+market's 0.013-0.020), and unlike every pool it is positive in **every** half-year, though the
+2026 H1 gain is thin (+0.006 to +0.013). The control, the same network trained on labels sampled
+from the market's own distribution, scores within ±0.002 of the market, so the gain is learned from
+outcomes, not leaked by the pipeline. (A first control that shuffled labels across ladders was
+flawed: it learned a prior over bucket index and scored −0.28 to −0.64; replaced.)
+
+**Backtest** (`results/backtest_g2.md`), nested selection over 28 configs per execution style:
+
+| Read · execution | Nested PnL | Sharpe [95% CI] | DSR | PBO |
+|---|---:|---|---:|---:|
+| 08:00 · taker | +$11,884 | 1.21 | 0.330 | 0.61 |
+| 08:00 · maker | +$1,629 | 0.13 | 0.002 | 0.29 |
+| 12:00 · taker | +$592 | 0.37 | 0.139 | 0.47 |
+| 12:00 · maker | −$24,577 | −2.10 | 0.000 | 0.00 |
+| **16:00 day before · taker** | **+$22,122** | **2.05 [0.81, 3.27]** | **0.849** | 0.26 |
+| 16:00 day before · maker | −$2,419 | −0.32 | 0.000 | 0.31 |
+
+The day-before taker strategy is the first result that survives costs: Newey-West t 3.17; most of
+its profit in 2025 H2 and 2026 H1 ($18,018 of $22,122), so it is not the decayed 2023 edge; positive
+in six of seven cities, losing only in NY, the most liquid; realised edge 2.6¢ of 4.8¢ predicted.
+The configuration nested selection settles on is the market+GFS pool trading only at ≥ 4¢ of EV,
+and it survives +1¢ slippage (+$6,513), +2¢ (+$4,516), 1.5× fees, 20% participation and 10× size
+(+$61,210, Sharpe 1.71). The G1 version of this strategy died at +1¢.
+
+**Verdict.** Close to the bar, not over it: DSR 0.85 < 0.95 and PBO 0.26 > 0.2. The one remaining
+honest test is the lockbox (2026-07-01 onward, about 640 ladders per read), scored once with the
+configuration frozen as above. It has not been run.

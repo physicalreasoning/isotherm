@@ -27,8 +27,10 @@ backtests in [results/backtest_taker.md](results/backtest_taker.md) and
 | Survey | which market is worth modelling | **done:** weather highs, 7 cities, ~8,200 city-days |
 | Labels | settlement, strikes, ladder structure | **clean** on NY: 100% arithmetic agreement, CLI = settlement 1,545/1,546 days |
 | G0 | does a free forecast add information the market lacks | **7 cities: the market now prices NBM fully but still underweights GFS MOS** (+0.009 to +0.020 nats on the last 12 months, CIs > 0 at every read). [FINDINGS §5](FINDINGS.md) |
-| Backtest | does it survive fees, spread, capacity | **No robust strategy yet.** Taker: ~1 tick of edge at the day-before read (Sharpe 1.67, fails DSR/PBO, dies at +1¢ slip). Maker: loses to adverse selection, though the model beats an uninformed market maker by ~2/3. [FINDINGS §6-7](FINDINGS.md) |
-| G1-G5 | baselines, model, synthetic pretraining, backtest, live shadow | not started |
+| Backtest (G2) | does it survive fees, spread, capacity | **Day-before taker: +$22k, Sharpe 2.05, survives +2¢ slip and 10× size; DSR 0.85, PBO 0.26, just short of the bar.** [FINDINGS §8](FINDINGS.md) |
+| Backtest (G1) | | **No robust strategy.** Taker: ~1 tick of edge at the day-before read (Sharpe 1.67, fails DSR/PBO, dies at +1¢ slip). Maker: loses to adverse selection, though the model beats an uninformed market maker by ~2/3. [FINDINGS §6-7](FINDINGS.md) |
+| G2 | does a learned model beat the best baseline | **yes:** LadderNet +0.033 to +0.071 nats vs market, best calibrated, positive every half-year; control ≈ market. [FINDINGS §8](FINDINGS.md) |
+| G3-G5 | synthetic pretraining, lockbox, live shadow | not started; lockbox untouched |
 
 ## Reproduce
 
@@ -59,7 +61,8 @@ src/pmdecide/
   dataset.py          panel -> padded ladders with every causal forecast attached
   splits.py           walk-forward folds, embargo, lockbox
   metrics.py          log score, RPS, Brier, debiased ECE, date-block bootstrap, Diebold-Mariano
-  baselines.py        Source, TemperedMarket, LogPool: the bar the model must clear
+  baselines.py        Source, TemperedMarket, LogPool (incl. rolling windows): the bar to clear
+  model.py            LadderNet: one distribution per ladder, learned log-pool + MLP, log score
   evaluation.py       the one walk-forward out-of-sample path both benchmark and backtest use
   backtest.py         taker + maker execution, Kalshi fees, ladder Kelly, trade ledger
   stats.py            stationary bootstrap, Newey-West, Deflated Sharpe, PBO (CSCV)
