@@ -13,4 +13,5 @@ jobs:
           python-version: "3.11"
       - run: uv sync --locked
       - run: uv run ruff check src scripts tests
+      - run: uv run ruff format --check src scripts tests
       - run: uv run pytest -q
