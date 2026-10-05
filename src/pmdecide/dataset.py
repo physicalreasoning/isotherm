@@ -33,7 +33,7 @@ EMBARGO = pd.Timedelta(days=2)
 MIN_FIT_DAYS = 365
 EPS = 1e-3            # probability floor; a tenth of Kalshi's 1¢ tick
 DATA = pathlib.Path("data")
-VERSION = 8           # bump when anything below changes what a row contains
+VERSION = 10           # bump when anything below changes what a row contains
 
 
 @dataclass
@@ -193,6 +193,7 @@ def _attach_gaussians(ls: LadderSet, city: City) -> None:
         p = np.full((n, k), np.nan)
         fc_all = np.full(n, np.nan)
         lead_all = np.full(n, np.nan)
+        mu_all, sg_all = np.full(n, np.nan), np.full(n, np.nan)
         for read, (dd, hh) in READS.items():
             rs = (ls.meta["read"] == read).to_numpy()
             if not rs.any():
@@ -215,9 +216,70 @@ def _attach_gaussians(ls: LadderSet, city: City) -> None:
                 if len(ok):
                     mu, sg = f.params(fc_all[ok], doy[ok])
                     p[ok] = interval_probs(mu, sg, ls.lo[ok], ls.hi[ok])
+                    mu_all[ok], sg_all[ok] = mu, sg
         ls.probs[name] = _finish(p, ls.mask)
         ls.meta["fcst_" + model.lower()] = fc_all
         ls.meta["lead_h_" + model.lower()] = lead_all
+        ls.meta["mu_" + model.lower()] = mu_all
+        ls.meta["sigma_" + model.lower()] = sg_all
+
+
+def unix_s(t: pd.Series) -> np.ndarray:
+    """Seconds since the epoch, independent of datetime resolution.
+
+    pandas 3 stores datetimes in microseconds, so `astype("int64") // 10**9` silently
+    yields values 1000x too small. That once made the observation window span all of
+    history (tests/test_weather.py::test_no_observations_before_the_climate_day).
+    """
+    t = pd.to_datetime(t, utc=True)
+    return ((t - pd.Timestamp("1970-01-01", tz="UTC")) // pd.Timedelta(seconds=1)).to_numpy()
+
+
+OBS_LAG = 15 * 60          # seconds: a METAR is on the wire within minutes; 15 is generous
+OBS_MARGIN = 1.5           # °F: CLI high >= round(hourly max) - 1 on 99.85% (NY) and 100% (CHI) of days
+
+
+def _attach_obs(ls: LadderSet, city: City) -> None:
+    """Max temperature observed so far in the NWS climate day, as known at the read time.
+
+    The climate day is midnight to midnight local STANDARD time, so in summer it starts
+    at 01:00 daylight time. Only obs at least OBS_LAG before the read count. The settled
+    high can only be at or above the hourly max seen so far (the CLI high comes from
+    finer-grained data), so `emos_nbm_obs` truncates the NBM EMOS Gaussian below
+    round(max so far) - OBS_MARGIN. With no obs yet (the day-before read) it equals
+    emos_nbm.
+    """
+    f = DATA / "obs" / "{}.parquet".format(city.station)
+    n = len(ls)
+    obs_max, obs_last, obs_n = np.full(n, np.nan), np.full(n, np.nan), np.zeros(n)
+    if f.exists():
+        o = pd.read_parquet(f).sort_values("valid")
+        ts = unix_s(o["valid"])
+        t = o["tmpf"].to_numpy()
+        start = unix_s((ls.meta["day"] - pd.Timedelta(hours=city.std_offset_h))
+                       .dt.tz_localize("UTC"))
+        end = ls.meta["read_ts"].to_numpy() - OBS_LAG
+        a, b = np.searchsorted(ts, start, "left"), np.searchsorted(ts, end, "right")
+        for i in np.flatnonzero(b > a):
+            w = t[a[i]:b[i]]
+            obs_max[i], obs_last[i], obs_n[i] = w.max(), w[-1], len(w)
+    ls.meta["obs_max"], ls.meta["obs_last"], ls.meta["obs_n"] = obs_max, obs_last, obs_n
+
+    from scipy.stats import norm
+    base = ls.probs.get("emos_nbm")
+    if base is None:
+        return
+    mu, sg = ls.meta["mu_nbs"].to_numpy(), ls.meta["sigma_nbs"].to_numpy()
+    p = base.copy()
+    has = np.isfinite(obs_max) & np.isfinite(mu)
+    if has.any():
+        lb = (np.round(obs_max[has]) - OBS_MARGIN)[:, None]
+        lo = np.maximum(ls.lo[has], lb)
+        hi = np.maximum(ls.hi[has], lb)
+        m_, s_ = mu[has][:, None], sg[has][:, None]
+        q = norm.cdf((hi - m_) / s_) - norm.cdf((lo - m_) / s_)
+        p[has] = _finish(np.where(ls.mask[has], q, 0.0), ls.mask[has])
+    ls.probs["emos_nbm_obs"] = p
 
 
 def _finish(p, mask):
@@ -234,7 +296,8 @@ def build_city(key: str, cache: bool = True) -> LadderSet:
     pp = DATA / "panel" / "{}.parquet".format(key)
     if not pp.exists():
         raise FileNotFoundError(pp)
-    inputs = [pp] + sorted((DATA / "forecasts").glob(city.station + "_*.parquet"))
+    inputs = [pp] + sorted((DATA / "forecasts").glob(city.station + "_*.parquet")) + \
+        sorted((DATA / "obs").glob(city.station + ".parquet"))
     h = hashlib.sha256(repr((VERSION, [(str(f), f.stat().st_mtime_ns) for f in inputs])).encode())
     cp = DATA / "features" / "{}_{}.pkl".format(key, h.hexdigest()[:12])
     if cache and cp.exists():
@@ -242,6 +305,7 @@ def build_city(key: str, cache: bool = True) -> LadderSet:
     ls = _ladders(pd.read_parquet(pp), city)
     if len(ls):
         _attach_gaussians(ls, city)
+        _attach_obs(ls, city)
     cp.parent.mkdir(parents=True, exist_ok=True)
     for old in cp.parent.glob("{}_*.pkl".format(key)):
         old.unlink()
