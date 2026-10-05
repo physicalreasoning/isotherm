@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 
-from pmdecide import serve, shadow
-from pmdecide.weather import bucket_interval
+from isotherm import serve, shadow
+from isotherm.weather import bucket_interval
 
 LADDER = [("less", None, 68), ("between", 68, 69), ("between", 70, 71), ("greater", 71, None)]
 IV = [bucket_interval(*b) for b in LADDER]

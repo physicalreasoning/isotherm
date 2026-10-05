@@ -1,6 +1,6 @@
 """Out-of-sample predictions on the MLB calendar.
 
-Identical in logic to `pmdecide.evaluation.oos_predictions` (one code path per row:
+Identical in logic to `isotherm.evaluation.oos_predictions` (one code path per row:
 fit on earlier folds, predict the fold, keep only rows every predictor answered), but
 with MLB splits: monthly folds and an MLB-specific lockbox. Kept separate so the shared
 module stays untouched while the weather work evolves it.

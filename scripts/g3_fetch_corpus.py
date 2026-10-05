@@ -15,8 +15,8 @@ import sys
 import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
-from pmdecide import iem  # noqa: E402
-from pmdecide.pretrain import STATIONS  # noqa: E402
+from isotherm import iem  # noqa: E402
+from isotherm.pretrain import STATIONS  # noqa: E402
 
 iem.MIN_INTERVAL = 5.0
 OUT = pathlib.Path("data/forecasts")

@@ -32,8 +32,8 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
-from pmdecide import dataset, stats  # noqa: E402
-from pmdecide.backtest import (  # noqa: E402
+from isotherm import dataset, stats  # noqa: E402
+from isotherm.backtest import (  # noqa: E402
     Config,
     MakerConfig,
     daily_pnl,
@@ -42,8 +42,8 @@ from pmdecide.backtest import (  # noqa: E402
     run,
     run_maker,
 )
-from pmdecide.baselines import default_suite, g2_suite  # noqa: E402
-from pmdecide.evaluation import oos_predictions  # noqa: E402
+from isotherm.baselines import default_suite, g2_suite  # noqa: E402
+from isotherm.evaluation import oos_predictions  # noqa: E402
 
 MODELS = ["pool · all", "pool · market+NBM", "EMOS · NBM", "market (tempered)"]  # [0] = default
 

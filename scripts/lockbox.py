@@ -20,10 +20,10 @@ import numpy as np
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from pmdecide import dataset, metrics, stats  # noqa: E402
-from pmdecide.backtest import Config, daily_pnl, interior_market, run  # noqa: E402
-from pmdecide.baselines import g2_suite  # noqa: E402
-from pmdecide.evaluation import oos_predictions  # noqa: E402
+from isotherm import dataset, metrics, stats  # noqa: E402
+from isotherm.backtest import Config, daily_pnl, interior_market, run  # noqa: E402
+from isotherm.baselines import g2_suite  # noqa: E402
+from isotherm.evaluation import oos_predictions  # noqa: E402
 
 spec = importlib.util.spec_from_file_location("bt", ROOT / "scripts" / "backtest.py")
 bt = importlib.util.module_from_spec(spec)

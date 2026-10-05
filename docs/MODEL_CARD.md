@@ -13,7 +13,7 @@ probabilities, not yet frozen or live.
 | Form | log pool: p ∝ p_market^1.073 · p_EMOS-GFS^0.294, renormalised over the ladder |
 | EMOS | per city, high ~ N(a + b · GFS MOS max, σ(day of year)), fit by interval likelihood on NWS CLI highs 2015 to 2026-06-29 |
 | Read time | 16:00 local the day before |
-| Serving | `uv run uvicorn pmdecide.serve:app` (`/health`, `/ladder/{city}`, `/decide`) |
+| Serving | `uv run uvicorn isotherm.serve:app` (`/health`, `/ladder/{city}`, `/decide`) |
 
 ### Intended use
 
@@ -54,7 +54,7 @@ and noise with matched turnover loses. Full record: `FINDINGS.md` §8-10.
 
 | | |
 |---|---|
-| Code | `src/pmdecide/model.py` |
+| Code | `src/isotherm/model.py` |
 | Form | per bucket: learned log pool of market, EMOS-GFS, EMOS-NBM, EMOS-NBM conditioned on today's observed max, climatology; plus an MLP correction over bucket and context features; softmax over the ladder |
 | Training | log score, sample weights halving every 365 days, initialised to equal the market, early stopping on the latest 15% of dates, 5-seed ensemble |
 | Result | +0.033 to +0.071 nats vs the market across read times; best calibrated model (debiased ECE 0.004 to 0.007); positive in every half-year |

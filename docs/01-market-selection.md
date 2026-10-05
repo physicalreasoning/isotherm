@@ -72,7 +72,7 @@ it is not free.
 
 - `GET /historical/*` serves every market settled before 2026-08-05, back to each series' first
   event. The rolling purge our earlier pm-jepa project had to race is gone.
-- Bucket arithmetic in `pmdecide.weather.bucket_interval` reproduces Kalshi's `result` on every
+- Bucket arithmetic in `isotherm.weather.bucket_interval` reproduces Kalshi's `result` on every
   market checked (48/48 in the smoke panel; the full panel re-checks every row).
 - NWS CLI for KNYC 2026-08-03 = 80°F = Kalshi `expiration_value` for `KXHIGHNY-26AUG03`.
 - **Settlement-source change:** contracts through at least 2026-08-03 settle on the NWS Daily

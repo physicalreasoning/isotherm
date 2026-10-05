@@ -23,7 +23,7 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
-from pmdecide.sports.elo import (  # noqa: E402
+from isotherm.sports.elo import (  # noqa: E402
     final_games,
     fit_logistic,
     pitcher_quality,

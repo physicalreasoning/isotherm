@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from pmdecide.weather import (
+from isotherm.weather import (
     MOS_AVAILABILITY_LAG,
     bucket_contains,
     bucket_interval,
@@ -79,7 +79,7 @@ def test_mos_returns_none_when_nothing_is_public():
 
 
 def test_vectorised_forecast_join_matches_reference():
-    from pmdecide.emos import daytime_max_table, forecast_at
+    from isotherm.emos import daytime_max_table, forecast_at
 
     rng = np.random.default_rng(0)
     runs = pd.date_range("2026-07-01", "2026-07-20", freq="6h", tz="UTC")
@@ -99,7 +99,7 @@ def test_vectorised_forecast_join_matches_reference():
 
 
 def test_partition_rejects_single_and_overlapping_thresholds():
-    from pmdecide.weather import is_partition
+    from isotherm.weather import is_partition
 
     ladder = [
         bucket_interval("less", None, 80),
@@ -115,7 +115,7 @@ def test_partition_rejects_single_and_overlapping_thresholds():
 
 
 def test_rules_text_strikes_parse_to_kalshi_semantics():
-    from pmdecide.weather import normalise_strikes
+    from isotherm.weather import normalise_strikes
 
     df = pd.DataFrame(
         {
@@ -143,7 +143,7 @@ def test_kalshi_signature_verifies_and_ignores_query_string():
     from cryptography.hazmat.primitives import hashes
     from cryptography.hazmat.primitives.asymmetric import padding, rsa
 
-    from pmdecide.kalshi import BASE, sign
+    from isotherm.kalshi import BASE, sign
 
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     url = BASE + "/markets?event_ticker=KXHIGHNY-26AUG03&limit=1000"
@@ -163,7 +163,7 @@ def test_kalshi_json_tolerates_control_characters_in_rules_text():
     assert json.loads(raw, strict=False)["rules_primary"].startswith("line one")
     import inspect
 
-    from pmdecide import iem, kalshi
+    from isotherm import iem, kalshi
 
     for mod in (kalshi, iem):
         assert "strict=True" not in inspect.getsource(mod).replace("zip(", "")
@@ -174,7 +174,7 @@ def test_kalshi_signature_supports_ed25519_keys():
 
     from cryptography.hazmat.primitives.asymmetric import ed25519
 
-    from pmdecide.kalshi import BASE, sign
+    from isotherm.kalshi import BASE, sign
 
     key = ed25519.Ed25519PrivateKey.generate()
     sig = sign(key, "GET", BASE + "/portfolio/balance?x=1", "1700000000000")
@@ -182,7 +182,7 @@ def test_kalshi_signature_supports_ed25519_keys():
 
 
 def test_unix_seconds_is_resolution_independent():
-    from pmdecide.dataset import unix_s
+    from isotherm.dataset import unix_s
 
     for unit in ("ns", "us", "s"):
         t = pd.Series(pd.to_datetime(["2026-08-03 00:00"]).as_unit(unit)).dt.tz_localize("UTC")
@@ -192,8 +192,8 @@ def test_unix_seconds_is_resolution_independent():
 def test_no_observations_before_the_climate_day():
     import pathlib
 
-    from pmdecide.dataset import LadderSet, _attach_obs
-    from pmdecide.weather import CITIES
+    from isotherm.dataset import LadderSet, _attach_obs
+    from isotherm.weather import CITIES
 
     if not pathlib.Path("data/obs/KNYC.parquet").exists():
         pytest.skip("obs not fetched")

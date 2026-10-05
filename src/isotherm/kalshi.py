@@ -50,7 +50,7 @@ KEY_PATH = os.environ.get("KALSHI_PRIVATE_KEY_PATH")
 MAX_RETRIES = 6
 
 CACHE = pathlib.Path(
-    os.environ.get("PMDECIDE_CACHE", pathlib.Path(__file__).resolve().parents[2] / "data_cache" / "http")
+    os.environ.get("ISOTHERM_CACHE", pathlib.Path(__file__).resolve().parents[2] / "data_cache" / "http")
 )
 
 _lock = threading.Lock()

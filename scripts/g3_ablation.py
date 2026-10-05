@@ -23,11 +23,11 @@ import time
 import numpy as np
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
-from pmdecide import metrics  # noqa: E402
-from pmdecide import pretrain as P  # noqa: E402
-from pmdecide.baselines import Source  # noqa: E402
-from pmdecide.evaluation import oos_predictions  # noqa: E402
-from pmdecide.splits import EMBARGO, LOCKBOX_START  # noqa: E402
+from isotherm import metrics  # noqa: E402
+from isotherm import pretrain as P  # noqa: E402
+from isotherm.baselines import Source  # noqa: E402
+from isotherm.evaluation import oos_predictions  # noqa: E402
+from isotherm.splits import EMBARGO, LOCKBOX_START  # noqa: E402
 
 FRACS = (0.1, 0.25, 0.5, 1.0)
 CONTROL = "control · market labels · pretrained"

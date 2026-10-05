@@ -26,9 +26,9 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import backtest as bt  # noqa: E402
 import sports_benchmark as sb  # noqa: E402
 
-from pmdecide.backtest import Config, MakerConfig  # noqa: E402
-from pmdecide.sports.dataset import build  # noqa: E402
-from pmdecide.sports.oos import oos_predictions  # noqa: E402
+from isotherm.backtest import Config, MakerConfig  # noqa: E402
+from isotherm.sports.dataset import build  # noqa: E402
+from isotherm.sports.oos import oos_predictions  # noqa: E402
 
 MODELS = ["pool · all", "pool · market+Elo+SP", "Elo + starters", "market (tempered)"]
 SLOTS = 15

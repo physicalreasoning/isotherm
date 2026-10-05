@@ -5,11 +5,11 @@ import pandas as pd
 import pytest
 from pydantic import ValidationError
 
-from pmdecide import metrics
-from pmdecide.api import Bucket, Choice, IntegerDistribution, Noul, Score, answer
-from pmdecide.baselines import LogPool, Source
-from pmdecide.dataset import LadderSet
-from pmdecide.splits import EMBARGO, LOCKBOX_START, walk_forward
+from isotherm import metrics
+from isotherm.api import Bucket, Choice, IntegerDistribution, Noul, Score, answer
+from isotherm.baselines import LogPool, Source
+from isotherm.dataset import LadderSet
+from isotherm.splits import EMBARGO, LOCKBOX_START, walk_forward
 
 
 def synthetic(n=600, k=6, seed=0, start="2023-01-01"):
@@ -119,7 +119,7 @@ def test_schema_rejects_malformed_questions():
 def test_market_label_control_learns_nothing_beyond_the_market():
     # Synthetic ladders where the market IS the truth: a net trained on market-sampled labels
     # must not beat the market on real outcomes.
-    from pmdecide.model import LadderNet
+    from isotherm.model import LadderNet
 
     ls = synthetic(n=900, k=6)
     ls.meta["city"] = "NY"

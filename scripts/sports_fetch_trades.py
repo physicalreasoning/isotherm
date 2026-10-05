@@ -20,7 +20,7 @@ import time
 import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
-from pmdecide import kalshi  # noqa: E402
+from isotherm import kalshi  # noqa: E402
 
 D = pathlib.Path("data/sports")
 WINDOWS = ((86400, 72000), (10800, 0))  # seconds before first pitch: (from, to)

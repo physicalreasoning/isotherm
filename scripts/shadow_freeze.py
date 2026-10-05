@@ -20,11 +20,11 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
-from pmdecide import dataset  # noqa: E402
-from pmdecide.baselines import LogPool  # noqa: E402
-from pmdecide.emos import daytime_max_table, fit_emos, forecast_at  # noqa: E402
-from pmdecide.splits import EMBARGO, LOCKBOX_START  # noqa: E402
-from pmdecide.weather import AVAILABILITY_LAG, CITIES  # noqa: E402
+from isotherm import dataset  # noqa: E402
+from isotherm.baselines import LogPool  # noqa: E402
+from isotherm.emos import daytime_max_table, fit_emos, forecast_at  # noqa: E402
+from isotherm.splits import EMBARGO, LOCKBOX_START  # noqa: E402
+from isotherm.weather import AVAILABILITY_LAG, CITIES  # noqa: E402
 
 READ = "d1_16"
 CUT = LOCKBOX_START - EMBARGO

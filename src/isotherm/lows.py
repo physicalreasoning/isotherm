@@ -46,7 +46,7 @@ FOLD_START = "2026-02-01"
 FOLD_FREQ = "MS"
 MIN_TRAIN_DAYS = 45
 LOCKBOX_START = pd.Timestamp("2026-09-01")
-FORECAST_ROOT = pathlib.Path("/Users/nikita/pm-decide/data/forecasts")
+FORECAST_ROOT = dataset.DATA / "forecasts"  # shared with the highs: same stations, same files
 PANEL = pathlib.Path("data/lows_panel")
 
 

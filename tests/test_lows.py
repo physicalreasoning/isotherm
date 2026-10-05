@@ -3,9 +3,9 @@
 import numpy as np
 import pandas as pd
 
-from pmdecide import lows
-from pmdecide.splits import EMBARGO
-from pmdecide.weather import AVAILABILITY_LAG
+from isotherm import lows
+from isotherm.splits import EMBARGO
+from isotherm.weather import AVAILABILITY_LAG
 
 
 def test_overnight_min_is_the_12z_row_of_the_morning_it_ends():

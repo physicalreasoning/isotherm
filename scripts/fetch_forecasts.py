@@ -17,8 +17,8 @@ import sys
 import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
-from pmdecide import iem  # noqa: E402
-from pmdecide.weather import CITIES  # noqa: E402
+from isotherm import iem  # noqa: E402
+from isotherm.weather import CITIES  # noqa: E402
 
 OUT = pathlib.Path("data/forecasts")
 KEEP = {"GFS": ["runtime", "ftime", "n_x", "tmp"], "NBS": ["runtime", "ftime", "txn", "xnd", "tmp", "tsd"]}

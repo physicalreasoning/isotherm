@@ -3,9 +3,9 @@
 import numpy as np
 import pandas as pd
 
-from pmdecide import stats
-from pmdecide.backtest import Config, kalshi_fee, kelly_ladder, run
-from pmdecide.dataset import LadderSet
+from isotherm import stats
+from isotherm.backtest import Config, kalshi_fee, kelly_ladder, run
+from isotherm.dataset import LadderSet
 
 
 def test_kalshi_fee_matches_the_published_formula():
@@ -98,7 +98,7 @@ def test_stationary_bootstrap_covers_the_sharpe():
 def test_in_spread_market_never_trades_even_with_overround():
     # mids sum to 1.06. Raw mids are not a distribution (a NO contract would count 1.06 - p),
     # and normalised mids leave the spread; the in-spread coherent distribution must not trade.
-    from pmdecide.backtest import interior_market
+    from isotherm.backtest import interior_market
 
     ls = _ladder([0.3, 0.5, 0.26], bid=[0.29, 0.40, 0.25], ask=[0.31, 0.51, 0.37], y=1, n=3)
     inner = interior_market(ls.quotes["bid"], ls.quotes["ask"], ls.mask)
@@ -108,7 +108,7 @@ def test_in_spread_market_never_trades_even_with_overround():
 
 
 def test_arbitrage_ladder_has_no_interior_distribution():
-    from pmdecide.backtest import interior_market
+    from isotherm.backtest import interior_market
 
     ls = _ladder([0.3, 0.5, 0.2], bid=[0.40, 0.40, 0.30], ask=[0.42, 0.45, 0.33], y=1)
     assert np.isnan(interior_market(ls.quotes["bid"], ls.quotes["ask"], ls.mask)).all()
@@ -129,7 +129,7 @@ def _tr(ts, px, cnt, taker_yes):
 
 
 def test_maker_fills_only_on_trade_throughs_from_the_right_side():
-    from pmdecide.backtest import MakerConfig, run_maker
+    from isotherm.backtest import MakerConfig, run_maker
 
     ls = _with_meta(_ladder([0.1, 0.8, 0.1], bid=[0.05, 0.50, 0.05], ask=[0.10, 0.60, 0.10], y=1))
     cfg = MakerConfig("m", theta=0.0, stake=100)  # bid on bucket 1 improves to 0.51
@@ -147,7 +147,7 @@ def test_maker_fills_only_on_trade_throughs_from_the_right_side():
 
 
 def test_maker_touch_fills_add_a_share_of_at_price_volume():
-    from pmdecide.backtest import MakerConfig, run_maker
+    from isotherm.backtest import MakerConfig, run_maker
 
     ls = _with_meta(_ladder([0.1, 0.8, 0.1], bid=[0.05, 0.50, 0.05], ask=[0.10, 0.60, 0.10], y=1))
     trades = {"T1": _tr([1500], [0.51], [40], [False])}
@@ -156,7 +156,7 @@ def test_maker_touch_fills_add_a_share_of_at_price_volume():
 
 
 def test_maker_oracle_never_loses():
-    from pmdecide.backtest import MakerConfig, run_maker
+    from isotherm.backtest import MakerConfig, run_maker
 
     ls = _with_meta(_ladder([0, 1, 0], bid=[0.20, 0.40, 0.20], ask=[0.30, 0.50, 0.30], y=1))
     rng = np.random.default_rng(0)
@@ -174,7 +174,7 @@ def test_maker_oracle_never_loses():
 
 
 def test_next_gfs_release_and_cancel_on_new_run():
-    from pmdecide.backtest import MakerConfig, next_gfs_public, run_maker
+    from isotherm.backtest import MakerConfig, next_gfs_public, run_maker
 
     t = 1785715200  # 2026-08-03 00:00Z
     assert next_gfs_public(t) == t + 5 * 3600

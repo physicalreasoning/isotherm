@@ -28,8 +28,8 @@ import time
 import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
-from pmdecide import kalshi  # noqa: E402
-from pmdecide.weather import CITIES  # noqa: E402
+from isotherm import kalshi  # noqa: E402
+from isotherm.weather import CITIES  # noqa: E402
 
 READ_TIMES = {"d1_16": (-1, 16), "d0_08": (0, 8), "d0_12": (0, 12), "d0_14": (0, 14)}
 OUT = pathlib.Path("data/panel")

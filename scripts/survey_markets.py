@@ -32,7 +32,7 @@ import time
 import numpy as np
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
-from pmdecide import kalshi  # noqa: E402
+from isotherm import kalshi  # noqa: E402
 
 CANDIDATES = [
     # series,          category,      note

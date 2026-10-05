@@ -1,7 +1,7 @@
 [project]
-name = "pmdecide"
+name = "isotherm"
 version = "0.1.0"
-description = "Add your description here"
+description = "Calibrated, typed decision model for prediction markets, evaluated against the market"
 readme = "README.md"
 authors = [
     { name = "berezucc", email = "96497560+berezucc@users.noreply.github.com" }

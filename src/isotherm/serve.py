@@ -1,13 +1,13 @@
 """HTTP service for the frozen model: typed questions in, calibrated typed answers out.
 
-    uv run uvicorn pmdecide.serve:app --port 8000
+    uv run uvicorn isotherm.serve:app --port 8000
 
     GET  /health                  model hash and what it was fit on
     GET  /ladder/{city}?day=      live ladder: market, forecast and model probability per bucket
     POST /decide                  {"city": "NY", "day": "2026-10-06", "questions": [...]}
 
 The model is the frozen strategy from FINDINGS §9 (shadow/frozen.json), the one the lockbox
-tested and the shadow record tracks. Questions use the typed API in `pmdecide.api`.
+tested and the shadow record tracks. Questions use the typed API in `isotherm.api`.
 
 Bucket probabilities are turned into a distribution over integer highs by spreading each
 bucket's mass over its integers in proportion to the forecast Gaussian, and the tails out to
@@ -69,7 +69,7 @@ class DecideResponse(BaseModel):
     answers: List[Answer]
 
 
-app = FastAPI(title="pm-decide", version="0.1.0")
+app = FastAPI(title="isotherm", version="0.1.0")
 
 
 def _frozen() -> dict:

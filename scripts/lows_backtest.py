@@ -18,7 +18,7 @@ import time
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from pmdecide import lows  # noqa: E402
+from isotherm import lows  # noqa: E402
 
 spec = importlib.util.spec_from_file_location("bt", ROOT / "scripts" / "backtest.py")
 bt = importlib.util.module_from_spec(spec)

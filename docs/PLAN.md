@@ -1,4 +1,4 @@
-# pm-decide · plan
+# isotherm · plan
 
 An open, typed, calibrated decision model for prediction markets, in the style of TypeSafe's Jev
 ("System One"), built and evaluated on Kalshi daily high-temperature ladders.
@@ -230,7 +230,7 @@ never on the lockbox.
 
 ## 8 · Serving and MLOps
 
-- **API:** `pmdecide.api`: pydantic schemas `DecisionRequest(state, questions: [Choice | Noul | Score])`
+- **API:** `isotherm.api`: pydantic schemas `DecisionRequest(state, questions: [Choice | Noul | Score])`
   -> `DecisionResponse(answers: [{value, probabilities, confidence}])`, served by FastAPI and
   callable as a library. Schema validation rejects questions outside the supported type system,
   like Jev.
@@ -249,7 +249,7 @@ never on the lockbox.
 
 ## 9 · Engineering
 
-`src/pmdecide/` library, `scripts/` one experiment per file writing `results/<name>.json` with config
+`src/isotherm/` library, `scripts/` one experiment per file writing `results/<name>.json` with config
 inlined, `tests/` with unit tests for bucket math, point-in-time selection and no-leak invariants,
 plus a 30-second end-to-end smoke. `ruff` + `pytest` in CI. Apache-2.0, matching `causal-jepa`.
 Raw Kalshi data is not redistributed; scripts rebuild it from the public API.

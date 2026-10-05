@@ -21,7 +21,7 @@ import sys
 import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
-from pmdecide.weather import (  # noqa: E402
+from isotherm.weather import (  # noqa: E402
     CITIES,
     bucket_contains,
     bucket_interval,
