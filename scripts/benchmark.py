@@ -28,10 +28,10 @@ import time
 import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
-from pmdecide import dataset, metrics  # noqa: E402
-from pmdecide.baselines import default_suite, g2_suite  # noqa: E402
-from pmdecide.evaluation import oos_predictions  # noqa: E402
-from pmdecide.splits import LOCKBOX_START  # noqa: E402
+from isotherm import dataset, metrics  # noqa: E402
+from isotherm.baselines import default_suite, g2_suite  # noqa: E402
+from isotherm.evaluation import oos_predictions  # noqa: E402
+from isotherm.splits import LOCKBOX_START  # noqa: E402
 
 GATE0 = {"pool · market+NBM": "NBM", "pool · market+GFS": "GFS MOS"}
 RECENT_FROM = LOCKBOX_START - pd.Timedelta(days=365)

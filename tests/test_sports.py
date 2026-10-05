@@ -3,8 +3,8 @@
 import numpy as np
 import pandas as pd
 
-from pmdecide.sports.elo import EloParams, pitcher_quality, run_elo
-from pmdecide.sports.kalshi_mlb import link, parse_event, rules_time
+from isotherm.sports.elo import EloParams, pitcher_quality, run_elo
+from isotherm.sports.kalshi_mlb import link, parse_event, rules_time
 
 
 def test_parse_event_with_and_without_start_time():
@@ -120,7 +120,7 @@ def test_pitcher_quality_ignores_the_game_day_itself():
 
 
 def test_build_makes_coherent_two_bucket_ladders():
-    from pmdecide.sports.dataset import build
+    from isotherm.sports.dataset import build
 
     rows = []
     for side, code, y, b, a in (("away", "BOS", 0, 0.44, 0.46), ("home", "NYY", 1, 0.54, 0.56)):

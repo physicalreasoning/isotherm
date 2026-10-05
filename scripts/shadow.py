@@ -14,7 +14,7 @@ import shutil
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
-from pmdecide import shadow  # noqa: E402
+from isotherm import shadow  # noqa: E402
 
 
 def write_report(root: pathlib.Path, r: dict):

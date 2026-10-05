@@ -22,8 +22,8 @@ import pandas as pd
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from pmdecide import lows, metrics  # noqa: E402
-from pmdecide.baselines import LogPool, Source, TemperedMarket  # noqa: E402
+from isotherm import lows, metrics  # noqa: E402
+from isotherm.baselines import LogPool, Source, TemperedMarket  # noqa: E402
 
 spec = importlib.util.spec_from_file_location("bench", ROOT / "scripts" / "benchmark.py")
 bench = importlib.util.module_from_spec(spec)

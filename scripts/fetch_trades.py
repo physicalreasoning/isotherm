@@ -19,8 +19,8 @@ import time
 import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
-from pmdecide import kalshi  # noqa: E402
-from pmdecide.weather import CITIES  # noqa: E402
+from isotherm import kalshi  # noqa: E402
+from isotherm.weather import CITIES  # noqa: E402
 
 OUT = pathlib.Path("data/trades")
 

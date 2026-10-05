@@ -14,7 +14,7 @@ import time
 import urllib.error
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
-from pmdecide import kalshi  # noqa: E402
+from isotherm import kalshi  # noqa: E402
 
 if not (kalshi.KEY_ID and kalshi.KEY_PATH):
     sys.exit("set KALSHI_API_KEY_ID and KALSHI_PRIVATE_KEY_PATH first")

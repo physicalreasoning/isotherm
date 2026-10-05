@@ -1,4 +1,4 @@
-# pm-decide
+# isotherm
 
 **An open, typed, calibrated decision model for prediction markets.**
 Built and evaluated on Kalshi daily high-temperature ladders.
@@ -56,13 +56,13 @@ uv run pytest
 
 Everything uses unauthenticated public endpoints: Kalshi's market-data API (including
 `/historical/*`) and the Iowa Environmental Mesonet. No keys, no accounts. An optional Kalshi API
-key only raises the rate limit (see `src/pmdecide/kalshi.py`, `scripts/kalshi_auth_check.py`). Settled responses are
+key only raises the rate limit (see `src/isotherm/kalshi.py`, `scripts/kalshi_auth_check.py`). Settled responses are
 cached immutably under `data_cache/`, so reruns are free.
 
 ## Serve
 
 ```bash
-uv run uvicorn pmdecide.serve:app --port 8000
+uv run uvicorn isotherm.serve:app --port 8000
 curl -X POST localhost:8000/decide -H 'content-type: application/json' -d '{
   "city": "NY", "questions": [
     {"kind": "noul", "set": {"lo": 70}},
@@ -75,7 +75,7 @@ not be used for: [docs/MODEL_CARD.md](docs/MODEL_CARD.md).
 ## Layout
 
 ```
-src/pmdecide/
+src/isotherm/
   kalshi.py, iem.py   public-API clients with immutable response caches
   weather.py          cities, bucket arithmetic, point-in-time forecast selection
   emos.py             EMOS and climatology baselines (interval likelihood)

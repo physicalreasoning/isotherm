@@ -140,7 +140,7 @@ of edge to change that, and the backtest now exists to say whether it does.
 
 ## 8 · G2: LadderNet, observations, time-varying weights (2026-10-04)
 
-**Model.** `pmdecide.model.LadderNet`: per-bucket score = learned log-pool of every causal source
+**Model.** `isotherm.model.LadderNet`: per-bucket score = learned log-pool of every causal source
 (market, EMOS-GFS, EMOS-NBM, EMOS-NBM conditioned on today's observed max, climatology) plus an
 MLP correction over bucket and context features; softmax over the ladder; trained on the log score
 with sample weights halving every 365 days; initialised to equal the market; 5-seed ensemble.

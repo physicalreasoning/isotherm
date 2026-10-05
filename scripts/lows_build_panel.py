@@ -21,8 +21,8 @@ import pandas as pd
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from pmdecide import kalshi  # noqa: E402
-from pmdecide.lows import LOW_SERIES, PANEL, READS, low_city  # noqa: E402
+from isotherm import kalshi  # noqa: E402
+from isotherm.lows import LOW_SERIES, PANEL, READS, low_city  # noqa: E402
 
 spec = importlib.util.spec_from_file_location("bwp", ROOT / "scripts" / "build_weather_panel.py")
 bwp = importlib.util.module_from_spec(spec)

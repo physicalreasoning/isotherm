@@ -18,9 +18,9 @@ import pandas as pd
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from pmdecide.dataset import regime  # noqa: E402
-from pmdecide.lows import FORECAST_ROOT, LOW_SERIES, PANEL  # noqa: E402
-from pmdecide.weather import (  # noqa: E402
+from isotherm.dataset import regime  # noqa: E402
+from isotherm.lows import FORECAST_ROOT, LOW_SERIES, PANEL  # noqa: E402
+from isotherm.weather import (  # noqa: E402
     CITIES,
     bucket_contains,
     bucket_interval,

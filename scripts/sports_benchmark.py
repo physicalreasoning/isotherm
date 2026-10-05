@@ -21,10 +21,10 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
-from pmdecide import metrics  # noqa: E402
-from pmdecide.baselines import LogPool, Source, TemperedMarket  # noqa: E402
-from pmdecide.sports.dataset import build  # noqa: E402
-from pmdecide.sports.oos import oos_predictions  # noqa: E402
+from isotherm import metrics  # noqa: E402
+from isotherm.baselines import LogPool, Source, TemperedMarket  # noqa: E402
+from isotherm.sports.dataset import build  # noqa: E402
+from isotherm.sports.oos import oos_predictions  # noqa: E402
 
 SPLITS = {
     "start": "2025-07-01",

@@ -3,8 +3,8 @@
 import numpy as np
 import pandas as pd
 
-from pmdecide import shadow
-from pmdecide.weather import CITIES
+from isotherm import shadow
+from isotherm.weather import CITIES
 
 
 def test_read_window_is_local_16_to_18_in_every_timezone_and_season():

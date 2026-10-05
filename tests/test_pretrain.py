@@ -3,10 +3,10 @@
 import numpy as np
 import pandas as pd
 
-from pmdecide import pretrain as P
-from pmdecide.dataset import LadderSet
-from pmdecide.model import LadderNet
-from pmdecide.weather import CITIES, bucket_contains, is_partition
+from isotherm import pretrain as P
+from isotherm.dataset import LadderSet
+from isotherm.model import LadderNet
+from isotherm.weather import CITIES, bucket_contains, is_partition
 
 
 def test_no_kalshi_settlement_station_is_used_for_pretraining():
@@ -63,7 +63,7 @@ def test_private_signal_makes_the_simulated_market_sharper():
     sim = P.MarketSim().fit_empirical(real)
     sharp = sim.simulate(real, np.random.default_rng(2), tau=0.5, lam=0.0)
     blunt = sim.simulate(real, np.random.default_rng(2), tau=50.0, lam=0.0)
-    from pmdecide.metrics import log_score
+    from isotherm.metrics import log_score
 
     assert log_score(sharp.probs["market"], sharp.y).mean() < log_score(blunt.probs["market"], blunt.y).mean()
 

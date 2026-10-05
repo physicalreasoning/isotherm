@@ -43,7 +43,7 @@ Engine checks:
 | oracle (must never lose) | 8177 | $375,335 | 0 |
 | in-spread market (must not trade) | 0 | $0 | 0 |
 | normalised mid | 318 | $819 | 171 |
-| noise_matched_turnover | 2003 | $615 | 1032 |
+| noise_matched_turnover | 2028 | $2,106 | 1035 |
 | arbitrage_ladders | 190 | $0 | 0 |
 
 Robustness (pool · market+GFS · θ 0.01):
@@ -110,7 +110,7 @@ Engine checks:
 | oracle (must never lose) | 7622 | $340,528 | 0 |
 | in-spread market (must not trade) | 0 | $0 | 0 |
 | normalised mid | 304 | $21 | 154 |
-| noise_matched_turnover | 1141 | $623 | 602 |
+| noise_matched_turnover | 1143 | $2,953 | 595 |
 | arbitrage_ladders | 105 | $0 | 0 |
 
 Robustness (pool · market+GFS · θ 0.02):
