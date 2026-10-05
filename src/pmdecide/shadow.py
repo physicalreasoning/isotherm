@@ -24,6 +24,7 @@ import pandas as pd
 
 from . import iem, kalshi, metrics
 from .backtest import _instruments, kalshi_fee, kelly_ladder
+from .dataset import regime
 from .emos import GaussianModel, daytime_max_table, forecast_at, interval_probs
 from .weather import AVAILABILITY_LAG, CITIES, bucket_interval, is_partition
 
@@ -201,10 +202,54 @@ def settle(root: pathlib.Path) -> int:
                     "ticker": m["ticker"],
                     "y": kalshi.result_yes(m),
                     "final_volume": kalshi.volume(m),
+                    "regime": regime(m.get("rules_primary") or ""),
                     "settled_seen_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                 }
             )
     return _append(out_p, rows, ["ticker"])
+
+
+WINDOW_DAYS = 30
+MIN_DAYS = 20
+
+
+def decay_status(days: np.ndarray, gain: np.ndarray, window: int = WINDOW_DAYS) -> dict:
+    """Rolling log-score gain vs the market, and the stop rule from issue #3.
+
+    Windows are consecutive and non-overlapping, counted back from the latest settled
+    day. STOP when the latest two windows each have a date-block 95% CI entirely below
+    zero; INSUFFICIENT_DATA until the latest window holds MIN_DAYS settled days.
+    """
+    d = pd.to_datetime(pd.Series(days)).dt.normalize()
+    end = d.max()
+    windows = []
+    for i in range(6):
+        hi = end - pd.Timedelta(days=window * i)
+        lo = hi - pd.Timedelta(days=window)
+        s = ((d > lo) & (d <= hi)).to_numpy()
+        n_days = int(d[s].nunique())
+        if n_days == 0:
+            break
+        w = {
+            "from": str((lo + pd.Timedelta(days=1)).date()),
+            "to": str(hi.date()),
+            "days": n_days,
+            "gain": float(gain[s].mean()),
+        }
+        if n_days >= 5:
+            w["ci"] = metrics.date_bootstrap_mean(d[s].to_numpy(), gain[s], 1000)
+        windows.append(w)
+    if not windows or windows[0]["days"] < MIN_DAYS:
+        status = "INSUFFICIENT_DATA"
+    elif (
+        len(windows) >= 2
+        and all(w.get("ci", [0, 0])[1] < 0 for w in windows[:2])
+        and windows[1]["days"] >= MIN_DAYS
+    ):
+        status = "STOP"
+    else:
+        status = "OK"
+    return {"status": status, "window_days": window, "windows": windows}
 
 
 def report(root: pathlib.Path, participation: float = 0.05) -> dict:
@@ -222,6 +267,7 @@ def report(root: pathlib.Path, participation: float = 0.05) -> dict:
         res["log_score_gain_vs_market"] = float(gain.mean())
         if len(gain) >= 5:
             res["gain_ci"] = metrics.date_bootstrap_mean(days.to_numpy(), gain, 1000)
+        res["decay"] = decay_status(days.to_numpy(), gain)
     if trade_p.exists():
         t = pd.read_csv(trade_p).merge(pd.read_csv(out_p), on=["event", "ticker"])
         if len(t):
@@ -238,6 +284,11 @@ def report(root: pathlib.Path, participation: float = 0.05) -> dict:
                     "hit_rate": float((t["pnl"] > 0).mean()) if len(t) else None,
                     "by_month": {k: float(v) for k, v in t.groupby(t["day"].str[:7])["pnl"].sum().items()},
                     "by_city": {k: float(v) for k, v in t.groupby("city")["pnl"].sum().items()},
+                    "by_regime": (
+                        {k: float(v) for k, v in t.groupby("regime")["pnl"].sum().items()}
+                        if "regime" in t
+                        else {}
+                    ),
                 }
             )
     return res
