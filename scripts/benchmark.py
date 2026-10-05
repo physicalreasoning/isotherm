@@ -29,7 +29,7 @@ import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 from isotherm import dataset, metrics  # noqa: E402
-from isotherm.baselines import default_suite, g2_suite  # noqa: E402
+from isotherm.baselines import default_suite, g2_suite, transformer_suite  # noqa: E402
 from isotherm.evaluation import oos_predictions  # noqa: E402
 from isotherm.splits import LOCKBOX_START  # noqa: E402
 
@@ -249,14 +249,21 @@ def main():
     ap.add_argument("--cities", nargs="*")
     ap.add_argument("--lockbox", action="store_true")
     ap.add_argument("--boot", type=int, default=1000)
-    ap.add_argument("--suite", default="g1", choices=["g1", "g2"])
+    ap.add_argument("--suite", default="g1", choices=["g1", "g2", "transformer"])
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     t0 = time.time()
     ls = dataset.load(a.cities)
     print("loaded {} ladders, cities {}".format(len(ls), sorted(ls.meta["city"].unique())), flush=True)
-    suite = g2_suite() if a.suite == "g2" else default_suite()
-    a.out = a.out or ("results/benchmark" if a.suite == "g1" else "results/benchmark_g2")
+    suite = {"g1": default_suite, "g2": g2_suite, "transformer": transformer_suite}[a.suite]()
+    a.out = (
+        a.out
+        or {
+            "g1": "results/benchmark",
+            "g2": "results/benchmark_g2",
+            "transformer": "results/benchmark_transformer",
+        }[a.suite]
+    )
     results, slices, reliab = run(ls, suite, a.lockbox, a.boot)
     try:
         sha = (
