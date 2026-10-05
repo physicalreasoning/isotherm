@@ -312,3 +312,23 @@ or choice. About five weeks: underpowered by construction.
 **Criteria.** Pass: mean daily PnL > 0 with Newey-West t > 1.645. Consistent but underpowered:
 PnL > 0, t ≤ 1.645. Fail: PnL ≤ 0. Reported regardless: log score vs market, matched-turnover
 noise, engine checks.
+
+## 14 · Daily lows lockbox: probabilities hold, the money does not (2026-10-05)
+
+`scripts/lows_lockbox.py`, run once against §13 (commit c0d3456). The rebuilt panel first
+reproduced the pre-lockbox backtest exactly (+$13,384, DSR 0.980, PBO 0.06). Raw:
+`results/lows_lockbox.json`.
+
+| | |
+|---|---|
+| Verdict | consistent but underpowered: **+$36** over 34 days, 131 trades, Newey-West t 0.06 |
+| Sharpe | 0.19, 95% CI [−5.57, 7.25] |
+| Log score vs market | **+0.019 [+0.001, +0.035]** |
+| Matched-turnover noise / normalised mid | −$454 / −$366 (both were slightly profitable in-sample) |
+| Engine checks | oracle never loses; in-spread market never trades |
+
+**Reading.** The model's probabilities still beat the market on held-out lows, but the trading
+edge is gone: about $1 a day against $63 a day in the backtest. The placebos flipping from
+profit to loss say the in-sample PnL came largely from a newly launched market's miscalibration,
+and that has been corrected. It is the highs story (§3, §10) in five weeks. Lows are not added
+to live trading.
