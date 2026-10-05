@@ -62,7 +62,8 @@ def summarise(daily: pd.Series, ledger: pd.DataFrame, boot: int) -> dict:
          "sharpe_ann_ci": [stats.annualise(v) for v in stats.stationary_bootstrap(x, n=boot)],
          "nw_t": stats.newey_west_t(x), "max_drawdown": float((np.maximum.accumulate(
              np.cumsum(x)) - np.cumsum(x)).max()),
-         "trades": int(len(ledger)), "active_days": int((x != 0).sum())}
+         "trades": int(len(ledger)), "active_days": int((x != 0).sum()),
+         "daily": [[str(d.date()), round(float(v), 2)] for d, v in daily.items()]}
     if len(ledger):
         c = ledger["contracts"]
         r.update({"contracts": float(c.sum()), "outlay": float(ledger["outlay"].sum()),
