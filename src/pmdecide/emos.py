@@ -52,7 +52,7 @@ class GaussianModel:
 def _fit(kind, xm, xs, high) -> GaussianModel:
     def nll(p):
         b, g = p[:xm.shape[1]], p[xm.shape[1]:]
-        mu, s = xm @ b, np.exp(xs @ g)
+        mu, s = xm @ b, np.exp(np.clip(xs @ g, -5, 5))      # sigma in [0.007, 148]°F
         pr = norm.cdf((high + 0.5 - mu) / s) - norm.cdf((high - 0.5 - mu) / s)
         return -np.log(np.clip(pr, 1e-12, None)).sum()
 
