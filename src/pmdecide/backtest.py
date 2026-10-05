@@ -232,11 +232,27 @@ class MakerConfig:
     fill: str = "through"
     touch_share: float = 0.5
     maker_fee_rate: float = 0.0  # weather series: fee_type "quadratic", no maker fee
+    cancel_on: str | None = None  # "gfs": pull the quote when the next GFS MOS run goes public
     max_contracts: int = 5_000
 
     @property
     def name(self):
-        return "{} · maker θ {:.2f} · {:g}h".format(self.model, self.theta, self.horizon_h)
+        life = "until next GFS" if self.cancel_on == "gfs" else "{:g}h".format(self.horizon_h)
+        return "{} · maker θ {:.2f} · {}".format(self.model, self.theta, life)
+
+
+GFS_PUBLIC_UTC_HOURS = (5, 11, 17, 23)  # 00/06/12/18Z runs on the wire about 5h later
+
+
+def next_gfs_public(t: int) -> int:
+    """Unix time of the first GFS MOS release strictly after t."""
+    day = t - t % 86400
+    for d in (0, 86400):
+        for h in GFS_PUBLIC_UTC_HOURS:
+            c = day + d + h * 3600
+            if c > t:
+                return c
+    return t + 6 * 3600
 
 
 def load_trades(cities, root="data/trades"):
@@ -294,6 +310,8 @@ def run_maker(rows, probs: np.ndarray, cfg: MakerConfig, trades: dict) -> pd.Dat
         p = probs[i][:k]
         t0 = int(meta["read_ts"].iat[i])
         t1 = min(t0 + int(cfg.horizon_h * 3600), int(meta["close_ts"].iat[i]))
+        if cfg.cancel_on == "gfs":
+            t1 = min(t1, next_gfs_public(t0))
         tick = meta["tickers"].iat[i]
         for j in range(k):
             y = 1.0 if rows.y[i] == j else 0.0
