@@ -1,0 +1,863 @@
+{
+  "generated": "2026-10-05T13:38:41Z",
+  "results": [
+    {
+      "series": "KXLOWTNYC",
+      "listed_settled_events": 295,
+      "first_event": "2025-12-14",
+      "last_event": "2026-10-04",
+      "sampled_events": 40,
+      "median_event_volume": 29647.5,
+      "median_markets_per_event": 6.0,
+      "median_life_h": 39.0,
+      "lead0.5": {
+        "two_sided_share": 0.6625,
+        "contested_obs": 134,
+        "median_spread": 0.12000000000000002,
+        "brier": 0.1337815298507463,
+        "brier_ci": [
+          0.10664998231765971,
+          0.16156151097513596
+        ],
+        "brier_climo": 0.20940075740699488,
+        "brier_climo_ci": [
+          0.19678498316513163,
+          0.22270829900587683
+        ],
+        "ece": 0.0705597014925373,
+        "ece_ci": [
+          0.05490812651856993,
+          0.14914759913933975
+        ],
+        "slope": 1.5718877111663876,
+        "slope_ci": [
+          1.0548065517492307,
+          2.6151840134783946
+        ],
+        "brier_skill": 0.361122034574468
+      },
+      "lead0.9": {
+        "two_sided_share": 0.25833333333333336,
+        "contested_obs": 52,
+        "median_spread": 0.09,
+        "brier": 0.098775,
+        "brier_ci": [
+          0.06524959478900255,
+          0.13569023692810453
+        ],
+        "brier_climo": 0.23187869822485205,
+        "brier_climo_ci": [
+          0.21832806664751508,
+          0.24395061728395065
+        ],
+        "ece": 0.15615384615384614,
+        "ece_ci": [
+          0.1371073246606335,
+          0.22876812499999996
+        ],
+        "slope": 2.5264685305906243,
+        "slope_ci": [
+          1.6824327940357533,
+          5.088809699835863
+        ],
+        "brier_skill": 0.574022966507177
+      },
+      "seconds": 76.3,
+      "listing_truncated": false,
+      "category": "lows",
+      "note": "NYC daily low"
+    },
+    {
+      "series": "KXLOWTCHI",
+      "listed_settled_events": 296,
+      "first_event": "2025-12-14",
+      "last_event": "2026-10-05",
+      "sampled_events": 40,
+      "median_event_volume": 28370.235,
+      "median_markets_per_event": 6.0,
+      "median_life_h": 40.0,
+      "lead0.5": {
+        "two_sided_share": 0.6916666666666667,
+        "contested_obs": 133,
+        "median_spread": 0.08000000000000002,
+        "brier": 0.14162180451127818,
+        "brier_ci": [
+          0.11866902750000001,
+          0.16990452657948366
+        ],
+        "brier_climo": 0.2103001865566171,
+        "brier_climo_ci": [
+          0.19678498316513163,
+          0.22314808276251671
+        ],
+        "ece": 0.07541353383458645,
+        "ece_ci": [
+          0.06370819729477613,
+          0.15525471138258437
+        ],
+        "slope": 1.4827040380850272,
+        "slope_ci": [
+          0.9712424732273136,
+          2.4086023252385895
+        ],
+        "brier_skill": 0.3265730913978496
+      },
+      "lead0.9": {
+        "two_sided_share": 0.2916666666666667,
+        "contested_obs": 52,
+        "median_spread": 0.06,
+        "brier": 0.12342740384615383,
+        "brier_ci": [
+          0.0691811921511628,
+          0.17082019979508195
+        ],
+        "brier_climo": 0.22633136094674558,
+        "brier_climo_ci": [
+          0.20517902606117056,
+          0.24468731811420805
+        ],
+        "ece": 0.09009615384615384,
+        "ece_ci": [
+          0.06825227272727273,
+          0.21658653846153844
+        ],
+        "slope": 1.30684370709229,
+        "slope_ci": [
+          0.7781620035597371,
+          2.740871540123344
+        ],
+        "brier_skill": 0.4546606209150328
+      },
+      "seconds": 42.2,
+      "listing_truncated": false,
+      "category": "lows",
+      "note": "Chicago daily low"
+    },
+    {
+      "series": "KXLOWTMIA",
+      "listed_settled_events": 296,
+      "first_event": "2025-12-14",
+      "last_event": "2026-10-05",
+      "sampled_events": 39,
+      "median_event_volume": 20565.55,
+      "median_markets_per_event": 6.0,
+      "median_life_h": 39.0,
+      "lead0.5": {
+        "two_sided_share": 0.7307692307692307,
+        "contested_obs": 132,
+        "median_spread": 0.145,
+        "brier": 0.1636789772727273,
+        "brier_ci": [
+          0.13850433384243097,
+          0.1895448963341346
+        ],
+        "brier_climo": 0.20500459136822777,
+        "brier_climo_ci": [
+          0.19634877186311198,
+          0.21465600000000004
+        ],
+        "ece": 0.06549242424242425,
+        "ece_ci": [
+          0.054304014041514026,
+          0.1517976567164179
+        ],
+        "slope": 1.2747072826124195,
+        "slope_ci": [
+          0.8050396027731883,
+          1.9009663689306648
+        ],
+        "brier_skill": 0.20158384658454653
+      },
+      "lead0.9": {
+        "two_sided_share": 0.24786324786324787,
+        "contested_obs": 33,
+        "median_spread": 0.07,
+        "brier": 0.03655757575757576,
+        "brier_ci": [
+          0.009960577698511169,
+          0.07348632720588236
+        ],
+        "brier_climo": 0.2479338842975206,
+        "brier_climo_ci": [
+          0.23520818115412706,
+          0.25
+        ],
+        "ece": 0.12606060606060607,
+        "ece_ci": [
+          0.09219655172413799,
+          0.18542458267090625
+        ],
+        "slope": 2.5197474375760796,
+        "slope_ci": [
+          1.8454173270230239,
+          7.5112576898289625
+        ],
+        "brier_skill": 0.852551111111111
+      },
+      "seconds": 41.5,
+      "listing_truncated": false,
+      "category": "lows",
+      "note": "Miami daily low"
+    },
+    {
+      "series": "KXLOWTAUS",
+      "listed_settled_events": 296,
+      "first_event": "2025-12-14",
+      "last_event": "2026-10-05",
+      "sampled_events": 40,
+      "median_event_volume": 21923.51,
+      "median_markets_per_event": 6.0,
+      "median_life_h": 40.0,
+      "lead0.5": {
+        "two_sided_share": 0.7541666666666667,
+        "contested_obs": 156,
+        "median_spread": 0.12,
+        "brier": 0.14527483974358973,
+        "brier_ci": [
+          0.12075579174780915,
+          0.17084489834529043
+        ],
+        "brier_climo": 0.18425378040762658,
+        "brier_climo_ci": [
+          0.17283950617283952,
+          0.19687138473919824
+        ],
+        "ece": 0.07080128205128206,
+        "ece_ci": [
+          0.054669494047619054,
+          0.1349894122777163
+        ],
+        "slope": 1.1818305641613107,
+        "slope_ci": [
+          0.7707209108091098,
+          1.8972554338973844
+        ],
+        "brier_skill": 0.2115502899197147
+      },
+      "lead0.9": {
+        "two_sided_share": 0.22083333333333333,
+        "contested_obs": 34,
+        "median_spread": 0.08999999999999998,
+        "brier": 0.19274485294117646,
+        "brier_ci": [
+          0.10500334665697675,
+          0.307404191091954
+        ],
+        "brier_climo": 0.2283737024221453,
+        "brier_climo_ci": [
+          0.20061270318263866,
+          0.24732461355529128
+        ],
+        "ece": 0.19397058823529412,
+        "ece_ci": [
+          0.13178540540540543,
+          0.35999379310344803
+        ],
+        "slope": 0.645055682451493,
+        "slope_ci": [
+          0.12019248830143371,
+          1.3733917519083065
+        ],
+        "brier_skill": 0.15601117424242417
+      },
+      "seconds": 42.3,
+      "listing_truncated": false,
+      "category": "lows",
+      "note": "Austin daily low"
+    },
+    {
+      "series": "KXLOWTLAX",
+      "listed_settled_events": 295,
+      "first_event": "2025-12-14",
+      "last_event": "2026-10-04",
+      "sampled_events": 40,
+      "median_event_volume": 19344.04,
+      "median_markets_per_event": 6.0,
+      "median_life_h": 42.0,
+      "lead0.5": {
+        "two_sided_share": 0.625,
+        "contested_obs": 120,
+        "median_spread": 0.12,
+        "brier": 0.17232458333333334,
+        "brier_ci": [
+          0.14185050693010198,
+          0.20617075051229505
+        ],
+        "brier_climo": 0.2163888888888889,
+        "brier_climo_ci": [
+          0.20575712523524894,
+          0.22702628369216024
+        ],
+        "ece": 0.09808333333333333,
+        "ece_ci": [
+          0.0677441965961707,
+          0.17585267857142858
+        ],
+        "slope": 1.0756609940823887,
+        "slope_ci": [
+          0.6512015922140217,
+          1.7190080648001784
+        ],
+        "brier_skill": 0.20363478818998726
+      },
+      "lead0.9": {
+        "two_sided_share": 0.2791666666666667,
+        "contested_obs": 47,
+        "median_spread": 0.12,
+        "brier": 0.13466648936170214,
+        "brier_ci": [
+          0.07856960937500002,
+          0.20212823820153064
+        ],
+        "brier_climo": 0.24445450430058846,
+        "brier_climo_ci": [
+          0.23405015498846599,
+          0.24985127900059487
+        ],
+        "ece": 0.10031914893617025,
+        "ece_ci": [
+          0.09599901883830456,
+          0.24285942249240114
+        ],
+        "slope": 1.2008827721653021,
+        "slope_ci": [
+          0.6669457261515085,
+          2.7172087159460414
+        ],
+        "brier_skill": 0.4491143055555554
+      },
+      "seconds": 42.4,
+      "listing_truncated": false,
+      "category": "lows",
+      "note": "LA daily low"
+    },
+    {
+      "series": "KXLOWTDEN",
+      "listed_settled_events": 296,
+      "first_event": "2025-12-14",
+      "last_event": "2026-10-05",
+      "sampled_events": 40,
+      "median_event_volume": 21247.920000000002,
+      "median_markets_per_event": 6.0,
+      "median_life_h": 41.0,
+      "lead0.5": {
+        "two_sided_share": 0.6375,
+        "contested_obs": 133,
+        "median_spread": 0.10999999999999999,
+        "brier": 0.18404172932330828,
+        "brier_ci": [
+          0.1574080356179342,
+          0.21058482754092014
+        ],
+        "brier_climo": 0.19028774944880997,
+        "brier_climo_ci": [
+          0.1758631448958035,
+          0.2035825236301144
+        ],
+        "ece": 0.06300751879699247,
+        "ece_ci": [
+          0.048915105250983144,
+          0.16211451311988442
+        ],
+        "slope": 0.6109955952675483,
+        "slope_ci": [
+          0.09007283436817494,
+          1.349094103804245
+        ],
+        "brier_skill": 0.0328240790255494
+      },
+      "lead0.9": {
+        "two_sided_share": 0.29583333333333334,
+        "contested_obs": 44,
+        "median_spread": 0.07499999999999998,
+        "brier": 0.16316875,
+        "brier_ci": [
+          0.10522092911585366,
+          0.22561064807692302
+        ],
+        "brier_climo": 0.21694214876033058,
+        "brier_climo_ci": [
+          0.18526877222778665,
+          0.24055222790357925
+        ],
+        "ece": 0.10215909090909091,
+        "ece_ci": [
+          0.0850284224441833,
+          0.23529801136363637
+        ],
+        "slope": 0.7765964707599992,
+        "slope_ci": [
+          0.3307727607213646,
+          1.6472268740175577
+        ],
+        "brier_skill": 0.24786976190476184
+      },
+      "seconds": 42.4,
+      "listing_truncated": false,
+      "category": "lows",
+      "note": "Denver daily low"
+    },
+    {
+      "series": "KXLOWTPHIL",
+      "listed_settled_events": 296,
+      "first_event": "2025-12-14",
+      "last_event": "2026-10-05",
+      "sampled_events": 40,
+      "median_event_volume": 13722.410000000002,
+      "median_markets_per_event": 6.0,
+      "median_life_h": 39.0,
+      "lead0.5": {
+        "two_sided_share": 0.6083333333333333,
+        "contested_obs": 119,
+        "median_spread": 0.13,
+        "brier": 0.14509957983193275,
+        "brier_ci": [
+          0.11566459782943349,
+          0.17653591695836401
+        ],
+        "brier_climo": 0.21425040604477089,
+        "brier_climo_ci": [
+          0.20152722570149434,
+          0.22606840689194974
+        ],
+        "ece": 0.06983193277310924,
+        "ece_ci": [
+          0.06784064730694354,
+          0.15013680739758317
+        ],
+        "slope": 1.3886029144948544,
+        "slope_ci": [
+          0.8854296329286856,
+          2.7374710626785883
+        ],
+        "brier_skill": 0.32275703691496394
+      },
+      "lead0.9": {
+        "two_sided_share": 0.20833333333333334,
+        "contested_obs": 34,
+        "median_spread": 0.07,
+        "brier": 0.14368161764705883,
+        "brier_ci": [
+          0.0876849272971652,
+          0.20252327696078432
+        ],
+        "brier_climo": 0.2283737024221453,
+        "brier_climo_ci": [
+          0.21484375,
+          0.24000000000000005
+        ],
+        "ece": 0.11044117647058825,
+        "ece_ci": [
+          0.0894103896103896,
+          0.2608444805194804
+        ],
+        "slope": 1.6437530858732319,
+        "slope_ci": [
+          0.8266280261925673,
+          5.633678914986154
+        ],
+        "brier_skill": 0.37084867424242407
+      },
+      "seconds": 42.4,
+      "listing_truncated": false,
+      "category": "lows",
+      "note": "Philadelphia daily low"
+    },
+    {
+      "series": "KXHIGHNY",
+      "listed_settled_events": 1882,
+      "first_event": "2022-12-23",
+      "last_event": "2026-10-05",
+      "sampled_events": 40,
+      "median_event_volume": 74180.5,
+      "median_markets_per_event": 6.0,
+      "median_life_h": 37.983333333333334,
+      "lead0.5": {
+        "two_sided_share": 0.6708333333333333,
+        "contested_obs": 133,
+        "median_spread": 0.08999999999999997,
+        "brier": 0.1575050751879699,
+        "brier_ci": [
+          0.13457066049589544,
+          0.18267239051094888
+        ],
+        "brier_climo": 0.1827124201481147,
+        "brier_climo_ci": [
+          0.16622029194735982,
+          0.19790237103975997
+        ],
+        "ece": 0.06372180451127818,
+        "ece_ci": [
+          0.05344441793893131,
+          0.14037476160203433
+        ],
+        "slope": 1.052611745387155,
+        "slope_ci": [
+          0.6360380459877475,
+          1.6092969186616477
+        ],
+        "brier_skill": 0.13796185798267357
+      },
+      "lead0.9": {
+        "two_sided_share": 0.06666666666666667,
+        "contested_obs": 10,
+        "median_spread": 0.10999999999999999,
+        "brier": 0.20349500000000004,
+        "brier_ci": [
+          0.12895688368055555,
+          0.25708636363636367
+        ],
+        "brier_climo": 0.24000000000000005,
+        "brier_climo_ci": [
+          0.12244897959183675,
+          0.25
+        ],
+        "ece": 0.186,
+        "ece_ci": [
+          0.08375000000000002,
+          0.44140909090909086
+        ],
+        "slope": 1.1699496706645187,
+        "slope_ci": [
+          0.04644902989451291,
+          152.65652258749796
+        ],
+        "brier_skill": 0.1521041666666667
+      },
+      "seconds": 44.8,
+      "listing_truncated": false,
+      "category": "highs",
+      "note": "control: NYC daily high"
+    },
+    {
+      "series": "KXRAINNYC",
+      "listed_settled_events": 869,
+      "first_event": null,
+      "last_event": null,
+      "sampled_events": 40,
+      "median_event_volume": 1986.0,
+      "median_markets_per_event": 1.0,
+      "median_life_h": 37.983333333333334,
+      "lead0.5": {
+        "two_sided_share": 0.525,
+        "contested_obs": 19,
+        "median_spread": 0.09000000000000008,
+        "brier": 0.13260789473684212,
+        "brier_ci": [
+          0.06565184210526315,
+          0.21247467105263157
+        ],
+        "brier_climo": 0.21606648199445985,
+        "brier_climo_ci": [
+          0.09418282548476453,
+          0.2493074792243768
+        ],
+        "ece": 0.2536842105263158,
+        "ece_ci": [
+          0.1742105263157895,
+          0.3668552631578947
+        ],
+        "slope": 1.6303188165999634,
+        "slope_ci": [
+          0.8445695993419197,
+          250.78357334393274
+        ],
+        "brier_skill": 0.3862634615384616
+      },
+      "lead0.9": {
+        "two_sided_share": 0.375,
+        "contested_obs": 9,
+        "median_spread": 0.12000000000000001,
+        "brier": 0.21047500000000002,
+        "brier_ci": [
+          0.022284097222222226,
+          0.41501583333333336
+        ],
+        "brier_climo": 0.1728395061728395,
+        "brier_climo_ci": [
+          0.0,
+          0.2469135802469136
+        ],
+        "ece": 0.20611111111111113,
+        "ece_ci": [
+          0.07219444444444444,
+          0.4878194444444442
+        ],
+        "slope": -0.3795050758105894,
+        "slope_ci": [
+          -4.33861494903918,
+          9.871192268670523
+        ],
+        "brier_skill": -0.21774821428571456
+      },
+      "seconds": 17.1,
+      "listing_truncated": false,
+      "category": "rain",
+      "note": "NYC rain, daily"
+    },
+    {
+      "series": "KXRAIN",
+      "listed_settled_events": 77,
+      "first_event": "2026-07-16",
+      "last_event": "2026-10-05",
+      "sampled_events": 40,
+      "median_event_volume": 557422.645,
+      "median_markets_per_event": 20.0,
+      "median_life_h": 43.833333333333336,
+      "lead0.5": {
+        "two_sided_share": 0.9333333333333333,
+        "contested_obs": 204,
+        "median_spread": 0.020000000000000018,
+        "brier": 0.24008345588235297,
+        "brier_ci": [
+          0.2032596740430622,
+          0.2751523043369391
+        ],
+        "brier_climo": 0.24759707804690506,
+        "brier_climo_ci": [
+          0.24,
+          0.2499759707804691
+        ],
+        "ece": 0.12066176470588236,
+        "ece_ci": [
+          0.07447503277972026,
+          0.19405198620590197
+        ],
+        "slope": 0.494003938633758,
+        "slope_ci": [
+          0.2517006137218889,
+          0.795330330663142
+        ],
+        "brier_skill": 0.030346166537267072
+      },
+      "lead0.9": {
+        "two_sided_share": 0.5583333333333333,
+        "contested_obs": 99,
+        "median_spread": 0.030000000000000027,
+        "brier": 0.1647502525252525,
+        "brier_ci": [
+          0.12301406493085566,
+          0.20565947214040248
+        ],
+        "brier_climo": 0.16120803999591876,
+        "brier_climo_ci": [
+          0.11553258782066793,
+          0.19774253625761387
+        ],
+        "ece": 0.13964646464646466,
+        "ece_ci": [
+          0.11693907766990291,
+          0.22175463521254143
+        ],
+        "slope": 0.7515652573866921,
+        "slope_ci": [
+          0.356509637447617,
+          1.2369840704117134
+        ],
+        "brier_skill": -0.02197292721518984
+      },
+      "seconds": 38.3,
+      "listing_truncated": false,
+      "category": "rain",
+      "note": "where will it rain, daily"
+    },
+    {
+      "series": "KXRAINNYCM",
+      "listed_settled_events": 32,
+      "first_event": null,
+      "last_event": null,
+      "sampled_events": 32,
+      "median_event_volume": 71474.79000000001,
+      "median_markets_per_event": 5.0,
+      "median_life_h": 829.9833333333333,
+      "lead0.5": {
+        "two_sided_share": 0.8553459119496856,
+        "contested_obs": 124,
+        "median_spread": 0.07500000000000001,
+        "brier": 0.18840040322580645,
+        "brier_ci": [
+          0.1510160413385827,
+          0.2282186411214952
+        ],
+        "brier_climo": 0.24973985431841839,
+        "brier_climo_ci": [
+          0.23024867850098615,
+          0.25
+        ],
+        "ece": 0.06508064516129033,
+        "ece_ci": [
+          0.0636856875,
+          0.18349612282878405
+        ],
+        "slope": 0.810291414776526,
+        "slope_ci": [
+          0.5137259448275284,
+          1.3553306683935722
+        ],
+        "brier_skill": 0.24561338541666689
+      },
+      "lead0.9": {
+        "two_sided_share": 0.3522012578616352,
+        "contested_obs": 38,
+        "median_spread": 0.09999999999999998,
+        "brier": 0.1225184210526316,
+        "brier_ci": [
+          0.07994370562880324,
+          0.16229785346798778
+        ],
+        "brier_climo": 0.23891966759002767,
+        "brier_climo_ci": [
+          0.17689095519864748,
+          0.25
+        ],
+        "ece": 0.14236842105263156,
+        "ece_ci": [
+          0.1023426304211188,
+          0.24692279411764698
+        ],
+        "slope": 1.4554160550721713,
+        "slope_ci": [
+          1.051738882696981,
+          3.9636865325781057
+        ],
+        "brier_skill": 0.4871982608695651
+      },
+      "seconds": 30.0,
+      "listing_truncated": false,
+      "category": "rain",
+      "note": "NYC monthly rain total"
+    },
+    {
+      "series": "KXRAINCHIM",
+      "listed_settled_events": 13,
+      "first_event": null,
+      "last_event": null,
+      "sampled_events": 13,
+      "median_event_volume": 94467.68000000001,
+      "median_markets_per_event": 7.0,
+      "median_life_h": 707.6330555555555,
+      "lead0.5": {
+        "two_sided_share": 0.6956521739130435,
+        "contested_obs": 42,
+        "median_spread": 0.050000000000000044,
+        "brier": 0.13876904761904763,
+        "brier_ci": [
+          0.07181173872180453,
+          0.21510541990022175
+        ],
+        "brier_climo": 0.22959183673469383,
+        "brier_climo_ci": [
+          0.16454894633032283,
+          0.24966835684711558
+        ],
+        "ece": 0.17547619047619045,
+        "ece_ci": [
+          0.13069482600732601,
+          0.3117613636363636
+        ],
+        "slope": 1.0453473386134633,
+        "slope_ci": [
+          0.618807468931547,
+          2.9730045193780974
+        ],
+        "brier_skill": 0.39558370370370355
+      },
+      "lead0.9": {
+        "two_sided_share": 0.2463768115942029,
+        "contested_obs": 8,
+        "median_spread": 0.03000000000000001,
+        "brier": 0.053509375,
+        "brier_ci": [
+          0.022008482142857146,
+          0.09020039062499999
+        ],
+        "brier_climo": 0.1875,
+        "brier_climo_ci": [
+          0.0,
+          0.2485339506172839
+        ],
+        "ece": 0.193125,
+        "ece_ci": [
+          0.11703571428571428,
+          0.2770312499999999
+        ],
+        "slope": 13.16904632154551,
+        "slope_ci": [
+          6.0502305460190255,
+          14.418321582655249
+        ],
+        "brier_skill": 0.7146166666666667
+      },
+      "seconds": 12.9,
+      "listing_truncated": false,
+      "category": "rain",
+      "note": "Chicago monthly rain"
+    },
+    {
+      "series": "KXRAINWKND",
+      "listed_settled_events": 7,
+      "first_event": null,
+      "last_event": null,
+      "sampled_events": 7,
+      "median_event_volume": 72313.65999999999,
+      "median_markets_per_event": 23.0,
+      "median_life_h": 163.83333333333334,
+      "lead0.5": {
+        "two_sided_share": 1.0,
+        "contested_obs": 36,
+        "median_spread": 0.17500000000000002,
+        "brier": 0.1332722222222222,
+        "brier_ci": [
+          0.07271945945945947,
+          0.21442089237967904
+        ],
+        "brier_climo": 0.24922839506172836,
+        "brier_climo_ci": [
+          0.21516031568877553,
+          0.25
+        ],
+        "ece": 0.1025,
+        "ece_ci": [
+          0.09680555555555556,
+          0.2710925239755885
+        ],
+        "slope": 1.6607506335412083,
+        "slope_ci": [
+          0.9191986779923375,
+          9.602308154996315
+        ],
+        "brier_skill": 0.4652606811145511
+      },
+      "lead0.9": {
+        "two_sided_share": 0.5,
+        "contested_obs": 17,
+        "median_spread": 0.23000000000000004,
+        "brier": 0.15962647058823531,
+        "brier_ci": [
+          0.0732915877757353,
+          0.2971210625
+        ],
+        "brier_climo": 0.24221453287197228,
+        "brier_climo_ci": [
+          0.1223910123966942,
+          0.25
+        ],
+        "ece": 0.1188235294117647,
+        "ece_ci": [
+          0.10975,
+          0.3431009615384611
+        ],
+        "slope": 1.5118901998325691,
+        "slope_ci": [
+          0.8294092052597571,
+          397.5865976190197
+        ],
+        "brier_skill": 0.3409707142857141
+      },
+      "seconds": 7.2,
+      "listing_truncated": false,
+      "category": "rain",
+      "note": "weekend rain"
+    }
+  ]
+}
