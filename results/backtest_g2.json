@@ -1,0 +1,2706 @@
+{
+  "config": {
+    "cities": null,
+    "reads": null,
+    "boot": 1000,
+    "execution": [
+      "taker",
+      "maker"
+    ],
+    "suite": "g2",
+    "out": "results/backtest_g2"
+  },
+  "git": "9eb59f9",
+  "cities": [
+    "AUS",
+    "CHI",
+    "DEN",
+    "LAX",
+    "MIA",
+    "NY",
+    "PHIL"
+  ],
+  "results": {
+    "d0_08 \u00b7 taker": {
+      "execution": "taker",
+      "configs": 28,
+      "picks": [
+        {
+          "fold": "2023-07-01..2023-09-30",
+          "config": "LadderNet \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2023-10-01..2023-12-31",
+          "config": "LadderNet \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2024-01-01..2024-03-31",
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 kelly 0.50"
+        },
+        {
+          "fold": "2024-04-01..2024-06-30",
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2024-07-01..2024-09-30",
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2024-10-01..2024-12-31",
+          "config": "LadderNet \u00b7 \u03b8 0.01"
+        },
+        {
+          "fold": "2025-01-01..2025-03-31",
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.08"
+        },
+        {
+          "fold": "2025-04-01..2025-06-30",
+          "config": "LadderNet \u00b7 kelly 0.10"
+        },
+        {
+          "fold": "2025-07-01..2025-09-30",
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.01"
+        },
+        {
+          "fold": "2025-10-01..2025-12-31",
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.01"
+        },
+        {
+          "fold": "2026-01-01..2026-03-31",
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.01"
+        },
+        {
+          "fold": "2026-04-01..2026-06-30",
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.01"
+        }
+      ],
+      "selected": {
+        "days": 1095,
+        "pnl": 11884.390000000003,
+        "mean_daily": 10.853324200913244,
+        "sharpe_ann": 1.2078198868605414,
+        "sharpe_ann_ci": [
+          0.12054063992941336,
+          2.2931901312699554
+        ],
+        "nw_t": 2.0133408951909253,
+        "max_drawdown": 3209.3300000000017,
+        "trades": 6193,
+        "active_days": 1025,
+        "contracts": 835990.0,
+        "outlay": 434794.61,
+        "hit_rate": 0.7162925884062651,
+        "return_on_outlay": 0.027333342517746495,
+        "ev_per_contract": 0.04063853633951038,
+        "realised_per_contract": 0.014215947559181336,
+        "attribution": {
+          "alpha_vs_mid": 33177.08,
+          "spread_paid": -12708.96,
+          "fees": -8583.73
+        }
+      },
+      "deflated_sharpe": {
+        "sr_daily": 0.06322018229630127,
+        "sr0_daily": 0.07592731028084011,
+        "dsr": 0.3295955257899119,
+        "skew": 1.6877332258632936,
+        "kurtosis": 15.897683059506123,
+        "n_trials": 28,
+        "t": 1095
+      },
+      "pbo": {
+        "pbo": 0.6125541125541125,
+        "splits": 924,
+        "blocks": 12,
+        "median_logit": -0.2076393647782445,
+        "oos_sr_best_minus_median": -0.00425582496096976
+      },
+      "edge_realisation": {
+        "by_bin": [
+          {
+            "ev": 0.01058774646406023,
+            "realised": 0.015180789588695193,
+            "trades": 1239.0
+          },
+          {
+            "ev": 0.015960709564080636,
+            "realised": -0.012972583717780985,
+            "trades": 1238.0
+          },
+          {
+            "ev": 0.025190188052177508,
+            "realised": 0.009818595749192308,
+            "trades": 1239.0
+          },
+          {
+            "ev": 0.041759346568018336,
+            "realised": 0.012336971248633448,
+            "trades": 1238.0
+          },
+          {
+            "ev": 0.10060189994984071,
+            "realised": 0.0494390128947273,
+            "trades": 1239.0
+          }
+        ],
+        "slope": 0.3209742742332997
+      },
+      "all_configs": [
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.01",
+          "pnl": 26351.309999999998,
+          "sharpe_ann": 1.9371812169644926,
+          "trades": 7173
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.04",
+          "pnl": 13943.159999999998,
+          "sharpe_ann": 1.9357525338600565,
+          "trades": 2498
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 kelly 0.25",
+          "pnl": 8941.690000000004,
+          "sharpe_ann": 1.8931264058076687,
+          "trades": 9034
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.01",
+          "pnl": 23818.909999999996,
+          "sharpe_ann": 1.8608449407643999,
+          "trades": 6536
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 kelly 0.10",
+          "pnl": 3676.0000000000014,
+          "sharpe_ann": 1.8281568769505663,
+          "trades": 8952
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 kelly 0.50",
+          "pnl": 15740.010000000007,
+          "sharpe_ann": 1.7610316171607987,
+          "trades": 9064
+        },
+        {
+          "config": "LadderNet \u00b7 \u03b8 0.04",
+          "pnl": 8730.62,
+          "sharpe_ann": 1.7119898566793403,
+          "trades": 1481
+        },
+        {
+          "config": "LadderNet \u00b7 \u03b8 0.08",
+          "pnl": 4592.52,
+          "sharpe_ann": 1.6785502011258893,
+          "trades": 449
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.02",
+          "pnl": 15729.379999999997,
+          "sharpe_ann": 1.619121504197982,
+          "trades": 4511
+        },
+        {
+          "config": "LadderNet \u00b7 kelly 0.10",
+          "pnl": 2578.430000000002,
+          "sharpe_ann": 1.6189794093358754,
+          "trades": 8345
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.02",
+          "pnl": 18021.559999999998,
+          "sharpe_ann": 1.586754946079414,
+          "trades": 4752
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 kelly 0.10",
+          "pnl": 3178.8400000000024,
+          "sharpe_ann": 1.5126091053339858,
+          "trades": 10013
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.08",
+          "pnl": 6134.19,
+          "sharpe_ann": 1.4754963173739344,
+          "trades": 923
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.08",
+          "pnl": 4991.22,
+          "sharpe_ann": 1.416555653022,
+          "trades": 847
+        },
+        {
+          "config": "LadderNet \u00b7 kelly 0.25",
+          "pnl": 4899.050000000005,
+          "sharpe_ann": 1.3044770554627312,
+          "trades": 8460
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 kelly 0.25",
+          "pnl": 6317.0000000000055,
+          "sharpe_ann": 1.2904457143756807,
+          "trades": 10087
+        },
+        {
+          "config": "LadderNet \u00b7 \u03b8 0.02",
+          "pnl": 8164.970000000001,
+          "sharpe_ann": 1.1654325617103498,
+          "trades": 3081
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.04",
+          "pnl": 6573.299999999999,
+          "sharpe_ann": 0.9951885351173302,
+          "trades": 2482
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 kelly 0.50",
+          "pnl": 9175.64000000001,
+          "sharpe_ann": 0.9877958077152996,
+          "trades": 10109
+        },
+        {
+          "config": "LadderNet \u00b7 kelly 0.50",
+          "pnl": 6180.950000000008,
+          "sharpe_ann": 0.8661074635153855,
+          "trades": 8495
+        },
+        {
+          "config": "LadderNet \u00b7 \u03b8 0.01",
+          "pnl": 5787.040000000002,
+          "sharpe_ann": 0.6195529088144712,
+          "trades": 4991
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.01",
+          "pnl": 1908.7900000000004,
+          "sharpe_ann": 0.43350911534819064,
+          "trades": 2721
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.50",
+          "pnl": 1614.9300000000057,
+          "sharpe_ann": 0.4207093933242375,
+          "trades": 7545
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.02",
+          "pnl": 1058.97,
+          "sharpe_ann": 0.3214994739545338,
+          "trades": 1638
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.25",
+          "pnl": 519.0400000000025,
+          "sharpe_ann": 0.24181164016982942,
+          "trades": 7515
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.10",
+          "pnl": -49.09999999999923,
+          "sharpe_ann": -0.04597045650515778,
+          "trades": 7413
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.08",
+          "pnl": -277.30000000000024,
+          "sharpe_ann": -0.18820619390040916,
+          "trades": 559
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.04",
+          "pnl": -1124.24,
+          "sharpe_ann": -0.4928552128697643,
+          "trades": 1072
+        }
+      ],
+      "by_period": {
+        "2023H2": {
+          "pnl": 796.95,
+          "trades": 476,
+          "per_contract": 0.07154591974144897
+        },
+        "2024H1": {
+          "pnl": 642.4100000000001,
+          "trades": 680,
+          "per_contract": 0.02622616860583793
+        },
+        "2024H2": {
+          "pnl": -182.93999999999983,
+          "trades": 447,
+          "per_contract": -0.003558105611202953
+        },
+        "2025H1": {
+          "pnl": 410.4700000000002,
+          "trades": 924,
+          "per_contract": 0.008746244486586695
+        },
+        "2025H2": {
+          "pnl": 6334.670000000001,
+          "trades": 1756,
+          "per_contract": 0.019929307833396782
+        },
+        "2026H1": {
+          "pnl": 3882.8300000000004,
+          "trades": 1910,
+          "per_contract": 0.010107509247617486
+        }
+      },
+      "by_city": {
+        "AUS": {
+          "pnl": -170.35999999999888,
+          "trades": 1344,
+          "per_contract": -0.0012661840560105754
+        },
+        "CHI": {
+          "pnl": 1914.27,
+          "trades": 1345,
+          "per_contract": 0.010289782622718183
+        },
+        "DEN": {
+          "pnl": 987.0600000000002,
+          "trades": 708,
+          "per_contract": 0.010734747145187604
+        },
+        "LAX": {
+          "pnl": 1945.7600000000002,
+          "trades": 646,
+          "per_contract": 0.021161295935790494
+        },
+        "MIA": {
+          "pnl": 3247.27,
+          "trades": 954,
+          "per_contract": 0.025561406823155275
+        },
+        "NY": {
+          "pnl": -4.569999999999624,
+          "trades": 669,
+          "per_contract": -4.603049898269196e-05
+        },
+        "PHIL": {
+          "pnl": 3964.96,
+          "trades": 527,
+          "per_contract": 0.0376936751941743
+        }
+      },
+      "robustness_config": "LadderNet \u00b7 kelly 0.25",
+      "robustness": [
+        {
+          "scenario": "base",
+          "pnl": 4899.050000000005,
+          "sharpe_ann": 1.3044770554627312,
+          "trades": 8460
+        },
+        {
+          "scenario": "slip +1\u00a2",
+          "pnl": 2619.149999999999,
+          "sharpe_ann": 0.8616606047561628,
+          "trades": 4293
+        },
+        {
+          "scenario": "slip +2\u00a2",
+          "pnl": 2144.6699999999983,
+          "sharpe_ann": 0.8427451864895088,
+          "trades": 2668
+        },
+        {
+          "scenario": "fees \u00d71.5",
+          "pnl": 3207.8000000000043,
+          "sharpe_ann": 0.9419798842095669,
+          "trades": 7243
+        },
+        {
+          "scenario": "participation 1%",
+          "pnl": -227.41999999999666,
+          "sharpe_ann": -0.0726760412492618,
+          "trades": 8187
+        },
+        {
+          "scenario": "participation 20%",
+          "pnl": 7170.450000000006,
+          "sharpe_ann": 1.7178037758591942,
+          "trades": 8535
+        },
+        {
+          "scenario": "size \u00d710",
+          "pnl": -13790.849999999977,
+          "sharpe_ann": -0.5222021132975251,
+          "trades": 8520
+        }
+      ],
+      "placebos": {
+        "oracle (must never lose)": {
+          "trades": 24685,
+          "pnl": 1194528.69,
+          "losing_trades": 0
+        },
+        "in-spread market (must not trade)": {
+          "trades": 0,
+          "pnl": 0.0,
+          "losing_trades": 0
+        },
+        "normalised mid": {
+          "trades": 3586,
+          "pnl": -13001.300000000003,
+          "losing_trades": 1555
+        },
+        "noise_matched_turnover": {
+          "trades": 5518,
+          "pnl": -5629.220000000001,
+          "losing_trades": 2200,
+          "sigma": 0.1
+        },
+        "arbitrage_ladders": {
+          "trades": 718,
+          "pnl": 0.0,
+          "losing_trades": 0
+        }
+      }
+    },
+    "d0_08 \u00b7 maker": {
+      "execution": "maker",
+      "configs": 32,
+      "picks": [
+        {
+          "fold": "2023-07-01..2023-09-30",
+          "config": "LadderNet \u00b7 maker \u03b8 0.02 \u00b7 4h"
+        },
+        {
+          "fold": "2023-10-01..2023-12-31",
+          "config": "LadderNet \u00b7 maker \u03b8 0.02 \u00b7 4h"
+        },
+        {
+          "fold": "2024-01-01..2024-03-31",
+          "config": "LadderNet \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        },
+        {
+          "fold": "2024-04-01..2024-06-30",
+          "config": "LadderNet \u00b7 maker \u03b8 0.02 \u00b7 1h"
+        },
+        {
+          "fold": "2024-07-01..2024-09-30",
+          "config": "LadderNet \u00b7 maker \u03b8 0.04 \u00b7 1h"
+        },
+        {
+          "fold": "2024-10-01..2024-12-31",
+          "config": "LadderNet \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        },
+        {
+          "fold": "2025-01-01..2025-03-31",
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.04 \u00b7 1h"
+        },
+        {
+          "fold": "2025-04-01..2025-06-30",
+          "config": "LadderNet \u00b7 maker \u03b8 0.02 \u00b7 1h"
+        },
+        {
+          "fold": "2025-07-01..2025-09-30",
+          "config": "LadderNet \u00b7 maker \u03b8 0.02 \u00b7 1h"
+        },
+        {
+          "fold": "2025-10-01..2025-12-31",
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.02 \u00b7 1h"
+        },
+        {
+          "fold": "2026-01-01..2026-03-31",
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.02 \u00b7 1h"
+        },
+        {
+          "fold": "2026-04-01..2026-06-30",
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.02 \u00b7 1h"
+        }
+      ],
+      "selected": {
+        "days": 1095,
+        "pnl": 1629.219999999992,
+        "mean_daily": 1.4878721461187143,
+        "sharpe_ann": 0.12938039934837256,
+        "sharpe_ann_ci": [
+          -0.9919796688573221,
+          1.2886923764476346
+        ],
+        "nw_t": 0.21747513702326995,
+        "max_drawdown": 10319.96,
+        "trades": 9844,
+        "active_days": 1091,
+        "contracts": 1322320.0,
+        "outlay": 579429.78,
+        "hit_rate": 0.5859406745225518,
+        "return_on_outlay": 0.002811764352187757,
+        "ev_per_contract": 0.07246571876823582,
+        "realised_per_contract": 0.0012320920805856332,
+        "attribution": {
+          "alpha_vs_mid": -62998.18,
+          "spread_paid": 64627.399999999994,
+          "fees": -0.0
+        }
+      },
+      "deflated_sharpe": {
+        "sr_daily": 0.00677207961332135,
+        "sr0_daily": 0.09292216450089472,
+        "dsr": 0.0021356116117419686,
+        "skew": 0.8277517751451613,
+        "kurtosis": 6.370226370864622,
+        "n_trials": 32,
+        "t": 1095
+      },
+      "pbo": {
+        "pbo": 0.2911255411255411,
+        "splits": 924,
+        "blocks": 12,
+        "median_logit": 0.9808292530117263,
+        "oos_sr_best_minus_median": 0.025201766991780304
+      },
+      "edge_realisation": {
+        "by_bin": [
+          {
+            "ev": 0.025177871287092868,
+            "realised": -0.00960401783359905,
+            "trades": 1969.0
+          },
+          {
+            "ev": 0.038595105546317766,
+            "realised": 0.0016203299843580755,
+            "trades": 1969.0
+          },
+          {
+            "ev": 0.055151751720155295,
+            "realised": -0.016267311282637174,
+            "trades": 1968.0
+          },
+          {
+            "ev": 0.08087492846450725,
+            "realised": 0.0020878613591645183,
+            "trades": 1969.0
+          },
+          {
+            "ev": 0.16304080170980778,
+            "realised": 0.02972710848733611,
+            "trades": 1969.0
+          }
+        ],
+        "slope": 0.18609410858679754
+      },
+      "all_configs": [
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": 16177.849999999991,
+          "sharpe_ann": 1.1635391352207007,
+          "trades": 10070
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": 14316.999999999993,
+          "sharpe_ann": 1.0391068435673974,
+          "trades": 10183
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": 10093.169999999995,
+          "sharpe_ann": 0.912622253623589,
+          "trades": 6225
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": 9241.989999999994,
+          "sharpe_ann": 0.81410458417804,
+          "trades": 6172
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": 10877.659999999989,
+          "sharpe_ann": 0.7250467937532569,
+          "trades": 13020
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": 9967.079999999994,
+          "sharpe_ann": 0.6595930347369892,
+          "trades": 13070
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": 6028.079999999994,
+          "sharpe_ann": 0.527854457491696,
+          "trades": 9253
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": 9607.409999999987,
+          "sharpe_ann": 0.5226478255853558,
+          "trades": 14040
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": 6769.959999999988,
+          "sharpe_ann": 0.4896862363869979,
+          "trades": 8411
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": 8771.449999999984,
+          "sharpe_ann": 0.48093515636647854,
+          "trades": 9769
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": 7657.289999999981,
+          "sharpe_ann": 0.36109148386762935,
+          "trades": 15102
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": 2978.979999999994,
+          "sharpe_ann": 0.3494239689638289,
+          "trades": 5172
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": 4426.139999999995,
+          "sharpe_ann": 0.3442172274389095,
+          "trades": 12647
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": 6853.409999999978,
+          "sharpe_ann": 0.3257060840555202,
+          "trades": 15223
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": 4504.259999999982,
+          "sharpe_ann": 0.27186201132803167,
+          "trades": 9824
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": 4409.129999999992,
+          "sharpe_ann": 0.26241687110504003,
+          "trades": 16610
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": 1481.5599999999959,
+          "sharpe_ann": 0.09476994292387635,
+          "trades": 15942
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": 954.889999999994,
+          "sharpe_ann": 0.09458342354574914,
+          "trades": 9210
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -3161.4100000000144,
+          "sharpe_ann": -0.15483434021521109,
+          "trades": 18880
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": -1909.1500000000055,
+          "sharpe_ann": -0.15890575934172047,
+          "trades": 13521
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -6032.830000000013,
+          "sharpe_ann": -0.26210673271311674,
+          "trades": 19319
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -10384.40000000002,
+          "sharpe_ann": -0.44837167412453643,
+          "trades": 19320
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -6796.350000000006,
+          "sharpe_ann": -0.46313174071590674,
+          "trades": 16307
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -8382.880000000008,
+          "sharpe_ann": -0.6146132504900929,
+          "trades": 16893
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": -5535.010000000004,
+          "sharpe_ann": -0.7702729513533798,
+          "trades": 4282
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": -12846.130000000012,
+          "sharpe_ann": -0.8655162179449027,
+          "trades": 14074
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -30631.77000000002,
+          "sharpe_ann": -1.131372870411335,
+          "trades": 24548
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -29856.180000000008,
+          "sharpe_ann": -1.2118948921155754,
+          "trades": 23624
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": -15311.960000000012,
+          "sharpe_ann": -1.3534980957928253,
+          "trades": 7494
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -25754.220000000012,
+          "sharpe_ann": -1.5211189996330186,
+          "trades": 20159
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -37849.81000000001,
+          "sharpe_ann": -1.6646519479230288,
+          "trades": 24153
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -39445.070000000014,
+          "sharpe_ann": -2.0008862563151126,
+          "trades": 24994
+        }
+      ],
+      "by_period": {
+        "2023H2": {
+          "pnl": -689.0300000000004,
+          "trades": 875,
+          "per_contract": -0.007264723868165241
+        },
+        "2024H1": {
+          "pnl": -353.8400000000004,
+          "trades": 934,
+          "per_contract": -0.004283829102047245
+        },
+        "2024H2": {
+          "pnl": 7282.559999999998,
+          "trades": 1379,
+          "per_contract": 0.03270796841736505
+        },
+        "2025H1": {
+          "pnl": -4700.800000000002,
+          "trades": 1873,
+          "per_contract": -0.016004684829459957
+        },
+        "2025H2": {
+          "pnl": -458.6700000000001,
+          "trades": 2334,
+          "per_contract": -0.0015460717030485259
+        },
+        "2026H1": {
+          "pnl": 549.0000000000005,
+          "trades": 2449,
+          "per_contract": 0.0016544167502915584
+        }
+      },
+      "by_city": {
+        "AUS": {
+          "pnl": -3966.1300000000024,
+          "trades": 1731,
+          "per_contract": -0.018189919280865906
+        },
+        "CHI": {
+          "pnl": 776.3999999999994,
+          "trades": 1779,
+          "per_contract": 0.0034515257130663607
+        },
+        "DEN": {
+          "pnl": -1769.9600000000005,
+          "trades": 888,
+          "per_contract": -0.01597811760882518
+        },
+        "LAX": {
+          "pnl": 2162.099999999999,
+          "trades": 1111,
+          "per_contract": 0.013987384764677334
+        },
+        "MIA": {
+          "pnl": 5274.87,
+          "trades": 1651,
+          "per_contract": 0.02714387896876447
+        },
+        "NY": {
+          "pnl": 172.17999999999756,
+          "trades": 1750,
+          "per_contract": 0.0005970822106398315
+        },
+        "PHIL": {
+          "pnl": -1020.2400000000005,
+          "trades": 934,
+          "per_contract": -0.007771007251233932
+        }
+      },
+      "robustness_config": "LadderNet \u00b7 maker \u03b8 0.02 \u00b7 1h",
+      "robustness": [
+        {
+          "scenario": "base: trade-through fills",
+          "pnl": 6028.079999999994,
+          "sharpe_ann": 0.527854457491696,
+          "trades": 9253,
+          "fill_ratio": 0.5925398327732965
+        },
+        {
+          "scenario": "touch fills, 50% queue share",
+          "pnl": 10425.099999999993,
+          "sharpe_ann": 0.8796911168062946,
+          "trades": 10539,
+          "fill_ratio": 0.5719207164651293
+        },
+        {
+          "scenario": "maker fee 0.0175",
+          "pnl": 2130.1299999999947,
+          "sharpe_ann": 0.1972294837778769,
+          "trades": 8564,
+          "fill_ratio": 0.5890237082914627
+        },
+        {
+          "scenario": "no price improvement",
+          "pnl": 5345.57,
+          "sharpe_ann": 0.47768045432191814,
+          "trades": 8421,
+          "fill_ratio": 0.632016959138747
+        },
+        {
+          "scenario": "horizon 1h",
+          "pnl": 6028.079999999994,
+          "sharpe_ann": 0.527854457491696,
+          "trades": 9253,
+          "fill_ratio": 0.5925398327732965
+        },
+        {
+          "scenario": "horizon to close",
+          "pnl": -59280.010000000024,
+          "sharpe_ann": -2.830114698810576,
+          "trades": 17144,
+          "fill_ratio": 0.7330201938944166
+        },
+        {
+          "scenario": "size \u00d710",
+          "pnl": -27345.760000000017,
+          "sharpe_ann": -0.7056529431263443,
+          "trades": 9253,
+          "fill_ratio": 0.1948160034266009
+        }
+      ],
+      "placebos": {
+        "oracle (must never lose)": {
+          "trades": 12808,
+          "pnl": 511839.18000000005,
+          "losing_trades": 0
+        },
+        "uninformed market maker": {
+          "trades": 17080,
+          "pnl": -42779.07000000001,
+          "losing_trades": 7990
+        },
+        "noise_matched_turnover": {
+          "trades": 10221,
+          "pnl": -19320.82000000001,
+          "losing_trades": 5185,
+          "sigma": 0.2
+        }
+      }
+    },
+    "d0_12 \u00b7 taker": {
+      "execution": "taker",
+      "configs": 28,
+      "picks": [
+        {
+          "fold": "2023-07-01..2023-09-30",
+          "config": "LadderNet \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2023-10-01..2023-12-31",
+          "config": "LadderNet \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2024-01-01..2024-03-31",
+          "config": "pool \u00b7 market+GFS \u00b7 kelly 0.50"
+        },
+        {
+          "fold": "2024-04-01..2024-06-30",
+          "config": "pool \u00b7 market+GFS \u00b7 kelly 0.50"
+        },
+        {
+          "fold": "2024-07-01..2024-09-30",
+          "config": "pool \u00b7 market+GFS \u00b7 kelly 0.50"
+        },
+        {
+          "fold": "2024-10-01..2024-12-31",
+          "config": "market (tempered) \u00b7 \u03b8 0.08"
+        },
+        {
+          "fold": "2025-01-01..2025-03-31",
+          "config": "market (tempered) \u00b7 \u03b8 0.08"
+        },
+        {
+          "fold": "2025-04-01..2025-06-30",
+          "config": "market (tempered) \u00b7 \u03b8 0.08"
+        },
+        {
+          "fold": "2025-07-01..2025-09-30",
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2025-10-01..2025-12-31",
+          "config": "market (tempered) \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2026-01-01..2026-03-31",
+          "config": "market (tempered) \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2026-04-01..2026-06-30",
+          "config": "market (tempered) \u00b7 \u03b8 0.04"
+        }
+      ],
+      "selected": {
+        "days": 1095,
+        "pnl": 592.4800000000004,
+        "mean_daily": 0.5410776255707765,
+        "sharpe_ann": 0.36527348648494823,
+        "sharpe_ann_ci": [
+          -0.8862686383248648,
+          1.651811674301835
+        ],
+        "nw_t": 0.6223752016237438,
+        "max_drawdown": 1292.1399999999999,
+        "trades": 702,
+        "active_days": 412,
+        "contracts": 34556.0,
+        "outlay": 21092.52,
+        "hit_rate": 0.5897435897435898,
+        "return_on_outlay": 0.028089578675283958,
+        "ev_per_contract": 0.052274791079388636,
+        "realised_per_contract": 0.017145502951730535,
+        "attribution": {
+          "alpha_vs_mid": 2232.545,
+          "spread_paid": -1150.065,
+          "fees": -489.99999999999994
+        }
+      },
+      "deflated_sharpe": {
+        "sr_daily": 0.019119288111415503,
+        "sr0_daily": 0.05215279593710534,
+        "dsr": 0.13857751560954013,
+        "skew": -0.4808962705640971,
+        "kurtosis": 18.9803576750494,
+        "n_trials": 28,
+        "t": 1095
+      },
+      "pbo": {
+        "pbo": 0.4653679653679654,
+        "splits": 924,
+        "blocks": 12,
+        "median_logit": 0.20763936477824455,
+        "oos_sr_best_minus_median": 0.0023174802614619487
+      },
+      "edge_realisation": {
+        "by_bin": [
+          {
+            "ev": 0.004213675328760918,
+            "realised": -0.0018671000361141186,
+            "trades": 141.0
+          },
+          {
+            "ev": 0.015407043194741305,
+            "realised": 0.0490731102850062,
+            "trades": 140.0
+          },
+          {
+            "ev": 0.037962604611502374,
+            "realised": -0.014407138535995142,
+            "trades": 140.0
+          },
+          {
+            "ev": 0.053969543318386916,
+            "realised": 0.01171401737497065,
+            "trades": 140.0
+          },
+          {
+            "ev": 0.09470225966674042,
+            "realised": 0.04128064091833076,
+            "trades": 141.0
+          }
+        ],
+        "slope": -0.07507560857889381
+      },
+      "all_configs": [
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.04",
+          "pnl": 2042.8700000000001,
+          "sharpe_ann": 1.308150897163218,
+          "trades": 513
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.08",
+          "pnl": 690.8799999999999,
+          "sharpe_ann": 1.1602125081657337,
+          "trades": 241
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.25",
+          "pnl": 1366.900000000002,
+          "sharpe_ann": 0.8846009600871473,
+          "trades": 4708
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.50",
+          "pnl": 2521.5400000000036,
+          "sharpe_ann": 0.8814423662052475,
+          "trades": 4736
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.10",
+          "pnl": 577.6300000000006,
+          "sharpe_ann": 0.8045692800795959,
+          "trades": 4625
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.04",
+          "pnl": 1770.2500000000002,
+          "sharpe_ann": 0.7268079494588945,
+          "trades": 655
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.02",
+          "pnl": 1822.66,
+          "sharpe_ann": 0.7107220468700711,
+          "trades": 897
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 kelly 0.25",
+          "pnl": 1430.6800000000019,
+          "sharpe_ann": 0.7082099060650248,
+          "trades": 4704
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 kelly 0.50",
+          "pnl": 2568.840000000004,
+          "sharpe_ann": 0.6789854145469547,
+          "trades": 4726
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 kelly 0.10",
+          "pnl": 600.3800000000008,
+          "sharpe_ann": 0.6726363132911044,
+          "trades": 4619
+        },
+        {
+          "config": "LadderNet \u00b7 \u03b8 0.04",
+          "pnl": 2404.7200000000007,
+          "sharpe_ann": 0.5306224497545575,
+          "trades": 770
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.08",
+          "pnl": 533.6299999999999,
+          "sharpe_ann": 0.5090529471336006,
+          "trades": 248
+        },
+        {
+          "config": "LadderNet \u00b7 \u03b8 0.08",
+          "pnl": 1289.4700000000003,
+          "sharpe_ann": 0.506657310376669,
+          "trades": 189
+        },
+        {
+          "config": "LadderNet \u00b7 kelly 0.10",
+          "pnl": 515.2800000000011,
+          "sharpe_ann": 0.4369549499621436,
+          "trades": 5021
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.02",
+          "pnl": 1580.8200000000008,
+          "sharpe_ann": 0.3802068650281449,
+          "trades": 1392
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.02",
+          "pnl": 2028.5099999999998,
+          "sharpe_ann": 0.29560051132727766,
+          "trades": 1967
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.01",
+          "pnl": 1101.3899999999999,
+          "sharpe_ann": 0.28653952175578457,
+          "trades": 1706
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.01",
+          "pnl": 1501.2199999999996,
+          "sharpe_ann": 0.26359722247275347,
+          "trades": 2412
+        },
+        {
+          "config": "LadderNet \u00b7 \u03b8 0.02",
+          "pnl": 1587.1200000000006,
+          "sharpe_ann": 0.23705429227315825,
+          "trades": 1697
+        },
+        {
+          "config": "LadderNet \u00b7 kelly 0.25",
+          "pnl": 430.13000000000227,
+          "sharpe_ann": 0.1579940885781835,
+          "trades": 5104
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.04",
+          "pnl": 432.3800000000002,
+          "sharpe_ann": 0.10938476533976801,
+          "trades": 917
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.08",
+          "pnl": 81.54000000000002,
+          "sharpe_ann": 0.04676577522915836,
+          "trades": 275
+        },
+        {
+          "config": "LadderNet \u00b7 kelly 0.50",
+          "pnl": -995.7999999999947,
+          "sharpe_ann": -0.19918934827667853,
+          "trades": 5132
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 kelly 0.10",
+          "pnl": -360.04999999999865,
+          "sharpe_ann": -0.28643488869900213,
+          "trades": 5618
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 kelly 0.25",
+          "pnl": -1050.7099999999962,
+          "sharpe_ann": -0.35754626081319946,
+          "trades": 5681
+        },
+        {
+          "config": "LadderNet \u00b7 \u03b8 0.01",
+          "pnl": -2865.8799999999997,
+          "sharpe_ann": -0.35776408987140224,
+          "trades": 2845
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 kelly 0.50",
+          "pnl": -2433.1499999999946,
+          "sharpe_ann": -0.4437452369248617,
+          "trades": 5696
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.01",
+          "pnl": -4532.389999999998,
+          "sharpe_ann": -0.5493616991057314,
+          "trades": 3363
+        }
+      ],
+      "by_period": {
+        "2023H2": {
+          "pnl": 125.22,
+          "trades": 241,
+          "per_contract": 0.03657126168224299
+        },
+        "2024H1": {
+          "pnl": 541.6200000000001,
+          "trades": 235,
+          "per_contract": 0.07589966367713007
+        },
+        "2024H2": {
+          "pnl": -277.0600000000002,
+          "trades": 117,
+          "per_contract": -0.04296169948829279
+        },
+        "2025H2": {
+          "pnl": -200.61000000000007,
+          "trades": 67,
+          "per_contract": -0.018443504642824314
+        },
+        "2026H1": {
+          "pnl": 403.3100000000002,
+          "trades": 42,
+          "per_contract": 0.06046626686656674
+        }
+      },
+      "by_city": {
+        "AUS": {
+          "pnl": 86.12000000000003,
+          "trades": 307,
+          "per_contract": 0.008242725880551305
+        },
+        "CHI": {
+          "pnl": 1101.13,
+          "trades": 122,
+          "per_contract": 0.16207388872534592
+        },
+        "DEN": {
+          "pnl": -276.13,
+          "trades": 11,
+          "per_contract": -0.13875879396984925
+        },
+        "LAX": {
+          "pnl": 342.95,
+          "trades": 14,
+          "per_contract": 0.16631910766246363
+        },
+        "MIA": {
+          "pnl": -437.05999999999995,
+          "trades": 81,
+          "per_contract": -0.09246033425005287
+        },
+        "NY": {
+          "pnl": -288.75,
+          "trades": 147,
+          "per_contract": -0.05399214659685864
+        },
+        "PHIL": {
+          "pnl": 64.22000000000003,
+          "trades": 20,
+          "per_contract": 0.020150611860684037
+        }
+      },
+      "robustness_config": "market (tempered) \u00b7 \u03b8 0.04",
+      "robustness": [
+        {
+          "scenario": "base",
+          "pnl": 2042.8700000000001,
+          "sharpe_ann": 1.308150897163218,
+          "trades": 513
+        },
+        {
+          "scenario": "slip +1\u00a2",
+          "pnl": 1484.5700000000002,
+          "sharpe_ann": 1.2122212716254614,
+          "trades": 430
+        },
+        {
+          "scenario": "slip +2\u00a2",
+          "pnl": 1292.5399999999997,
+          "sharpe_ann": 1.361337171402366,
+          "trades": 344
+        },
+        {
+          "scenario": "fees \u00d71.5",
+          "pnl": 1648.9500000000003,
+          "sharpe_ann": 1.3319907583531312,
+          "trades": 445
+        },
+        {
+          "scenario": "participation 1%",
+          "pnl": 1390.7800000000002,
+          "sharpe_ann": 1.2353862933611455,
+          "trades": 409
+        },
+        {
+          "scenario": "participation 20%",
+          "pnl": 2072.2,
+          "sharpe_ann": 0.9936239313575925,
+          "trades": 555
+        },
+        {
+          "scenario": "size \u00d710",
+          "pnl": 8314.060000000001,
+          "sharpe_ann": 0.962545138024673,
+          "trades": 513
+        }
+      ],
+      "placebos": {
+        "oracle (must never lose)": {
+          "trades": 18914,
+          "pnl": 939953.46,
+          "losing_trades": 0
+        },
+        "in-spread market (must not trade)": {
+          "trades": 2,
+          "pnl": 740.4300000000001,
+          "losing_trades": 1
+        },
+        "normalised mid": {
+          "trades": 2169,
+          "pnl": 3577.239999999996,
+          "losing_trades": 1228
+        },
+        "noise_matched_turnover": {
+          "trades": 805,
+          "pnl": 418.24000000000024,
+          "losing_trades": 400,
+          "sigma": 0.1
+        },
+        "arbitrage_ladders": {
+          "trades": 378,
+          "pnl": 0.0,
+          "losing_trades": 0
+        }
+      }
+    },
+    "d0_12 \u00b7 maker": {
+      "execution": "maker",
+      "configs": 32,
+      "picks": [
+        {
+          "fold": "2023-07-01..2023-09-30",
+          "config": "LadderNet \u00b7 maker \u03b8 0.02 \u00b7 4h"
+        },
+        {
+          "fold": "2023-10-01..2023-12-31",
+          "config": "LadderNet \u00b7 maker \u03b8 0.02 \u00b7 4h"
+        },
+        {
+          "fold": "2024-01-01..2024-03-31",
+          "config": "LadderNet \u00b7 maker \u03b8 0.04 \u00b7 1h"
+        },
+        {
+          "fold": "2024-04-01..2024-06-30",
+          "config": "market (tempered) \u00b7 maker \u03b8 0.04 \u00b7 1h"
+        },
+        {
+          "fold": "2024-07-01..2024-09-30",
+          "config": "market (tempered) \u00b7 maker \u03b8 0.04 \u00b7 1h"
+        },
+        {
+          "fold": "2024-10-01..2024-12-31",
+          "config": "LadderNet \u00b7 maker \u03b8 0.04 \u00b7 1h"
+        },
+        {
+          "fold": "2025-01-01..2025-03-31",
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.00 \u00b7 1h"
+        },
+        {
+          "fold": "2025-04-01..2025-06-30",
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.04 \u00b7 1h"
+        },
+        {
+          "fold": "2025-07-01..2025-09-30",
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.04 \u00b7 1h"
+        },
+        {
+          "fold": "2025-10-01..2025-12-31",
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.04 \u00b7 1h"
+        },
+        {
+          "fold": "2026-01-01..2026-03-31",
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.04 \u00b7 1h"
+        },
+        {
+          "fold": "2026-04-01..2026-06-30",
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.04 \u00b7 1h"
+        }
+      ],
+      "selected": {
+        "days": 1095,
+        "pnl": -24577.15000000001,
+        "mean_daily": -22.444885844748867,
+        "sharpe_ann": -2.1007030911980378,
+        "sharpe_ann_ci": [
+          -3.2181269973507045,
+          -0.9429515915011973
+        ],
+        "nw_t": -3.443244013340844,
+        "max_drawdown": 26238.409999999974,
+        "trades": 8538,
+        "active_days": 1081,
+        "contracts": 1292637.0,
+        "outlay": 479771.15,
+        "hit_rate": 0.5229561958304052,
+        "return_on_outlay": -0.051226819286653666,
+        "ev_per_contract": 0.06869579109856078,
+        "realised_per_contract": -0.019013187770425887,
+        "attribution": {
+          "alpha_vs_mid": -104455.47,
+          "spread_paid": 79878.31999999999,
+          "fees": -0.0
+        }
+      },
+      "deflated_sharpe": {
+        "sr_daily": -0.10995582521922644,
+        "sr0_daily": 0.2286491476999151,
+        "dsr": 3.2177970581165524e-28,
+        "skew": 0.2516189758663902,
+        "kurtosis": 6.917441062237739,
+        "n_trials": 32,
+        "t": 1095
+      },
+      "pbo": {
+        "pbo": 0.0010822510822510823,
+        "splits": 924,
+        "blocks": 12,
+        "median_logit": 3.4657359027997274,
+        "oos_sr_best_minus_median": 0.17029679555572017
+      },
+      "edge_realisation": {
+        "by_bin": [
+          {
+            "ev": 0.017660059660419624,
+            "realised": -0.03644440302941907,
+            "trades": 1708.0
+          },
+          {
+            "ev": 0.046744306132987586,
+            "realised": -0.02822240946856875,
+            "trades": 1707.0
+          },
+          {
+            "ev": 0.06253171018657012,
+            "realised": -0.011690411719501264,
+            "trades": 1708.0
+          },
+          {
+            "ev": 0.08922083798967685,
+            "realised": -0.010421315742005322,
+            "trades": 1707.0
+          },
+          {
+            "ev": 0.18302813529210266,
+            "realised": 0.0077974345730027475,
+            "trades": 1708.0
+          }
+        ],
+        "slope": 0.23731962502223114
+      },
+      "all_configs": [
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": -5785.83000000001,
+          "sharpe_ann": -0.5464523776901097,
+          "trades": 6572
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": -15034.040000000008,
+          "sharpe_ann": -1.349111017563562,
+          "trades": 6643
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": -15956.82000000001,
+          "sharpe_ann": -1.3832127819329778,
+          "trades": 6991
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": -27902.97000000001,
+          "sharpe_ann": -1.8494395599278255,
+          "trades": 11124
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": -17209.520000000004,
+          "sharpe_ann": -1.9186144131312592,
+          "trades": 6136
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": -28087.640000000014,
+          "sharpe_ann": -2.080023511830734,
+          "trades": 10757
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": -32172.210000000006,
+          "sharpe_ann": -2.3494273830602634,
+          "trades": 10519
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": -40895.390000000014,
+          "sharpe_ann": -2.442510672836695,
+          "trades": 13968
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": -42861.76000000001,
+          "sharpe_ann": -2.838716551879749,
+          "trades": 14025
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": -44916.29000000001,
+          "sharpe_ann": -2.9463500185878586,
+          "trades": 13531
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": -37957.170000000006,
+          "sharpe_ann": -3.133291532864527,
+          "trades": 10828
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -58481.35000000001,
+          "sharpe_ann": -3.4087828182111126,
+          "trades": 17356
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -60594.78000000001,
+          "sharpe_ann": -3.426084945589817,
+          "trades": 16844
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": -47606.360000000015,
+          "sharpe_ann": -3.4684406292509213,
+          "trades": 9297
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": -53973.470000000016,
+          "sharpe_ann": -3.6400421344715377,
+          "trades": 9365
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -59737.28000000002,
+          "sharpe_ann": -3.6787989888318595,
+          "trades": 17341
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": -50834.87000000001,
+          "sharpe_ann": -3.7386577421194964,
+          "trades": 14319
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -63299.86000000003,
+          "sharpe_ann": -3.7457111099222185,
+          "trades": 16922
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": -64454.920000000006,
+          "sharpe_ann": -4.439499375392515,
+          "trades": 9767
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": -58207.14000000001,
+          "sharpe_ann": -5.1419674784919485,
+          "trades": 8860
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": -98056.96000000002,
+          "sharpe_ann": -5.158168778765791,
+          "trades": 14737
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": -91379.12000000002,
+          "sharpe_ann": -5.291543380984488,
+          "trades": 14379
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": -94107.06000000003,
+          "sharpe_ann": -5.299249773802495,
+          "trades": 14130
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -118569.63000000002,
+          "sharpe_ann": -5.639106773429371,
+          "trades": 18222
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -125474.95000000001,
+          "sharpe_ann": -6.4139228831290085,
+          "trades": 17870
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -124493.43000000002,
+          "sharpe_ann": -6.5719244107119135,
+          "trades": 18382
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": -97928.71000000002,
+          "sharpe_ann": -6.866511761969068,
+          "trades": 14523
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -158579.78,
+          "sharpe_ann": -7.043238091881163,
+          "trades": 22040
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -162534.86000000004,
+          "sharpe_ann": -7.341796300547775,
+          "trades": 22766
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -163740.31,
+          "sharpe_ann": -7.467929452602305,
+          "trades": 22262
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -151825.77000000005,
+          "sharpe_ann": -7.598421826801262,
+          "trades": 22795
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -126202.40000000002,
+          "sharpe_ann": -7.604280858953634,
+          "trades": 18847
+        }
+      ],
+      "by_period": {
+        "2023H2": {
+          "pnl": -6589.400000000001,
+          "trades": 863,
+          "per_contract": -0.07449184923918696
+        },
+        "2024H1": {
+          "pnl": -134.67000000000007,
+          "trades": 588,
+          "per_contract": -0.0034803845557450784
+        },
+        "2024H2": {
+          "pnl": 1015.809999999999,
+          "trades": 1277,
+          "per_contract": 0.006829801253260892
+        },
+        "2025H1": {
+          "pnl": -15480.030000000002,
+          "trades": 3102,
+          "per_contract": -0.02481286996831076
+        },
+        "2025H2": {
+          "pnl": -4658.750000000003,
+          "trades": 1926,
+          "per_contract": -0.01643866310047213
+        },
+        "2026H1": {
+          "pnl": 1269.889999999999,
+          "trades": 782,
+          "per_contract": 0.011599287541103388
+        }
+      },
+      "by_city": {
+        "AUS": {
+          "pnl": -3074.510000000001,
+          "trades": 1498,
+          "per_contract": -0.014913656780853154
+        },
+        "CHI": {
+          "pnl": -4961.640000000001,
+          "trades": 1484,
+          "per_contract": -0.02263170858534717
+        },
+        "DEN": {
+          "pnl": -537.6500000000015,
+          "trades": 971,
+          "per_contract": -0.0030227981896382167
+        },
+        "LAX": {
+          "pnl": -3384.5500000000025,
+          "trades": 763,
+          "per_contract": -0.021247057346432733
+        },
+        "MIA": {
+          "pnl": -3605.590000000001,
+          "trades": 1478,
+          "per_contract": -0.017887000436559913
+        },
+        "NY": {
+          "pnl": -4807.640000000001,
+          "trades": 1533,
+          "per_contract": -0.021609021812902564
+        },
+        "PHIL": {
+          "pnl": -4205.5700000000015,
+          "trades": 811,
+          "per_contract": -0.03966396302933133
+        }
+      },
+      "robustness_config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.04 \u00b7 1h",
+      "robustness": [
+        {
+          "scenario": "base: trade-through fills",
+          "pnl": -5785.83000000001,
+          "sharpe_ann": -0.5464523776901097,
+          "trades": 6572,
+          "fill_ratio": 0.5675941649310413
+        },
+        {
+          "scenario": "touch fills, 50% queue share",
+          "pnl": -3168.190000000007,
+          "sharpe_ann": -0.2951877715300386,
+          "trades": 6943,
+          "fill_ratio": 0.5561730687294411
+        },
+        {
+          "scenario": "maker fee 0.0175",
+          "pnl": -7201.650000000007,
+          "sharpe_ann": -0.7200357879883887,
+          "trades": 6106,
+          "fill_ratio": 0.5582702716623422
+        },
+        {
+          "scenario": "no price improvement",
+          "pnl": -16506.090000000004,
+          "sharpe_ann": -1.4566923585757223,
+          "trades": 6378,
+          "fill_ratio": 0.6431718050917837
+        },
+        {
+          "scenario": "horizon 1h",
+          "pnl": -5785.83000000001,
+          "sharpe_ann": -0.5464523776901097,
+          "trades": 6572,
+          "fill_ratio": 0.5675941649310413
+        },
+        {
+          "scenario": "horizon to close",
+          "pnl": -74593.88,
+          "sharpe_ann": -5.23395340578403,
+          "trades": 10098,
+          "fill_ratio": 0.6366103765809067
+        },
+        {
+          "scenario": "size \u00d710",
+          "pnl": -156030.28000000003,
+          "sharpe_ann": -3.421450914885958,
+          "trades": 6572,
+          "fill_ratio": 0.20450985814269448
+        }
+      ],
+      "placebos": {
+        "oracle (must never lose)": {
+          "trades": 11764,
+          "pnl": 545805.3500000001,
+          "losing_trades": 0
+        },
+        "uninformed market maker": {
+          "trades": 19196,
+          "pnl": -101868.78000000003,
+          "losing_trades": 9808
+        },
+        "noise_matched_turnover": {
+          "trades": 8453,
+          "pnl": -34834.45000000001,
+          "losing_trades": 4658,
+          "sigma": 0.3
+        }
+      }
+    },
+    "d1_16 \u00b7 taker": {
+      "execution": "taker",
+      "configs": 28,
+      "picks": [
+        {
+          "fold": "2023-07-01..2023-09-30",
+          "config": "LadderNet \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2023-10-01..2023-12-31",
+          "config": "LadderNet \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2024-01-01..2024-03-31",
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2024-04-01..2024-06-30",
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2024-07-01..2024-09-30",
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2024-10-01..2024-12-31",
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2025-01-01..2025-03-31",
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 kelly 0.50"
+        },
+        {
+          "fold": "2025-04-01..2025-06-30",
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.02"
+        },
+        {
+          "fold": "2025-07-01..2025-09-30",
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.01"
+        },
+        {
+          "fold": "2025-10-01..2025-12-31",
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.01"
+        },
+        {
+          "fold": "2026-01-01..2026-03-31",
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.01"
+        },
+        {
+          "fold": "2026-04-01..2026-06-30",
+          "config": "pool \u00b7 market+GFS \u00b7 kelly 0.25"
+        }
+      ],
+      "selected": {
+        "days": 1089,
+        "pnl": 22121.550000000003,
+        "mean_daily": 20.313636363636366,
+        "sharpe_ann": 2.045708586723519,
+        "sharpe_ann_ci": [
+          0.81474318547258,
+          3.274267026588426
+        ],
+        "nw_t": 3.174665290174005,
+        "max_drawdown": 5195.33,
+        "trades": 6662,
+        "active_days": 967,
+        "contracts": 852480.0,
+        "outlay": 481041.45,
+        "hit_rate": 0.709696787751426,
+        "return_on_outlay": 0.04598678554623516,
+        "ev_per_contract": 0.04832788378925428,
+        "realised_per_contract": 0.0259496410472973,
+        "attribution": {
+          "alpha_vs_mid": 43560.83500000001,
+          "spread_paid": -12434.355,
+          "fees": -9004.93
+        }
+      },
+      "deflated_sharpe": {
+        "sr_daily": 0.10707728129393067,
+        "sr0_daily": 0.07787508765066897,
+        "dsr": 0.8492025627259538,
+        "skew": 1.5379621042288893,
+        "kurtosis": 12.90612703768042,
+        "n_trials": 28,
+        "t": 1089
+      },
+      "pbo": {
+        "pbo": 0.26406926406926406,
+        "splits": 924,
+        "blocks": 12,
+        "median_logit": 1.343734746701095,
+        "oos_sr_best_minus_median": 0.030439785609221455
+      },
+      "edge_realisation": {
+        "by_bin": [
+          {
+            "ev": 0.007029438931829689,
+            "realised": 0.0036339953133386694,
+            "trades": 1333.0
+          },
+          {
+            "ev": 0.01422437785232592,
+            "realised": 0.05071393486909967,
+            "trades": 1332.0
+          },
+          {
+            "ev": 0.02384704436588221,
+            "realised": 0.01068694312177071,
+            "trades": 1332.0
+          },
+          {
+            "ev": 0.04032124538975883,
+            "realised": 0.04678543548566967,
+            "trades": 1332.0
+          },
+          {
+            "ev": 0.11347430383165326,
+            "realised": 0.010289966112974261,
+            "trades": 1333.0
+          }
+        ],
+        "slope": -0.0006158817707653535
+      },
+      "all_configs": [
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 kelly 0.25",
+          "pnl": 14654.590000000006,
+          "sharpe_ann": 3.123812763144468,
+          "trades": 9644
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 kelly 0.50",
+          "pnl": 27241.980000000007,
+          "sharpe_ann": 3.043234640194439,
+          "trades": 9699
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.01",
+          "pnl": 40723.3,
+          "sharpe_ann": 2.804470213561988,
+          "trades": 7887
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 kelly 0.10",
+          "pnl": 5307.330000000002,
+          "sharpe_ann": 2.6098644154821025,
+          "trades": 9517
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.01",
+          "pnl": 33560.16,
+          "sharpe_ann": 2.5015660093830485,
+          "trades": 6609
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 kelly 0.25",
+          "pnl": 12896.420000000006,
+          "sharpe_ann": 2.3680694461117566,
+          "trades": 11020
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 kelly 0.10",
+          "pnl": 5220.5700000000015,
+          "sharpe_ann": 2.233764149439957,
+          "trades": 10902
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 kelly 0.50",
+          "pnl": 22651.540000000008,
+          "sharpe_ann": 2.2009518744900216,
+          "trades": 11065
+        },
+        {
+          "config": "LadderNet \u00b7 kelly 0.25",
+          "pnl": 8761.300000000005,
+          "sharpe_ann": 2.122843648764109,
+          "trades": 9160
+        },
+        {
+          "config": "LadderNet \u00b7 \u03b8 0.02",
+          "pnl": 23148.1,
+          "sharpe_ann": 2.109558149768695,
+          "trades": 3380
+        },
+        {
+          "config": "LadderNet \u00b7 kelly 0.10",
+          "pnl": 3651.8100000000018,
+          "sharpe_ann": 2.09327556810649,
+          "trades": 9032
+        },
+        {
+          "config": "LadderNet \u00b7 kelly 0.50",
+          "pnl": 16597.51000000001,
+          "sharpe_ann": 2.091652412457862,
+          "trades": 9195
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.02",
+          "pnl": 23650.550000000003,
+          "sharpe_ann": 1.946440410793523,
+          "trades": 5156
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.02",
+          "pnl": 19124.64,
+          "sharpe_ann": 1.936752770960446,
+          "trades": 4289
+        },
+        {
+          "config": "LadderNet \u00b7 \u03b8 0.04",
+          "pnl": 12988.33,
+          "sharpe_ann": 1.815427047570578,
+          "trades": 1397
+        },
+        {
+          "config": "LadderNet \u00b7 \u03b8 0.01",
+          "pnl": 23912.060000000005,
+          "sharpe_ann": 1.813620487214912,
+          "trades": 5675
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.04",
+          "pnl": 11622.14,
+          "sharpe_ann": 1.7894402516769432,
+          "trades": 2188
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.50",
+          "pnl": 6035.100000000006,
+          "sharpe_ann": 1.6936551837011815,
+          "trades": 7117
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.25",
+          "pnl": 2915.740000000003,
+          "sharpe_ann": 1.390245949553753,
+          "trades": 7083
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.08",
+          "pnl": 6728.87,
+          "sharpe_ann": 1.2888723051189577,
+          "trades": 754
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.01",
+          "pnl": 4850.4800000000005,
+          "sharpe_ann": 1.2501561776278665,
+          "trades": 2381
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.08",
+          "pnl": 4971.780000000001,
+          "sharpe_ann": 1.2337813639451805,
+          "trades": 755
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 \u03b8 0.04",
+          "pnl": 9933.060000000001,
+          "sharpe_ann": 1.1796373659834711,
+          "trades": 2581
+        },
+        {
+          "config": "LadderNet \u00b7 \u03b8 0.08",
+          "pnl": 4024.2900000000004,
+          "sharpe_ann": 1.1147391492059775,
+          "trades": 333
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.02",
+          "pnl": 3106.27,
+          "sharpe_ann": 1.1108547674596454,
+          "trades": 1722
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.04",
+          "pnl": 991.32,
+          "sharpe_ann": 0.6061334258896837,
+          "trades": 1150
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.10",
+          "pnl": 463.880000000001,
+          "sharpe_ann": 0.41773760302687685,
+          "trades": 6955
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.08",
+          "pnl": 481.8699999999999,
+          "sharpe_ann": 0.37615786329452244,
+          "trades": 586
+        }
+      ],
+      "by_period": {
+        "2023H2": {
+          "pnl": 396.4599999999999,
+          "trades": 587,
+          "per_contract": 0.026692250723759504
+        },
+        "2024H1": {
+          "pnl": 1412.52,
+          "trades": 385,
+          "per_contract": 0.061392559109874824
+        },
+        "2024H2": {
+          "pnl": 1108.8899999999999,
+          "trades": 281,
+          "per_contract": 0.029305478474589707
+        },
+        "2025H1": {
+          "pnl": 1185.5000000000005,
+          "trades": 1444,
+          "per_contract": 0.005118584498741405
+        },
+        "2025H2": {
+          "pnl": 11187.269999999999,
+          "trades": 1444,
+          "per_contract": 0.04230167432996551
+        },
+        "2026H1": {
+          "pnl": 6830.910000000003,
+          "trades": 2521,
+          "per_contract": 0.02433448874100938
+        }
+      },
+      "by_city": {
+        "AUS": {
+          "pnl": 4548.8600000000015,
+          "trades": 908,
+          "per_contract": 0.04440078086871646
+        },
+        "CHI": {
+          "pnl": 1985.4700000000007,
+          "trades": 1139,
+          "per_contract": 0.013886930490858483
+        },
+        "DEN": {
+          "pnl": 4532.620000000001,
+          "trades": 710,
+          "per_contract": 0.04654235164857733
+        },
+        "LAX": {
+          "pnl": 4190.9400000000005,
+          "trades": 768,
+          "per_contract": 0.03990193371480801
+        },
+        "MIA": {
+          "pnl": 6650.77,
+          "trades": 1455,
+          "per_contract": 0.03763684928328495
+        },
+        "NY": {
+          "pnl": -1750.87,
+          "trades": 904,
+          "per_contract": -0.015096309708570442
+        },
+        "PHIL": {
+          "pnl": 1963.7600000000002,
+          "trades": 778,
+          "per_contract": 0.017541559102805745
+        }
+      },
+      "robustness_config": "pool \u00b7 market+GFS \u00b7 \u03b8 0.04",
+      "robustness": [
+        {
+          "scenario": "base",
+          "pnl": 11622.14,
+          "sharpe_ann": 1.7894402516769432,
+          "trades": 2188
+        },
+        {
+          "scenario": "slip +1\u00a2",
+          "pnl": 6512.5999999999985,
+          "sharpe_ann": 1.2377491971293402,
+          "trades": 1633
+        },
+        {
+          "scenario": "slip +2\u00a2",
+          "pnl": 4516.369999999999,
+          "sharpe_ann": 0.9821176365719855,
+          "trades": 1255
+        },
+        {
+          "scenario": "fees \u00d71.5",
+          "pnl": 8514.79,
+          "sharpe_ann": 1.4198873089999462,
+          "trades": 1845
+        },
+        {
+          "scenario": "participation 1%",
+          "pnl": 9205.550000000001,
+          "sharpe_ann": 1.879831971298655,
+          "trades": 2146
+        },
+        {
+          "scenario": "participation 20%",
+          "pnl": 8734.0,
+          "sharpe_ann": 1.1817876227119497,
+          "trades": 2206
+        },
+        {
+          "scenario": "size \u00d710",
+          "pnl": 61210.20000000001,
+          "sharpe_ann": 1.7102631859116582,
+          "trades": 2188
+        }
+      ],
+      "placebos": {
+        "oracle (must never lose)": {
+          "trades": 29204,
+          "pnl": 1569263.23,
+          "losing_trades": 0
+        },
+        "in-spread market (must not trade)": {
+          "trades": 0,
+          "pnl": 0.0,
+          "losing_trades": 0
+        },
+        "normalised mid": {
+          "trades": 3446,
+          "pnl": -6726.67,
+          "losing_trades": 1238
+        },
+        "noise_matched_turnover": {
+          "trades": 5876,
+          "pnl": -15646.44,
+          "losing_trades": 2609,
+          "sigma": 0.3
+        },
+        "arbitrage_ladders": {
+          "trades": 548,
+          "pnl": 0.0,
+          "losing_trades": 0
+        }
+      }
+    },
+    "d1_16 \u00b7 maker": {
+      "execution": "maker",
+      "configs": 32,
+      "picks": [
+        {
+          "fold": "2023-07-01..2023-09-30",
+          "config": "LadderNet \u00b7 maker \u03b8 0.02 \u00b7 4h"
+        },
+        {
+          "fold": "2023-10-01..2023-12-31",
+          "config": "LadderNet \u00b7 maker \u03b8 0.02 \u00b7 4h"
+        },
+        {
+          "fold": "2024-01-01..2024-03-31",
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.00 \u00b7 1h"
+        },
+        {
+          "fold": "2024-04-01..2024-06-30",
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        },
+        {
+          "fold": "2024-07-01..2024-09-30",
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.02 \u00b7 1h"
+        },
+        {
+          "fold": "2024-10-01..2024-12-31",
+          "config": "LadderNet \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        },
+        {
+          "fold": "2025-01-01..2025-03-31",
+          "config": "LadderNet \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        },
+        {
+          "fold": "2025-04-01..2025-06-30",
+          "config": "LadderNet \u00b7 maker \u03b8 0.04 \u00b7 1h"
+        },
+        {
+          "fold": "2025-07-01..2025-09-30",
+          "config": "LadderNet \u00b7 maker \u03b8 0.04 \u00b7 1h"
+        },
+        {
+          "fold": "2025-10-01..2025-12-31",
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        },
+        {
+          "fold": "2026-01-01..2026-03-31",
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        },
+        {
+          "fold": "2026-04-01..2026-06-30",
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        }
+      ],
+      "selected": {
+        "days": 1089,
+        "pnl": -2419.220000000005,
+        "mean_daily": -2.2215059687787004,
+        "sharpe_ann": -0.32121836041411134,
+        "sharpe_ann_ci": [
+          -1.5843939237114741,
+          0.9859714602669815
+        ],
+        "nw_t": -0.5273227869444181,
+        "max_drawdown": 5111.110000000001,
+        "trades": 4672,
+        "active_days": 1020,
+        "contracts": 474393.0,
+        "outlay": 236195.22,
+        "hit_rate": 0.5898972602739726,
+        "return_on_outlay": -0.01024245960608349,
+        "ev_per_contract": 0.07369248347999126,
+        "realised_per_contract": -0.005099611503542428,
+        "attribution": {
+          "alpha_vs_mid": -16170.279999999999,
+          "spread_paid": 13751.059999999996,
+          "fees": -0.0
+        }
+      },
+      "deflated_sharpe": {
+        "sr_daily": -0.016813337421595118,
+        "sr0_daily": 0.11314522453797428,
+        "dsr": 1.0716337947710334e-05,
+        "skew": 1.0168133212734842,
+        "kurtosis": 8.220970559791017,
+        "n_trials": 32,
+        "t": 1089
+      },
+      "pbo": {
+        "pbo": 0.3116883116883117,
+        "splits": 924,
+        "blocks": 12,
+        "median_logit": 0.43078291609245434,
+        "oos_sr_best_minus_median": 0.010867468650807345
+      },
+      "edge_realisation": {
+        "by_bin": [
+          {
+            "ev": 0.03595507294614249,
+            "realised": -0.017507829786324338,
+            "trades": 935.0
+          },
+          {
+            "ev": 0.0478600824913764,
+            "realised": -0.018741753591712304,
+            "trades": 934.0
+          },
+          {
+            "ev": 0.05872057805959661,
+            "realised": -0.032161669430510784,
+            "trades": 934.0
+          },
+          {
+            "ev": 0.07713445004151642,
+            "realised": 0.024349600612758503,
+            "trades": 934.0
+          },
+          {
+            "ev": 0.15008367117032587,
+            "realised": 0.020722452009757128,
+            "trades": 935.0
+          }
+        ],
+        "slope": 0.40453558676596624
+      },
+      "all_configs": [
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": 7037.089999999995,
+          "sharpe_ann": 0.7560949161653107,
+          "trades": 6168
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": 2835.559999999999,
+          "sharpe_ann": 0.661587350536406,
+          "trades": 2642
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": 3147.989999999999,
+          "sharpe_ann": 0.49960576244035265,
+          "trades": 5936
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": 3985.6599999999944,
+          "sharpe_ann": 0.4941715864627353,
+          "trades": 5241
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": 2212.479999999998,
+          "sharpe_ann": 0.45947510945960757,
+          "trades": 3141
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": 5247.609999999995,
+          "sharpe_ann": 0.43375932920980903,
+          "trades": 11477
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": 3141.029999999995,
+          "sharpe_ann": 0.3776953705920149,
+          "trades": 5761
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": 890.7999999999988,
+          "sharpe_ann": 0.20286267268794933,
+          "trades": 2932
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": 1387.1199999999974,
+          "sharpe_ann": 0.19785336882402602,
+          "trades": 7898
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": 1204.919999999998,
+          "sharpe_ann": 0.19455057581914595,
+          "trades": 5905
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": 311.79999999999774,
+          "sharpe_ann": 0.04403285133453712,
+          "trades": 8164
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": 219.38999999999658,
+          "sharpe_ann": 0.04315108634163849,
+          "trades": 3368
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": 258.7899999999945,
+          "sharpe_ann": 0.02324952311052967,
+          "trades": 11564
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -983.6300000000056,
+          "sharpe_ann": -0.07356159946296167,
+          "trades": 15426
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -1649.0800000000017,
+          "sharpe_ann": -0.2093789510530883,
+          "trades": 9894
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": -1259.080000000001,
+          "sharpe_ann": -0.2095905558511575,
+          "trades": 5661
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": -1866.080000000002,
+          "sharpe_ann": -0.2762147267021505,
+          "trades": 7933
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": -3776.160000000006,
+          "sharpe_ann": -0.33167952777047505,
+          "trades": 11125
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": -1105.140000000001,
+          "sharpe_ann": -0.43907909295227765,
+          "trades": 1458
+        },
+        {
+          "config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -7626.970000000006,
+          "sharpe_ann": -0.5074703576565983,
+          "trades": 19278
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -4815.460000000002,
+          "sharpe_ann": -0.6192832135919802,
+          "trades": 10490
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -9086.070000000005,
+          "sharpe_ann": -0.6777191323032369,
+          "trades": 15870
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -10606.360000000004,
+          "sharpe_ann": -0.8040869209058686,
+          "trades": 15674
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -6809.700000000003,
+          "sharpe_ann": -0.8861590092146795,
+          "trades": 10133
+        },
+        {
+          "config": "pool \u00b7 market+GFS \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -13959.030000000004,
+          "sharpe_ann": -0.9533359332223119,
+          "trades": 20487
+        },
+        {
+          "config": "LadderNet \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -22334.750000000007,
+          "sharpe_ann": -1.5291753015070846,
+          "trades": 19931
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": -7653.500000000001,
+          "sharpe_ann": -1.6726918773595276,
+          "trades": 5057
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": -14884.700000000006,
+          "sharpe_ann": -1.7819694669445878,
+          "trades": 10064
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": -12746.250000000002,
+          "sharpe_ann": -2.0667231640225254,
+          "trades": 8471
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -17847.77,
+          "sharpe_ann": -2.357141479598067,
+          "trades": 11112
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -28825.930000000004,
+          "sharpe_ann": -2.6638802660687086,
+          "trades": 16625
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -43292.18000000001,
+          "sharpe_ann": -3.235137847374465,
+          "trades": 21678
+        }
+      ],
+      "by_period": {
+        "2023H2": {
+          "pnl": -680.2900000000008,
+          "trades": 694,
+          "per_contract": -0.009665544236534401
+        },
+        "2024H1": {
+          "pnl": 999.5199999999995,
+          "trades": 635,
+          "per_contract": 0.01995926354886376
+        },
+        "2024H2": {
+          "pnl": 403.89999999999907,
+          "trades": 661,
+          "per_contract": 0.006572930397565445
+        },
+        "2025H1": {
+          "pnl": -129.36000000000115,
+          "trades": 965,
+          "per_contract": -0.0012376460232871973
+        },
+        "2025H2": {
+          "pnl": -2008.590000000001,
+          "trades": 901,
+          "per_contract": -0.02387285023235914
+        },
+        "2026H1": {
+          "pnl": -1004.3999999999999,
+          "trades": 816,
+          "per_contract": -0.009673970623645556
+        }
+      },
+      "by_city": {
+        "AUS": {
+          "pnl": 245.19999999999982,
+          "trades": 842,
+          "per_contract": 0.003149484933336756
+        },
+        "CHI": {
+          "pnl": -2875.4300000000007,
+          "trades": 943,
+          "per_contract": -0.02693434622554025
+        },
+        "DEN": {
+          "pnl": 53.69999999999985,
+          "trades": 336,
+          "per_contract": 0.0015364367257016923
+        },
+        "LAX": {
+          "pnl": 1207.7799999999995,
+          "trades": 349,
+          "per_contract": 0.029729237434155457
+        },
+        "MIA": {
+          "pnl": -22.710000000001173,
+          "trades": 1006,
+          "per_contract": -0.0002399518194497398
+        },
+        "NY": {
+          "pnl": -2016.8100000000004,
+          "trades": 825,
+          "per_contract": -0.022885787234042557
+        },
+        "PHIL": {
+          "pnl": 989.05,
+          "trades": 371,
+          "per_contract": 0.03146233617508589
+        }
+      },
+      "robustness_config": "pool \u00b7 market+GFS+obs \u00b7 365d \u00b7 maker \u03b8 0.04 \u00b7 4h",
+      "robustness": [
+        {
+          "scenario": "base: trade-through fills",
+          "pnl": 7037.089999999995,
+          "sharpe_ann": 0.7560949161653107,
+          "trades": 6168,
+          "fill_ratio": 0.5447756348619894
+        },
+        {
+          "scenario": "touch fills, 50% queue share",
+          "pnl": 10963.749999999993,
+          "sharpe_ann": 1.126398782314034,
+          "trades": 6892,
+          "fill_ratio": 0.5280920776091848
+        },
+        {
+          "scenario": "maker fee 0.0175",
+          "pnl": 7610.029999999995,
+          "sharpe_ann": 0.8440233849035675,
+          "trades": 5683,
+          "fill_ratio": 0.5401749720747759
+        },
+        {
+          "scenario": "no price improvement",
+          "pnl": 8274.05,
+          "sharpe_ann": 0.8647409189684503,
+          "trades": 5949,
+          "fill_ratio": 0.5949510731467682
+        },
+        {
+          "scenario": "horizon 1h",
+          "pnl": 2212.479999999998,
+          "sharpe_ann": 0.45947510945960757,
+          "trades": 3141,
+          "fill_ratio": 0.41665105280145054
+        },
+        {
+          "scenario": "horizon to close",
+          "pnl": -52947.010000000024,
+          "sharpe_ann": -2.9512243849963635,
+          "trades": 11441,
+          "fill_ratio": 0.7484283943432744
+        },
+        {
+          "scenario": "size \u00d710",
+          "pnl": -15326.00000000001,
+          "sharpe_ann": -0.5303703937512825,
+          "trades": 6168,
+          "fill_ratio": 0.14806418410088054
+        }
+      ],
+      "placebos": {
+        "oracle (must never lose)": {
+          "trades": 16240,
+          "pnl": 549707.45,
+          "losing_trades": 0
+        },
+        "uninformed market maker": {
+          "trades": 23453,
+          "pnl": -66702.03000000001,
+          "losing_trades": 10412
+        },
+        "noise_matched_turnover": {
+          "trades": 5231,
+          "pnl": -15490.780000000004,
+          "losing_trades": 2222,
+          "sigma": 0.1
+        }
+      }
+    }
+  },
+  "seconds": 368.8
+}
