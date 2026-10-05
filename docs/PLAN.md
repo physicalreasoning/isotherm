@@ -52,7 +52,7 @@ live trading; an LLM reading question text and emitting P(yes).
 
 | Gate | Question | Pass | Kill / redirect |
 |---|---|---|---|
-| **G0** | Does a free forecast add information the market lacks? | blend beats market log score, 95% CI excludes 0, at ≥1 read time | CI includes 0 at every read time *and* intraday obs add nothing: stop, write up |
+| **G0** | Does a free forecast add information the market lacks? | blend beats market log score, 95% CI excludes 0, at ≥1 read time. *Amended 2026-10-04 (FINDINGS §3): and on the most recent 12 months before the lockbox* | CI includes 0 at every read time *and* intraday obs add nothing: stop, write up |
 | **G1** | What is the bar? | baselines reproduce, leak tests pass | |
 | **G2** | Does the typed model beat the best baseline? | Δ log score vs best baseline > 0, CI excludes 0, walk-forward | ship the best baseline as the model instead; it still serves the API |
 | **G3** | Does synthetic pretraining help? | learning curve: same score with ≤50% real data, or better at 100% | drop it, and say so |

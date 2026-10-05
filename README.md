@@ -23,7 +23,8 @@ Pre-registered plan in [docs/PLAN.md](docs/PLAN.md); domain choice and the surve
 | Gate | | Status |
 |---|---|---|
 | Survey | which market is worth modelling | **done:** weather highs, 7 cities, ~8,200 city-days |
-| G0 | does a free forecast add information the market lacks | running |
+| Labels | settlement, strikes, ladder structure | **clean** on NY: 100% arithmetic agreement, CLI = settlement 1,545/1,546 days |
+| G0 | does a free forecast add information the market lacks | **NY: passes as written, fails on the last 12 months.** The edge was +0.22 nats in 2023 H2 and is zero since 2025. Six cities pending. [FINDINGS §3](FINDINGS.md) |
 | G1-G5 | baselines, model, synthetic pretraining, backtest, live shadow | not started |
 
 ## Reproduce
