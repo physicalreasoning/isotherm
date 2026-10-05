@@ -31,16 +31,21 @@ class City:
     series: str
     station: str          # ICAO id for MOS and the IEM CLI archive
     tz: str
+    std_offset_h: int     # local STANDARD time offset: the NWS climate day is midnight-midnight LST
+
+    @property
+    def asos(self) -> str:
+        return self.station[1:]
 
 
 CITIES: Dict[str, City] = {c.key: c for c in [
-    City("NY", "KXHIGHNY", "KNYC", "America/New_York"),
-    City("CHI", "KXHIGHCHI", "KMDW", "America/Chicago"),
-    City("MIA", "KXHIGHMIA", "KMIA", "America/New_York"),
-    City("AUS", "KXHIGHAUS", "KAUS", "America/Chicago"),
-    City("LAX", "KXHIGHLAX", "KLAX", "America/Los_Angeles"),
-    City("DEN", "KXHIGHDEN", "KDEN", "America/Denver"),
-    City("PHIL", "KXHIGHPHIL", "KPHL", "America/New_York"),
+    City("NY", "KXHIGHNY", "KNYC", "America/New_York", -5),
+    City("CHI", "KXHIGHCHI", "KMDW", "America/Chicago", -6),
+    City("MIA", "KXHIGHMIA", "KMIA", "America/New_York", -5),
+    City("AUS", "KXHIGHAUS", "KAUS", "America/Chicago", -6),
+    City("LAX", "KXHIGHLAX", "KLAX", "America/Los_Angeles", -8),
+    City("DEN", "KXHIGHDEN", "KDEN", "America/Denver", -7),
+    City("PHIL", "KXHIGHPHIL", "KPHL", "America/New_York", -5),
 ]}
 
 # When a run is public, by model. GFS MOS hits the wire roughly 4h after its

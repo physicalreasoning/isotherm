@@ -115,3 +115,26 @@ def cli(station: str, year: int) -> pd.DataFrame:
     for c in ("high", "low"):
         df[c] = pd.to_numeric(df[c], errors="coerce")
     return df[["station", "valid", "high", "low", "product"]]
+
+
+def asos(station3: str, year: int) -> pd.DataFrame:
+    """Hourly + special METAR temperatures for one station-year, UTC.
+
+    `station3` is the 3-letter id IEM's ASOS archive uses (NYC for Central Park).
+    Routine hourly obs land at :51; specials whenever weather changes. tmpf is
+    derived from the tenths-of-°C remark when present, so it is not pre-rounded.
+    """
+    q = urllib.parse.urlencode([("station", station3), ("data", "tmpf"),
+                                ("year1", year), ("month1", 1), ("day1", 1),
+                                ("year2", year + 1), ("month2", 1), ("day2", 1),
+                                ("tz", "Etc/UTC"), ("format", "onlycomma"), ("latlon", "no"),
+                                ("missing", "M"), ("trace", "T"), ("direct", "no"),
+                                ("report_type", 3), ("report_type", 4)])
+    closed = year < pd.Timestamp.now(tz="UTC").year
+    body = _cached("{}/cgi-bin/request/asos.py?{}".format(BASE, q), cache=closed)
+    df = pd.read_csv(io.BytesIO(body), na_values=["M"])
+    if df.empty:
+        return df
+    df["valid"] = pd.to_datetime(df["valid"], utc=True)
+    df["tmpf"] = pd.to_numeric(df["tmpf"], errors="coerce")
+    return df.dropna(subset=["tmpf"])[["station", "valid", "tmpf"]]
