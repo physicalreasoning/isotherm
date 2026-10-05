@@ -19,20 +19,21 @@ distribution, so answers to different question types cannot contradict each othe
 Pre-registered plan in [docs/PLAN.md](docs/PLAN.md); domain choice and the survey behind it in
 [docs/01-market-selection.md](docs/01-market-selection.md); evaluation protocol in
 [docs/EVALS.md](docs/EVALS.md); latest leaderboard in [results/benchmark.md](results/benchmark.md),
-backtests in [results/backtest_taker.md](results/backtest_taker.md) and
-[results/backtest_maker.md](results/backtest_maker.md).
+backtests in [results/backtest_g2.md](results/backtest_g2.md); every headline number in one place in
+[results/SUMMARY.md](results/SUMMARY.md).
 
-| Gate | | Status |
+| Stage | Question | Result |
 |---|---|---|
-| Survey | which market is worth modelling | **done:** weather highs, 7 cities, ~8,200 city-days |
-| Labels | settlement, strikes, ladder structure | **clean** on NY: 100% arithmetic agreement, CLI = settlement 1,545/1,546 days |
-| G0 | does a free forecast add information the market lacks | **7 cities: the market now prices NBM fully but still underweights GFS MOS** (+0.009 to +0.020 nats on the last 12 months, CIs > 0 at every read). [FINDINGS §5](FINDINGS.md) |
-| Backtest (G2) | does it survive fees, spread, capacity | **Day-before taker: +$22k, Sharpe 2.05, survives +2¢ slip and 10× size; DSR 0.85, PBO 0.26, just short of the bar.** [FINDINGS §8](FINDINGS.md) |
-| Backtest (G1) | | **No robust strategy.** Taker: ~1 tick of edge at the day-before read (Sharpe 1.67, fails DSR/PBO, dies at +1¢ slip). Maker: loses to adverse selection, though the model beats an uninformed market maker by ~2/3. [FINDINGS §6-7](FINDINGS.md) |
-| G2 | does a learned model beat the best baseline | **yes:** LadderNet +0.033 to +0.071 nats vs market, best calibrated, positive every half-year; control ≈ market. [FINDINGS §8](FINDINGS.md) |
-| Lockbox | the one-shot held-out test (2026-07 to 2026-10) | **PASS, marginally:** +$1,851 on 95 unseen days, NW t 1.77, survives +1¢; but monthly PnL halves each month. [FINDINGS §9-10](FINDINGS.md) |
-| Sports | same pipeline on MLB game winners | **no edge:** Elo + starters within ±0.001 nats of the market; no backtest passes. [docs/SPORTS.md](docs/SPORTS.md) |
-| G3, G5 | synthetic pretraining, live shadow | not started |
+| Survey | which market is worth modelling | weather highs: 7 cities, ~8,200 city-days ([selection](docs/01-market-selection.md)) |
+| Labels | are the settlements reproducible | 7,722 ladders, 100% bucket-arithmetic agreement, settlement = NWS CLI on all but 1 of 1,553 NY days |
+| G0 | does a free forecast add information | yes, but decaying: +0.18 nats in 2023 H2, about 0 by 2025 for simple pools. The market now prices NBM, not GFS MOS ([§5](FINDINGS.md)) |
+| G1 backtest | can simple pools make money | no robust strategy: about one tick of edge as a taker, adverse selection as a maker ([§6-7](FINDINGS.md)) |
+| G2 | does a learned model help | LadderNet +0.033 to +0.071 nats vs market, best calibrated, positive every half-year ([§8](FINDINGS.md)) |
+| G2 backtest | does it survive costs | day-before taker: +$22k, Sharpe 2.05, survives +2¢ slippage; DSR 0.85, PBO 0.26 ([§8](FINDINGS.md)) |
+| Lockbox | one sealed out-of-sample test | pass, marginally: +$1,851 on 95 unseen days, NW t 1.77; monthly PnL halving ([§9-10](FINDINGS.md)) |
+| Sports | same pipeline on MLB | no edge: within ±0.001 nats of the market ([SPORTS](docs/SPORTS.md)) |
+| G5 | does it hold live | running: paper trades at 16:00 local daily, ledger on [`shadow-ledger`](../../tree/shadow-ledger) |
+| G3 | synthetic pretraining | not started |
 
 ## Reproduce
 
@@ -45,6 +46,9 @@ uv run scripts/check_labels.py                 # label validation, fails loudly
 uv run scripts/benchmark.py                    # G0 verdict + baseline leaderboard
 uv run scripts/fetch_trades.py                 # every print, for the maker fill model
 uv run scripts/backtest.py                     # taker + maker, nested selection, DSR, PBO
+uv run scripts/lockbox.py                      # the one-shot held-out test (already run once)
+uv run scripts/report.py                       # every headline metric -> results/SUMMARY.md
+uv run scripts/shadow.py score settle report   # live shadow scoring (what CI runs hourly)
 uv run pytest
 ```
 
@@ -68,6 +72,8 @@ src/pmdecide/
   evaluation.py       the one walk-forward out-of-sample path both benchmark and backtest use
   backtest.py         taker + maker execution, Kalshi fees, ladder Kelly, trade ledger
   stats.py            stationary bootstrap, Newey-West, Deflated Sharpe, PBO (CSCV)
+  shadow.py           live scoring of the frozen strategy, settlement, running report
+  sports/             the same pipeline on MLB game winners
   api.py              typed Choice / Noul / Score interface over one distribution
 scripts/              survey, data builds, label checks, benchmark; each writes results/
 tests/                label arithmetic, no-leak invariants, scoring rules, API coherence
