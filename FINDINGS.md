@@ -414,3 +414,27 @@ with transformer-L's market-label control within ±0.005 of the market. The lock
 This is the second architecture tried on the same out-of-sample rows, so a pass would count as
 weaker evidence than §16's would have, and would need confirming on data after 2026-10-05 before
 the MLP is replaced.
+
+## 19 · Larger transformer: fails its gate, but scale helps (2026-10-05)
+
+`scripts/transformer_gate.py --large` against §18 (pre-registered in commit 83b3a3e). Raw:
+`results/transformer_large_gate.json`, `results/benchmark_transformer_large.md`.
+
+Transformer-L minus isotherm, log score gain on the last 12 months before the lockbox, paired on
+identical rows, 95% date-block CI, with §17's small transformer for comparison:
+
+| Read | Transformer-L | CI | Small (§17) |
+|---|---|---|---|
+| 08:00 | **+0.0064** | **[+0.0001, +0.0129]** | +0.0016 |
+| 12:00 | +0.0012 | [−0.0019, +0.0044] | +0.0004 |
+| 14:00 | +0.0009 | [−0.0021, +0.0039] | −0.0003 |
+| 16:00 day before | **+0.0099** | **[+0.0063, +0.0136]** | +0.0040 |
+
+Two reads of four clear zero against the three required, so **the gate fails and the MLP stays**.
+Controls sit within −0.0004 to +0.0017 of the market, so the comparison is clean.
+
+Scale moved every read in the same direction: the larger network beats the small one at all four.
+At 16:00 the day before it lifts the gain over the market from +0.014 (MLP) to +0.024 nats per
+ladder. Read against §18's caveat this is a second look at the same rows, and the 08:00 pass is at
+the edge of its interval. It is a reason to run a forward test on ladders after 2026-10-05, not to
+switch models now. Issue #24 tracks it.

@@ -1,0 +1,76 @@
+{
+  "gate": "FINDINGS \u00a718",
+  "reads_passing": 2,
+  "controls_ok": true,
+  "verdict": "FAIL",
+  "results": {
+    "d0_08": {
+      "rows_recent": 2554,
+      "transformer_minus_isotherm_recent": 0.006361734439578132,
+      "ci": [
+        6.836138901740601e-05,
+        0.012912370122528497
+      ],
+      "transformer_minus_isotherm_all": 0.0011200961388257728,
+      "ci_all": [
+        -0.0027794567520319884,
+        0.004860220565330871
+      ],
+      "transformer_vs_market_recent": 0.01562013599860616,
+      "isotherm_vs_market_recent": 0.009258401559028028,
+      "control_vs_market_all": -0.00022244846894008813,
+      "pass": true
+    },
+    "d0_12": {
+      "rows_recent": 2554,
+      "transformer_minus_isotherm_recent": 0.0011630504831040855,
+      "ci": [
+        -0.0018808414444164141,
+        0.004412019569241977
+      ],
+      "transformer_minus_isotherm_all": 0.000399413457037348,
+      "ci_all": [
+        -0.002518388507553773,
+        0.0034133904305018734
+      ],
+      "transformer_vs_market_recent": 0.010776904094628887,
+      "isotherm_vs_market_recent": 0.0096138536115248,
+      "control_vs_market_all": -0.0003878969710928993,
+      "pass": false
+    },
+    "d0_14": {
+      "rows_recent": 2554,
+      "transformer_minus_isotherm_recent": 0.0009402083984787904,
+      "ci": [
+        -0.0020808765399445927,
+        0.0038838040571936606
+      ],
+      "transformer_minus_isotherm_all": 0.004380383176278868,
+      "ci_all": [
+        0.001641929869940271,
+        0.0072068166601834405
+      ],
+      "transformer_vs_market_recent": 0.017858734879514865,
+      "isotherm_vs_market_recent": 0.016918526481036072,
+      "control_vs_market_all": 0.0017499709379190116,
+      "pass": false
+    },
+    "d1_16": {
+      "rows_recent": 2542,
+      "transformer_minus_isotherm_recent": 0.009855703699379636,
+      "ci": [
+        0.006257054440480423,
+        0.013630017345303341
+      ],
+      "transformer_minus_isotherm_all": 0.004415825548399983,
+      "ci_all": [
+        0.0014798412471196448,
+        0.007442665630863612
+      ],
+      "transformer_vs_market_recent": 0.024134272958820854,
+      "isotherm_vs_market_recent": 0.014278569259441216,
+      "control_vs_market_all": -0.0002394684787079512,
+      "pass": true
+    }
+  }
+}
