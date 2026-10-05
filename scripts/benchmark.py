@@ -30,8 +30,10 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 from pmdecide import dataset, metrics  # noqa: E402
 from pmdecide.baselines import default_suite  # noqa: E402
 from pmdecide.evaluation import oos_predictions  # noqa: E402
+from pmdecide.splits import LOCKBOX_START  # noqa: E402
 
 GATE0 = {"pool · market+NBM": "NBM", "pool · market+GFS": "GFS MOS"}
+RECENT_FROM = LOCKBOX_START - pd.Timedelta(days=365)
 
 
 def score_block(name, p, ls, ref=None, boot=1000):
@@ -80,13 +82,29 @@ def run(ls, suite, lockbox, boot):
                                             metrics.date_bootstrap_mean(ev.meta["day"].to_numpy()[s],
                                                                         d, boot)}
         per_city[read] = {"model": best, "slices": pc}
+        # Amended gate (FINDINGS §3): the gain must also hold on the last 12 months before the
+        # lockbox, overall and city by city, because the pooled period cannot see decay.
+        recent = (ev.meta["day"] >= RECENT_FROM).to_numpy()
+        rec = {}
+        for name in list(GATE0) + [best]:
+            d = ref - losses[name]
+            row = {"n": int(recent.sum()), "gain": float(d[recent].mean()),
+                   "ci": metrics.date_bootstrap_mean(ev.meta["day"].to_numpy()[recent], d[recent],
+                                                     boot), "by_city": {}}
+            for c in sorted(ev.meta["city"].unique()):
+                s_ = recent & (ev.meta["city"] == c).to_numpy()
+                row["by_city"][c] = {"n": int(s_.sum()), "gain": float(d[s_].mean()), "ci":
+                                     metrics.date_bootstrap_mean(ev.meta["day"].to_numpy()[s_],
+                                                                 d[s_], boot)}
+            rec[name] = row
+        out[read]["recent"] = rec
         reliab[read] = {k: metrics.reliability(*metrics.binary_pairs(P[k], ev.y, ev.mask))
                         for k in ("market", best)}
     return out, per_city, reliab
 
 
 def gate0(results):
-    verdict = {}
+    verdict, amended = {}, {}
     for read, r in results.items():
         for row in r["leaderboard"]:
             if row["model"] in GATE0:
@@ -94,8 +112,16 @@ def gate0(results):
                 verdict.setdefault(read, {})[GATE0[row["model"]]] = {
                     "gain": row["gain_vs_market"], "ci": [lo, hi], "pass": lo > 0,
                     "dm_p": row["dm_vs_market"]["p"]}
+        for name, fc in GATE0.items():
+            x = r["recent"][name]
+            cities = [c for c, v in x["by_city"].items() if v["ci"][0] > 0]
+            amended.setdefault(read, {})[fc] = {"gain": x["gain"], "ci": x["ci"],
+                                                "pass": x["ci"][0] > 0, "cities_passing": cities}
     passed = any(v["pass"] for r in verdict.values() for v in r.values())
-    return {"by_read": verdict, "pass": passed}
+    passed_recent = any(v["pass"] or v["cities_passing"] for r in amended.values()
+                        for v in r.values())
+    return {"by_read": verdict, "pass": passed, "recent_from": str(RECENT_FROM.date()),
+            "amended_by_read": amended, "amended_pass": passed_recent}
 
 
 def markdown(res):
@@ -111,6 +137,21 @@ def markdown(res):
         for fc, x in v.items():
             L.append("| {} | {} | {:+.4f} | [{:+.4f}, {:+.4f}] | {:.3g} |".format(
                 read, fc, x["gain"], *x["ci"], x["dm_p"]))
+    L += ["", "## Gate 0, amended: last 12 months ({} to lockbox): {}".format(
+        g["recent_from"], "**PASS**" if g["amended_pass"] else "**FAIL**"), "",
+        "Passes if the pooled gain, or any single city's, has a CI excluding zero.", "",
+        "| Read | Forecast | Δ (all cities) | 95% CI | Cities with CI > 0 |", "|---|---|---:|---|---|"]
+    for read, v in g["amended_by_read"].items():
+        for fc, x in v.items():
+            L.append("| {} | {} | {:+.4f} | [{:+.4f}, {:+.4f}] | {} |".format(
+                read, fc, x["gain"], *x["ci"], ", ".join(x["cities_passing"]) or "none"))
+    L += ["", "Per city, last 12 months, best model per read:", "",
+          "| Read | City | n | Δ | 95% CI |", "|---|---|---:|---:|---|"]
+    for read, r in res["results"].items():
+        best = res["slices"][read]["model"]
+        for c, v in r["recent"][best]["by_city"].items():
+            L.append("| {} | {} | {} | {:+.4f} | [{:+.4f}, {:+.4f}] |".format(
+                read, c, v["n"], v["gain"], *v["ci"]))
     for read, r in res["results"].items():
         L += ["", "## {}  ·  {} ladders, {} to {}".format(read, r["rows"], r["from"], r["to"]), "",
               "| Model | Log score | 95% CI | RPS | Brier | ECE (debiased) | Top-1 | Δ vs market | Δ CI |",
