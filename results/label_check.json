@@ -1,0 +1,43 @@
+{
+  "NY": {
+    "markets": 9644,
+    "events": 1873,
+    "unparsed_markets": 0,
+    "arithmetic_agreement": 1.0,
+    "arithmetic_by_strike_source": {
+      "api": 1.0,
+      "rules_text": 1.0
+    },
+    "no_settle_value": 5050,
+    "one_yes_share": 1.0,
+    "ladder_events": 1615,
+    "non_ladder_events": 258,
+    "non_ladder_years": {
+      "2021": 144,
+      "2022": 114
+    },
+    "cli_nws_cli": {
+      "days": 1546,
+      "agree": 0.999353169469599,
+      "first": "2022-03-04",
+      "last": "2026-08-13",
+      "diffs": {
+        "1.0": 1
+      }
+    },
+    "cli_other": {
+      "days": 206,
+      "agree": 1.0,
+      "first": "2021-08-06",
+      "last": "2022-03-03",
+      "diffs": {}
+    },
+    "cli_twc": {
+      "days": 51,
+      "agree": 1.0,
+      "first": "2026-08-14",
+      "last": "2026-10-03",
+      "diffs": {}
+    }
+  }
+}
