@@ -59,6 +59,7 @@ and noise with matched turnover loses. Full record: `FINDINGS.md` §8-10.
 | Training | log score, sample weights halving every 365 days, initialised to equal the market, early stopping on the latest 15% of dates, 5-seed ensemble |
 | Result | +0.033 to +0.071 nats vs the market across read times; best calibrated model (debiased ECE 0.004 to 0.007); positive in every half-year |
 | Control | the same network trained on labels sampled from the market scores within ±0.002 of the market |
+| Architecture check | a transformer over the ladder's buckets, same inputs and training, lands within 0.004 of the MLP and fails its pre-registered gate (FINDINGS §16-17); the MLP is kept |
 
 ## Data
 
