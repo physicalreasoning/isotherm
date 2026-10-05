@@ -17,6 +17,7 @@ unauthenticated Kalshi API; settled responses are cached so a rerun is free.
 
     uv run scripts/survey_markets.py --events 30
 """
+
 from __future__ import annotations
 
 import argparse
@@ -54,9 +55,9 @@ CANDIDATES = [
     ("KXBTCD", "crypto", "BTC hourly above/below (pm-jepa control)"),
 ]
 
-LEADS = (0.5, 0.9)           # fraction of market life elapsed at which we read the quote
-MAX_MARKETS_PER_EVENT = 6    # most-traded markets of a ladder; keeps 188-strike ladders cheap
-CONTESTED = (0.05, 0.95)     # a mid outside this range carries no calibration information
+LEADS = (0.5, 0.9)  # fraction of market life elapsed at which we read the quote
+MAX_MARKETS_PER_EVENT = 6  # most-traded markets of a ladder; keeps 188-strike ladders cheap
+CONTESTED = (0.05, 0.95)  # a mid outside this range carries no calibration information
 
 
 def quote_at(cs, t):
@@ -77,8 +78,12 @@ def survey_event(ev):
     rows = [r for r in rows if kalshi.result_yes(r) is not None]
     if not rows:
         return None
-    out = {"event": ev["event_ticker"], "n_markets": len(rows),
-           "volume": sum(kalshi.volume(r) for r in rows), "obs": []}
+    out = {
+        "event": ev["event_ticker"],
+        "n_markets": len(rows),
+        "volume": sum(kalshi.volume(r) for r in rows),
+        "obs": [],
+    }
     rows.sort(key=kalshi.volume, reverse=True)
     for r in rows[:MAX_MARKETS_PER_EVENT]:
         o, c = kalshi.ts(r["open_time"]), kalshi.ts(r["close_time"])
@@ -94,8 +99,9 @@ def survey_event(ev):
         cs.sort(key=lambda x: x["end_period_ts"])
         for lead in LEADS:
             b, a = quote_at(cs, o + lead * life)
-            out["obs"].append({"lead": lead, "bid": b, "ask": a,
-                               "y": kalshi.result_yes(r), "life_h": life / 3600})
+            out["obs"].append(
+                {"lead": lead, "bid": b, "ask": a, "y": kalshi.result_yes(r), "life_h": life / 3600}
+            )
     return out
 
 
@@ -107,6 +113,7 @@ def logit(p):
 def calib_slope(mid, y):
     """Slope b in P(y)=sigmoid(a + b*logit(mid)). b<1: market overconfident; b>1: underconfident."""
     from sklearn.linear_model import LogisticRegression
+
     if len(set(y)) < 2:
         return float("nan")
     m = LogisticRegression(C=1e6, max_iter=1000).fit(logit(mid)[:, None], y)
@@ -127,12 +134,16 @@ def ece(p, y, bins=10):
 def summarise(series, events, n_listed, first, last, boot=300, seed=0):
     rng = np.random.default_rng(seed)
     ev = [e for e in events if e]
-    res = {"series": series, "listed_settled_events": n_listed,
-           "first_event": first, "last_event": last,
-           "sampled_events": len(ev),
-           "median_event_volume": float(np.median([e["volume"] for e in ev])) if ev else None,
-           "median_markets_per_event": float(np.median([e["n_markets"] for e in ev])) if ev else None,
-           "median_life_h": float(np.median([o["life_h"] for e in ev for o in e["obs"]])) if ev else None}
+    res = {
+        "series": series,
+        "listed_settled_events": n_listed,
+        "first_event": first,
+        "last_event": last,
+        "sampled_events": len(ev),
+        "median_event_volume": float(np.median([e["volume"] for e in ev])) if ev else None,
+        "median_markets_per_event": float(np.median([e["n_markets"] for e in ev])) if ev else None,
+        "median_life_h": float(np.median([o["life_h"] for e in ev for o in e["obs"]])) if ev else None,
+    }
     for lead in LEADS:
         per_event = []
         n_all = n_two = 0
@@ -154,16 +165,21 @@ def summarise(series, events, n_listed, first, last, boot=300, seed=0):
             if rows:
                 per_event.append(np.array(rows))
         key = "lead{}".format(lead)
-        res[key] = {"two_sided_share": n_two / n_all if n_all else None,
-                    "contested_obs": int(sum(len(r) for r in per_event)),
-                    "median_spread": float(np.median(spreads)) if spreads else None}
+        res[key] = {
+            "two_sided_share": n_two / n_all if n_all else None,
+            "contested_obs": int(sum(len(r) for r in per_event)),
+            "median_spread": float(np.median(spreads)) if spreads else None,
+        }
         if len(per_event) < 5:
             continue
         allr = np.concatenate(per_event)
         p, y = allr[:, 0], allr[:, 1]
-        stats = {"brier": float(np.mean((p - y) ** 2)),
-                 "brier_climo": float(np.mean((y.mean() - y) ** 2)),
-                 "ece": ece(p, y), "slope": calib_slope(p, y)}
+        stats = {
+            "brier": float(np.mean((p - y) ** 2)),
+            "brier_climo": float(np.mean((y.mean() - y) ** 2)),
+            "ece": ece(p, y),
+            "slope": calib_slope(p, y),
+        }
         bs = {k: [] for k in stats}
         for _ in range(boot):
             pick = rng.integers(0, len(per_event), len(per_event))
@@ -176,10 +192,12 @@ def summarise(series, events, n_listed, first, last, boot=300, seed=0):
         for k, v in stats.items():
             v_ = np.array([x for x in bs[k] if not math.isnan(x)])
             res[key][k] = v
-            res[key][k + "_ci"] = [float(np.percentile(v_, 2.5)), float(np.percentile(v_, 97.5))] \
-                if len(v_) else None
-        res[key]["brier_skill"] = 1 - stats["brier"] / stats["brier_climo"] \
-            if stats["brier_climo"] > 0 else None
+            res[key][k + "_ci"] = (
+                [float(np.percentile(v_, 2.5)), float(np.percentile(v_, 97.5))] if len(v_) else None
+            )
+        res[key]["brier_skill"] = (
+            1 - stats["brier"] / stats["brier_climo"] if stats["brier_climo"] > 0 else None
+        )
     return res
 
 
@@ -194,8 +212,7 @@ def run_series(series, n_events, max_pages, seed):
     sample = rng.sample(pool, min(n_events, len(pool)))
     with cf.ThreadPoolExecutor(6) as ex:
         out = list(ex.map(lambda e: _safe(survey_event, e), sample))
-    s = summarise(series, out, len(evs), dates[0] if dates else None,
-                  dates[-1] if dates else None, seed=seed)
+    s = summarise(series, out, len(evs), dates[0] if dates else None, dates[-1] if dates else None, seed=seed)
     s["seconds"] = round(time.time() - t0, 1)
     s["listing_truncated"] = len(evs) >= max_pages * 200
     return s
@@ -210,8 +227,13 @@ def _safe(f, x):
 
 
 def fmt(x, nd=3):
-    return "-" if x is None or (isinstance(x, float) and math.isnan(x)) else \
-        ("{:.%df}" % nd).format(x) if isinstance(x, float) else str(x)
+    return (
+        "-"
+        if x is None or (isinstance(x, float) and math.isnan(x))
+        else ("{:.%df}" % nd).format(x)
+        if isinstance(x, float)
+        else str(x)
+    )
 
 
 def main():
@@ -236,16 +258,33 @@ def main():
         s.update(category=cat, note=note)
         results.append(s)
         l5 = s.get("lead0.5", {})
-        print("   events={} since={} vol/ev={} two-sided={} spread={} brier={} ece={} slope={} ({}s)".format(
-            s["listed_settled_events"], s["first_event"], fmt(s["median_event_volume"], 0),
-            fmt(l5.get("two_sided_share"), 2), fmt(l5.get("median_spread")),
-            fmt(l5.get("brier")), fmt(l5.get("ece")), fmt(l5.get("slope"), 2), s["seconds"]),
-            flush=True)
+        print(
+            "   events={} since={} vol/ev={} two-sided={} spread={} brier={} ece={} slope={} ({}s)".format(
+                s["listed_settled_events"],
+                s["first_event"],
+                fmt(s["median_event_volume"], 0),
+                fmt(l5.get("two_sided_share"), 2),
+                fmt(l5.get("median_spread")),
+                fmt(l5.get("brier")),
+                fmt(l5.get("ece")),
+                fmt(l5.get("slope"), 2),
+                s["seconds"],
+            ),
+            flush=True,
+        )
 
     p = pathlib.Path(a.out)
     p.parent.mkdir(exist_ok=True)
-    p.write_text(json.dumps({"generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                             "config": vars(a), "results": results}, indent=2))
+    p.write_text(
+        json.dumps(
+            {
+                "generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "config": vars(a),
+                "results": results,
+            },
+            indent=2,
+        )
+    )
     print("wrote", p)
 
 

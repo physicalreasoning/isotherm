@@ -11,6 +11,7 @@ data/sports/mlb_panel.parquet (one row per market per read time).
 
     uv run scripts/sports_build_panel.py
 """
+
 from __future__ import annotations
 
 import argparse
@@ -42,8 +43,18 @@ def fetch_markets(workers):
             rows.extend(got)
             if i % 1000 == 0:
                 print("   markets for {}/{} events".format(i, len(evs)), flush=True)
-    keep = ["event", "ticker", "result", "yes_sub_title", "open_time", "close_time",
-            "volume_fp", "rules_primary", "expected_expiration_time", "status"]
+    keep = [
+        "event",
+        "ticker",
+        "result",
+        "yes_sub_title",
+        "open_time",
+        "close_time",
+        "volume_fp",
+        "rules_primary",
+        "expected_expiration_time",
+        "status",
+    ]
     df = pd.DataFrame(rows)
     df = df[[c for c in keep if c in df.columns]]
     df["code"] = df["ticker"].str.split("-").str[-1]
@@ -58,8 +69,7 @@ def event_rows(ev, m, lk):
     for r in m.itertuples(index=False):
         o = kalshi.ts(r.open_time)
         start = max(o, T - int(READS["t_24h"].total_seconds()) - 600)
-        mk = {"ticker": r.ticker, "open_time": r.open_time, "close_time": r.close_time,
-              "result": r.result}
+        mk = {"ticker": r.ticker, "open_time": r.open_time, "close_time": r.close_time, "result": r.result}
         ok = True
         try:
             cs = kalshi.candles(mk, interval=1, start_ts=start, end_ts=T) if start < T else []
@@ -70,13 +80,28 @@ def event_rows(ev, m, lk):
         for name, dt in READS.items():
             t = T - int(dt.total_seconds())
             b, a = quote_at(cs, t) if t >= o else (None, None)
-            out.append({"event": ev, "ticker": r.ticker, "code": r.code,
-                        "side": "home" if r.code == lk["home"] else "away",
-                        "y": 1 if r.result == "yes" else 0, "result": r.result,
-                        "day": lk["day"], "period": period_of(lk["day"]), "game_pk": lk["game_pk"],
-                        "first_pitch_ts": T, "read": name, "read_ts": t, "open_ts": o,
-                        "bid": b, "ask": a, "vol_after": volume_between(cs, t, T),
-                        "market_volume": r.volume, "candles_ok": ok})
+            out.append(
+                {
+                    "event": ev,
+                    "ticker": r.ticker,
+                    "code": r.code,
+                    "side": "home" if r.code == lk["home"] else "away",
+                    "y": 1 if r.result == "yes" else 0,
+                    "result": r.result,
+                    "day": lk["day"],
+                    "period": period_of(lk["day"]),
+                    "game_pk": lk["game_pk"],
+                    "first_pitch_ts": T,
+                    "read": name,
+                    "read_ts": t,
+                    "open_ts": o,
+                    "bid": b,
+                    "ask": a,
+                    "vol_after": volume_between(cs, t, T),
+                    "market_volume": r.volume,
+                    "candles_ok": ok,
+                }
+            )
     return out
 
 
@@ -95,13 +120,18 @@ def main():
         markets = fetch_markets(a.workers)
         markets.to_parquet(mp, index=False)
     res = markets.groupby("event")["result"].agg(lambda s: tuple(sorted(s)))
-    print("events {} | result patterns {}".format(markets["event"].nunique(),
-                                                  res.value_counts().to_dict()), flush=True)
+    print(
+        "events {} | result patterns {}".format(markets["event"].nunique(), res.value_counts().to_dict()),
+        flush=True,
+    )
 
     sched = pd.read_parquet(OUT / "mlb_schedule.parquet")
     teams = pd.read_parquet(OUT / "mlb_teams.parquet")
-    ev = markets.groupby("event").agg(codes=("code", lambda s: tuple(sorted(s))),
-                                      rules=("rules_primary", "first")).reset_index()
+    ev = (
+        markets.groupby("event")
+        .agg(codes=("code", lambda s: tuple(sorted(s))), rules=("rules_primary", "first"))
+        .reset_index()
+    )
     links = link(ev, sched, teams)
     links["results"] = links["event"].map(res)
     links.to_parquet(OUT / "mlb_links.parquet", index=False)
@@ -112,8 +142,10 @@ def main():
     by_ev = {e: g for e, g in markets.groupby("event")}
     rows = []
     with cf.ThreadPoolExecutor(a.workers) as ex:
-        futs = {ex.submit(event_rows, r["event"], by_ev[r["event"]], r): r["event"]
-                for r in good.to_dict("records")}
+        futs = {
+            ex.submit(event_rows, r["event"], by_ev[r["event"]], r): r["event"]
+            for r in good.to_dict("records")
+        }
         for i, f in enumerate(cf.as_completed(futs), 1):
             try:
                 rows.extend(f.result())
@@ -123,8 +155,12 @@ def main():
                 print("   {}/{} events ({:.0f}s)".format(i, len(good), time.time() - t0), flush=True)
     panel = pd.DataFrame(rows)
     panel.to_parquet(OUT / "mlb_panel.parquet", index=False)
-    print("wrote panel: {} rows, {} events ({:.0f}s)".format(len(panel), panel["event"].nunique(),
-                                                             time.time() - t0), flush=True)
+    print(
+        "wrote panel: {} rows, {} events ({:.0f}s)".format(
+            len(panel), panel["event"].nunique(), time.time() - t0
+        ),
+        flush=True,
+    )
 
 
 if __name__ == "__main__":

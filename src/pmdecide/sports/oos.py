@@ -5,6 +5,7 @@ fit on earlier folds, predict the fold, keep only rows every predictor answered)
 with MLB splits: monthly folds and an MLB-specific lockbox. Kept separate so the shared
 module stays untouched while the weather work evolves it.
 """
+
 from __future__ import annotations
 
 from typing import Dict
@@ -33,6 +34,5 @@ def oos_predictions(ls: LadderSet, suite, lockbox: bool = False, **split_kw) -> 
         for p in preds.values():
             ok &= np.isfinite(p).all(1)
         idx = np.flatnonzero(ok)
-        out[read] = OOS(read, sub.take(idx), {k: v[idx] for k, v in preds.items()},
-                        fold_of[idx], folds)
+        out[read] = OOS(read, sub.take(idx), {k: v[idx] for k, v in preds.items()}, fold_of[idx], folds)
     return out

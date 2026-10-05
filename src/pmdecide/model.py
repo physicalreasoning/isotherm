@@ -20,6 +20,7 @@ stopping holds out the most recent 15% of training dates. Probabilities from
 Implements the Predictor protocol, so the benchmark and backtest treat it exactly
 like the baselines.
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -43,12 +44,12 @@ def features(ls: LadderSet):
     """(x: n×K×F bucket features, c: n×C context, logp: n×K×S source log-probs)."""
     m = ls.meta
     n, k = ls.mask.shape
-    logp = np.stack([np.log(np.clip(np.nan_to_num(ls.probs[s], nan=0.0), 1e-4, 1))
-                     for s in SOURCES], -1)
+    logp = np.stack([np.log(np.clip(np.nan_to_num(ls.probs[s], nan=0.0), 1e-4, 1)) for s in SOURCES], -1)
     cen = _centre(ls.lo, ls.hi)
 
     def col(name, fill=0.0):
         return np.nan_to_num(m[name].to_numpy(float), nan=fill) if name in m else np.full(n, fill)
+
     mu_n, sg_n = col("mu_nbs", np.nan), col("sigma_nbs", 3.0)
     mu_g, sg_g = col("mu_gfs", np.nan), col("sigma_gfs", 3.0)
     mu_n = np.where(np.isfinite(mu_n), mu_n, np.nanmean(cen, 1))
@@ -57,27 +58,38 @@ def features(ls: LadderSet):
     has_obs = np.isfinite(obs)
     obs0 = np.where(has_obs, obs, 0.0)
     bid, ask = ls.quotes["bid"], ls.quotes["ask"]
-    x = np.stack([
-        (cen - mu_n[:, None]) / np.maximum(sg_n, 0.5)[:, None],
-        (cen - mu_g[:, None]) / np.maximum(sg_g, 0.5)[:, None],
-        np.where(has_obs[:, None], (ls.hi <= np.round(obs0)[:, None] - 1.5), 0.0),
-        np.where(has_obs[:, None], np.clip((cen - obs0[:, None]) / 5, -3, 3), 0.0),
-        ask - bid,
-        (bid + ask) / 2,
-        (~np.isfinite(ls.lo)).astype(float),
-        (~np.isfinite(ls.hi)).astype(float),
-    ], -1)
+    x = np.stack(
+        [
+            (cen - mu_n[:, None]) / np.maximum(sg_n, 0.5)[:, None],
+            (cen - mu_g[:, None]) / np.maximum(sg_g, 0.5)[:, None],
+            np.where(has_obs[:, None], (ls.hi <= np.round(obs0)[:, None] - 1.5), 0.0),
+            np.where(has_obs[:, None], np.clip((cen - obs0[:, None]) / 5, -3, 3), 0.0),
+            ask - bid,
+            (bid + ask) / 2,
+            (~np.isfinite(ls.lo)).astype(float),
+            (~np.isfinite(ls.hi)).astype(float),
+        ],
+        -1,
+    )
     x = np.where(ls.mask[..., None], x, 0.0)
     doy = m["day"].dt.dayofyear.to_numpy() / 365.25 * 2 * np.pi
     city = np.stack([(m["city"] == c).to_numpy(float) for c in CITY_KEYS], -1)
-    c = np.column_stack([
-        city, np.sin(doy), np.cos(doy),
-        np.clip((mu_n - mu_g) / 5, -3, 3), sg_n / 5, sg_g / 5,
-        col("lead_h_gfs", 24.0) / 48, col("overround", 1.0) - 1,
-        has_obs.astype(float), col("obs_n") / 24,
-        np.where(has_obs, np.clip((col("obs_last") - obs0) / 5, -3, 3), 0.0),
-        np.log1p(col("cum_volume")) / 10,
-    ])
+    c = np.column_stack(
+        [
+            city,
+            np.sin(doy),
+            np.cos(doy),
+            np.clip((mu_n - mu_g) / 5, -3, 3),
+            sg_n / 5,
+            sg_g / 5,
+            col("lead_h_gfs", 24.0) / 48,
+            col("overround", 1.0) - 1,
+            has_obs.astype(float),
+            col("obs_n") / 24,
+            np.where(has_obs, np.clip((col("obs_last") - obs0) / 5, -3, 3), 0.0),
+            np.log1p(col("cum_volume")) / 10,
+        ]
+    )
     return x.astype(np.float32), c.astype(np.float32), logp.astype(np.float32)
 
 
@@ -85,9 +97,15 @@ class _Net(nn.Module):
     def __init__(self, f, cdim, s, hidden=64, dropout=0.1):
         super().__init__()
         self.pool = nn.Parameter(torch.tensor([1.0] + [0.0] * (s - 1)))
-        self.mlp = nn.Sequential(nn.Linear(f + cdim + s, hidden), nn.GELU(), nn.Dropout(dropout),
-                                 nn.Linear(hidden, hidden), nn.GELU(), nn.Dropout(dropout),
-                                 nn.Linear(hidden, 1))
+        self.mlp = nn.Sequential(
+            nn.Linear(f + cdim + s, hidden),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(hidden, hidden),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(hidden, 1),
+        )
         nn.init.zeros_(self.mlp[-1].weight)
         nn.init.zeros_(self.mlp[-1].bias)
 
@@ -99,8 +117,18 @@ class _Net(nn.Module):
 
 
 class LadderNet:
-    def __init__(self, name="LadderNet", half_life_days=365.0, seeds=5, hidden=64, epochs=300,
-                 lr=3e-3, weight_decay=1e-3, patience=15, market_labels=False):
+    def __init__(
+        self,
+        name="LadderNet",
+        half_life_days=365.0,
+        seeds=5,
+        hidden=64,
+        epochs=300,
+        lr=3e-3,
+        weight_decay=1e-3,
+        patience=15,
+        market_labels=False,
+    ):
         self.name = name
         self.half_life, self.seeds, self.hidden = half_life_days, seeds, hidden
         self.epochs, self.lr, self.wd, self.patience = epochs, lr, weight_decay, patience
@@ -120,8 +148,7 @@ class LadderNet:
         xm, xs, cm, cs = self.stats
         x = np.where(ls.mask[..., None], (x - xm) / xs, 0.0).astype(np.float32)
         c = ((c - cm) / cs).astype(np.float32)
-        return (torch.from_numpy(x), torch.from_numpy(c), torch.from_numpy(logp),
-                torch.from_numpy(ls.mask))
+        return (torch.from_numpy(x), torch.from_numpy(c), torch.from_numpy(logp), torch.from_numpy(ls.mask))
 
     def fit(self, train: LadderSet):
         self.stats, self.nets = None, []
@@ -142,8 +169,9 @@ class LadderNet:
                 rng = np.random.default_rng(1000 + seed)
                 pm = np.where(train.mask, train.probs["market"], 0.0)
                 cum = np.cumsum(pm / pm.sum(1, keepdims=True), 1)
-                yy = torch.from_numpy((cum < rng.random((len(cum), 1))).sum(1).clip(
-                    0, train.mask.sum(1) - 1).astype(np.int64))
+                yy = torch.from_numpy(
+                    (cum < rng.random((len(cum), 1))).sum(1).clip(0, train.mask.sum(1) - 1).astype(np.int64)
+                )
             net = _Net(x.shape[-1], c.shape[-1], lp.shape[-1], self.hidden)
             opt = torch.optim.AdamW(net.parameters(), lr=self.lr, weight_decay=self.wd)
             best, best_state, bad = np.inf, None, 0

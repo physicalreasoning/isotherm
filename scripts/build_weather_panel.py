@@ -15,6 +15,7 @@ every city and season:
 
     uv run scripts/build_weather_panel.py --cities NY CHI
 """
+
 from __future__ import annotations
 
 import argparse
@@ -55,8 +56,7 @@ def quote_at(cs, t):
 
 def build_event(city, ev):
     day = event_day(ev["event_ticker"])
-    rows = [r for r in kalshi.event_markets(ev["event_ticker"])
-            if kalshi.result_yes(r) is not None]
+    rows = [r for r in kalshi.event_markets(ev["event_ticker"]) if kalshi.result_yes(r) is not None]
     if not rows:
         return []
     reads = {}
@@ -73,15 +73,22 @@ def build_event(city, ev):
         except Exception as e:
             print("   candles {}: {}".format(r["ticker"], str(e)[:60]), flush=True)
             cs, ok = [], False
-        base = {"city": city.key, "day": day, "event": ev["event_ticker"], "ticker": r["ticker"],
-                "strike_type": r.get("strike_type"),
-                "floor": kalshi.to_float(r.get("floor_strike")),
-                "cap": kalshi.to_float(r.get("cap_strike")),
-                "y": kalshi.result_yes(r),
-                "settle": kalshi.to_float(r.get("expiration_value")),
-                "open_ts": kalshi.ts(r["open_time"]), "close_ts": kalshi.ts(r["close_time"]),
-                "market_volume": kalshi.volume(r), "candles_ok": ok,
-                "rules": (r.get("rules_primary") or "")[:300]}
+        base = {
+            "city": city.key,
+            "day": day,
+            "event": ev["event_ticker"],
+            "ticker": r["ticker"],
+            "strike_type": r.get("strike_type"),
+            "floor": kalshi.to_float(r.get("floor_strike")),
+            "cap": kalshi.to_float(r.get("cap_strike")),
+            "y": kalshi.result_yes(r),
+            "settle": kalshi.to_float(r.get("expiration_value")),
+            "open_ts": kalshi.ts(r["open_time"]),
+            "close_ts": kalshi.ts(r["close_time"]),
+            "market_volume": kalshi.volume(r),
+            "candles_ok": ok,
+            "rules": (r.get("rules_primary") or "")[:300],
+        }
         for name, t in reads.items():
             b, a, v = quote_at(cs, t) if t >= base["open_ts"] else (None, None, 0.0)
             out.append(dict(base, read=name, read_ts=t, bid=b, ask=a, cum_volume=v))
@@ -111,8 +118,12 @@ def build_city(key, workers, limit):
     OUT.mkdir(parents=True, exist_ok=True)
     p = OUT / "{}.parquet".format(key)
     df.to_parquet(p, index=False)
-    print("   wrote {} ({} rows, {} events) in {:.0f}s".format(
-        p, len(df), df["event"].nunique() if len(df) else 0, time.time() - t0), flush=True)
+    print(
+        "   wrote {} ({} rows, {} events) in {:.0f}s".format(
+            p, len(df), df["event"].nunique() if len(df) else 0, time.time() - t0
+        ),
+        flush=True,
+    )
 
 
 def main():

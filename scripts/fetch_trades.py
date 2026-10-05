@@ -7,6 +7,7 @@ Settled markets' trades never change, so every page is cached immutably.
 
     uv run scripts/fetch_trades.py --since 2023-07-01
 """
+
 from __future__ import annotations
 
 import argparse
@@ -25,13 +26,22 @@ OUT = pathlib.Path("data/trades")
 
 
 def market_trades(row):
-    m = {"ticker": row["ticker"], "close_time": pd.Timestamp(row["close_ts"], unit="s",
-                                                             tz="UTC").strftime("%Y-%m-%dT%H:%M:%SZ"),
-         "result": "yes" if row["y"] == 1 else "no"}
+    m = {
+        "ticker": row["ticker"],
+        "close_time": pd.Timestamp(row["close_ts"], unit="s", tz="UTC").strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "result": "yes" if row["y"] == 1 else "no",
+    }
     t = kalshi.trades(m)
-    return [{"ticker": x["ticker"], "ts": kalshi.ts(x["created_time"]),
-             "yes_price": float(x["yes_price_dollars"]), "count": float(x["count_fp"]),
-             "taker_yes": x["taker_side"] == "yes"} for x in t]
+    return [
+        {
+            "ticker": x["ticker"],
+            "ts": kalshi.ts(x["created_time"]),
+            "yes_price": float(x["yes_price_dollars"]),
+            "count": float(x["count_fp"]),
+            "taker_yes": x["taker_side"] == "yes",
+        }
+        for x in t
+    ]
 
 
 def main():
@@ -58,16 +68,22 @@ def main():
                     bad += 1
                     print("   skip: {}".format(str(e)[:80]), flush=True)
                 if i % 2000 == 0:
-                    print("   {} {}/{} markets, {:.0f}s".format(key, i, len(mk), time.time() - t0),
-                          flush=True)
+                    print(
+                        "   {} {}/{} markets, {:.0f}s".format(key, i, len(mk), time.time() - t0), flush=True
+                    )
         df = pd.DataFrame(rows)
         df.to_parquet(OUT / "{}.parquet".format(key), index=False)
         vol = p.drop_duplicates("ticker").set_index("ticker")["market_volume"]
         got = df.groupby("ticker")["count"].sum() if len(df) else pd.Series(dtype=float)
-        complete = float((got.reindex(mk["ticker"]).fillna(0)
-                          >= 0.999 * vol.reindex(mk["ticker"]).fillna(0)).mean())
-        print("== {}: {} markets, {} trades, {} failed, volume-complete {:.3f}, {:.0f}s".format(
-            key, len(mk), len(df), bad, complete, time.time() - t0), flush=True)
+        complete = float(
+            (got.reindex(mk["ticker"]).fillna(0) >= 0.999 * vol.reindex(mk["ticker"]).fillna(0)).mean()
+        )
+        print(
+            "== {}: {} markets, {} trades, {} failed, volume-complete {:.3f}, {:.0f}s".format(
+                key, len(mk), len(df), bad, complete, time.time() - t0
+            ),
+            flush=True,
+        )
 
 
 if __name__ == "__main__":

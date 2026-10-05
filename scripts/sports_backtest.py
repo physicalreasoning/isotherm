@@ -12,6 +12,7 @@ order is cancelled when the game starts.
 
     uv run scripts/sports_backtest.py
 """
+
 from __future__ import annotations
 
 import argparse
@@ -46,20 +47,29 @@ class Maker(bt.Maker):
     default = MakerConfig("pool · all", theta=0.02, horizon_h=4.0, maker_fee_rate=MAKER_FEE)
 
     def configs(self):
-        return [MakerConfig(m, theta=t, horizon_h=h, maker_fee_rate=MAKER_FEE) for m in MODELS
-                for t in (0.0, 0.01, 0.02, 0.04) for h in (1.0, 4.0)]
+        return [
+            MakerConfig(m, theta=t, horizon_h=h, maker_fee_rate=MAKER_FEE)
+            for m in MODELS
+            for t in (0.0, 0.01, 0.02, 0.04)
+            for h in (1.0, 4.0)
+        ]
 
 
 def load_trades(root="data/sports/trades"):
     import pandas as pd
+
     out = {}
     f = pathlib.Path(root) / "mlb.parquet"
     if not f.exists():
         return out
     df = pd.read_parquet(f).sort_values(["ticker", "ts"])
     for t, g in df.groupby("ticker", sort=False):
-        out[t] = (g["ts"].to_numpy(), g["yes_price"].to_numpy(), g["count"].to_numpy(),
-                  g["taker_yes"].to_numpy())
+        out[t] = (
+            g["ts"].to_numpy(),
+            g["yes_price"].to_numpy(),
+            g["count"].to_numpy(),
+            g["taker_yes"].to_numpy(),
+        )
     return out
 
 
@@ -87,15 +97,23 @@ def main():
             print("== {}: {} ladders".format(key, len(o.rows)), flush=True)
             results[key] = bt.run_read(ex, a.boot)
             s = results[key]["selected"]
-            print("   nested PnL ${:,.0f}  Sharpe {:.2f}  DSR {:.3f}  PBO {:.2f}  ({:.0f}s)".format(
-                s["pnl"], s["sharpe_ann"], results[key]["deflated_sharpe"]["dsr"],
-                results[key]["pbo"]["pbo"], time.time() - t0), flush=True)
+            print(
+                "   nested PnL ${:,.0f}  Sharpe {:.2f}  DSR {:.3f}  PBO {:.2f}  ({:.0f}s)".format(
+                    s["pnl"],
+                    s["sharpe_ann"],
+                    results[key]["deflated_sharpe"]["dsr"],
+                    results[key]["pbo"]["pbo"],
+                    time.time() - t0,
+                ),
+                flush=True,
+            )
     res = {"config": vars(a), "results": results, "seconds": round(time.time() - t0, 1)}
     p = pathlib.Path(a.out)
     p.parent.mkdir(exist_ok=True)
     p.with_suffix(".json").write_text(json.dumps(res, indent=2, default=str))
-    md = bt.markdown(res).replace("split across 7 concurrent ladders",
-                                  "split across {} concurrent games".format(SLOTS))
+    md = bt.markdown(res).replace(
+        "split across 7 concurrent ladders", "split across {} concurrent games".format(SLOTS)
+    )
     md = md.replace("# Backtest", "# MLB backtest", 1)
     p.with_suffix(".md").write_text(md)
     print(md)

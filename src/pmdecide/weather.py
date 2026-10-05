@@ -15,6 +15,7 @@ construction: bucket probabilities sum to one and threshold probabilities are
 monotone in the strike, which a model with independent per-question heads does
 not guarantee.
 """
+
 from __future__ import annotations
 
 import re
@@ -29,24 +30,27 @@ import pandas as pd
 class City:
     key: str
     series: str
-    station: str          # ICAO id for MOS and the IEM CLI archive
+    station: str  # ICAO id for MOS and the IEM CLI archive
     tz: str
-    std_offset_h: int     # local STANDARD time offset: the NWS climate day is midnight-midnight LST
+    std_offset_h: int  # local STANDARD time offset: the NWS climate day is midnight-midnight LST
 
     @property
     def asos(self) -> str:
         return self.station[1:]
 
 
-CITIES: Dict[str, City] = {c.key: c for c in [
-    City("NY", "KXHIGHNY", "KNYC", "America/New_York", -5),
-    City("CHI", "KXHIGHCHI", "KMDW", "America/Chicago", -6),
-    City("MIA", "KXHIGHMIA", "KMIA", "America/New_York", -5),
-    City("AUS", "KXHIGHAUS", "KAUS", "America/Chicago", -6),
-    City("LAX", "KXHIGHLAX", "KLAX", "America/Los_Angeles", -8),
-    City("DEN", "KXHIGHDEN", "KDEN", "America/Denver", -7),
-    City("PHIL", "KXHIGHPHIL", "KPHL", "America/New_York", -5),
-]}
+CITIES: Dict[str, City] = {
+    c.key: c
+    for c in [
+        City("NY", "KXHIGHNY", "KNYC", "America/New_York", -5),
+        City("CHI", "KXHIGHCHI", "KMDW", "America/Chicago", -6),
+        City("MIA", "KXHIGHMIA", "KMIA", "America/New_York", -5),
+        City("AUS", "KXHIGHAUS", "KAUS", "America/Chicago", -6),
+        City("LAX", "KXHIGHLAX", "KLAX", "America/Los_Angeles", -8),
+        City("DEN", "KXHIGHDEN", "KDEN", "America/Denver", -7),
+        City("PHIL", "KXHIGHPHIL", "KPHL", "America/New_York", -5),
+    ]
+}
 
 # When a run is public, by model. GFS MOS hits the wire roughly 4h after its
 # nominal runtime; NBM text bulletins run hourly and post about 1h after. One
@@ -56,8 +60,7 @@ AVAILABILITY_LAG = {"GFS": pd.Timedelta(hours=5), "NBS": pd.Timedelta(hours=2)}
 MOS_AVAILABILITY_LAG = AVAILABILITY_LAG["GFS"]
 
 
-def bucket_interval(strike_type: str, floor: Optional[float],
-                    cap: Optional[float]) -> Tuple[float, float]:
+def bucket_interval(strike_type: str, floor: Optional[float], cap: Optional[float]) -> Tuple[float, float]:
     """Continuous interval [lo, hi) of the latent high that settles in this bucket."""
     if strike_type == "less":
         return -np.inf, float(cap) - 0.5
@@ -127,13 +130,15 @@ def bucket_contains(strike_type: str, floor, cap, value: float) -> bool:
 
 def gaussian_bucket_probs(mu: float, sigma: float, intervals) -> np.ndarray:
     from scipy.stats import norm
+
     lo = np.array([a for a, _ in intervals], dtype=float)
     hi = np.array([b for _, b in intervals], dtype=float)
     return norm.cdf((hi - mu) / sigma) - norm.cdf((lo - mu) / sigma)
 
 
-def mos_daytime_max(mos: pd.DataFrame, day: pd.Timestamp, known_at: pd.Timestamp,
-                    max_lead_runs: int = 1) -> Optional[dict]:
+def mos_daytime_max(
+    mos: pd.DataFrame, day: pd.Timestamp, known_at: pd.Timestamp, max_lead_runs: int = 1
+) -> Optional[dict]:
     """The latest GFS MOS daytime-max forecast for local `day` that was public by `known_at`.
 
     MOS reports the 7am-7pm LST max at forecast hour 00Z of the following UTC
@@ -147,5 +152,8 @@ def mos_daytime_max(mos: pd.DataFrame, day: pd.Timestamp, known_at: pd.Timestamp
     if m.empty:
         return None
     r = m.sort_values("runtime").iloc[-1]
-    return {"fcst": float(r["n_x"]), "runtime": r["runtime"],
-            "lead_h": (target - r["runtime"]).total_seconds() / 3600}
+    return {
+        "fcst": float(r["n_x"]),
+        "runtime": r["runtime"],
+        "lead_h": (target - r["runtime"]).total_seconds() / 3600,
+    }

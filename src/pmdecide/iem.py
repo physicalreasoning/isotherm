@@ -15,6 +15,7 @@ IEM returns HTTP 429 with a plain-text body when hit faster than roughly one
 request every couple of seconds, so this client is much slower than the Kalshi
 one, and caches every response that covers a closed time window.
 """
+
 from __future__ import annotations
 
 import gzip
@@ -57,8 +58,7 @@ def _fetch(url: str, retries: int = 8) -> bytes:
                 delay = min(delay * 2, 300)
                 continue
             raise
-        except (urllib.error.URLError, TimeoutError, http.client.IncompleteRead,
-                ConnectionError):
+        except (urllib.error.URLError, TimeoutError, http.client.IncompleteRead, ConnectionError):
             if attempt < retries - 1:
                 time.sleep(delay)
                 continue
@@ -86,8 +86,15 @@ def mos(station: str, model: str, start: str, end: str) -> pd.DataFrame:
 
     model: GFS (MAV, back to 2000s), NBS (NBM short-range), NBE (NBM extended).
     """
-    q = urllib.parse.urlencode({"station": station, "model": model, "sts": start + "T00:00Z",
-                                "ets": end + "T00:00Z", "format": "csv"})
+    q = urllib.parse.urlencode(
+        {
+            "station": station,
+            "model": model,
+            "sts": start + "T00:00Z",
+            "ets": end + "T00:00Z",
+            "format": "csv",
+        }
+    )
     closed = pd.Timestamp(end, tz="UTC") < pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=2)
     body = _cached("{}/cgi-bin/request/mos.py?{}".format(BASE, q), cache=closed)
     if not body.strip():
@@ -124,12 +131,26 @@ def asos(station3: str, year: int) -> pd.DataFrame:
     Routine hourly obs land at :51; specials whenever weather changes. tmpf is
     derived from the tenths-of-°C remark when present, so it is not pre-rounded.
     """
-    q = urllib.parse.urlencode([("station", station3), ("data", "tmpf"),
-                                ("year1", year), ("month1", 1), ("day1", 1),
-                                ("year2", year + 1), ("month2", 1), ("day2", 1),
-                                ("tz", "Etc/UTC"), ("format", "onlycomma"), ("latlon", "no"),
-                                ("missing", "M"), ("trace", "T"), ("direct", "no"),
-                                ("report_type", 3), ("report_type", 4)])
+    q = urllib.parse.urlencode(
+        [
+            ("station", station3),
+            ("data", "tmpf"),
+            ("year1", year),
+            ("month1", 1),
+            ("day1", 1),
+            ("year2", year + 1),
+            ("month2", 1),
+            ("day2", 1),
+            ("tz", "Etc/UTC"),
+            ("format", "onlycomma"),
+            ("latlon", "no"),
+            ("missing", "M"),
+            ("trace", "T"),
+            ("direct", "no"),
+            ("report_type", 3),
+            ("report_type", 4),
+        ]
+    )
     closed = year < pd.Timestamp.now(tz="UTC").year
     body = _cached("{}/cgi-bin/request/asos.py?{}".format(BASE, q), cache=closed)
     df = pd.read_csv(io.BytesIO(body), na_values=["M"])

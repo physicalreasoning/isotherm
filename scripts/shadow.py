@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Shadow-score the frozen strategy live. Run hourly by .github/workflows/shadow.yml.
 
-    uv run scripts/shadow.py score settle report       # what CI runs
-    uv run scripts/shadow.py score --force --root /tmp/x  # test outside the 16:00 window
+uv run scripts/shadow.py score settle report       # what CI runs
+uv run scripts/shadow.py score --force --root /tmp/x  # test outside the 16:00 window
 """
+
 from __future__ import annotations
 
 import argparse
@@ -18,17 +19,28 @@ from pmdecide import shadow  # noqa: E402
 
 def write_report(root: pathlib.Path, r: dict):
     (root / "metrics.json").write_text(json.dumps(r, indent=2, sort_keys=True) + "\n")
-    L = ["# Shadow record", "",
-         "Frozen strategy from FINDINGS §9, scored live at 16:00 local the day before. "
-         "Paper trades only. Lockbox reference: +$1,851 over 95 days.", "",
-         "| | |", "|---|---|", "| Settled ladders | {} |".format(r.get("settled_ladders", 0))]
+    L = [
+        "# Shadow record",
+        "",
+        "Frozen strategy from FINDINGS §9, scored live at 16:00 local the day before. "
+        "Paper trades only. Lockbox reference: +$1,851 over 95 days.",
+        "",
+        "| | |",
+        "|---|---|",
+        "| Settled ladders | {} |".format(r.get("settled_ladders", 0)),
+    ]
     if "log_score_gain_vs_market" in r:
         ci = r.get("gain_ci")
-        L.append("| Log score gain vs market | {:+.4f}{} |".format(
-            r["log_score_gain_vs_market"], " [{:+.4f}, {:+.4f}]".format(*ci) if ci else ""))
+        L.append(
+            "| Log score gain vs market | {:+.4f}{} |".format(
+                r["log_score_gain_vs_market"], " [{:+.4f}, {:+.4f}]".format(*ci) if ci else ""
+            )
+        )
     if "pnl" in r:
-        L += ["| Paper PnL | ${:,.0f} over {} trades |".format(r["pnl"], r["trades"]),
-              "| Hit rate | {:.1%} |".format(r["hit_rate"] or 0)]
+        L += [
+            "| Paper PnL | ${:,.0f} over {} trades |".format(r["pnl"], r["trades"]),
+            "| Hit rate | {:.1%} |".format(r["hit_rate"] or 0),
+        ]
         L += ["", "| Month | PnL |", "|---|---:|"]
         L += ["| {} | ${:,.0f} |".format(k, v) for k, v in r["by_month"].items()]
     (root / "REPORT.md").write_text("\n".join(L) + "\n")

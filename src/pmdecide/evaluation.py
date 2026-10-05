@@ -6,6 +6,7 @@ forecast (the identical-rows rule), and each kept row remembers which fold
 predicted it, so downstream selection can be nested: a choice made for fold i
 may only look at folds < i.
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -25,15 +26,16 @@ from .splits import walk_forward
 @dataclass
 class OOS:
     read: str
-    rows: LadderSet                 # scored rows only
-    preds: Dict[str, np.ndarray]    # model name -> (n, K) bucket probs
-    fold: np.ndarray                # (n,) fold index, increasing in time
+    rows: LadderSet  # scored rows only
+    preds: Dict[str, np.ndarray]  # model name -> (n, K) bucket probs
+    fold: np.ndarray  # (n,) fold index, increasing in time
     folds: List[dict]
 
 
 def _cache_key(ls: LadderSet, suite, lockbox: bool) -> str:
     """Data identity + every predictor's config + the source of the modules that define them."""
     from . import baselines, model
+
     h = hashlib.sha256()
     h.update(repr((lockbox, [(m.name, sorted(vars(m).items(), key=str)) for m in suite])).encode())
     h.update(pd.util.hash_pandas_object(ls.meta[["event", "read", "day"]], index=False).values)
@@ -42,8 +44,9 @@ def _cache_key(ls: LadderSet, suite, lockbox: bool) -> str:
     return h.hexdigest()[:16]
 
 
-def oos_predictions(ls: LadderSet, suite, lockbox: bool = False,
-                    cache_dir: str | None = "data/oos") -> Dict[str, OOS]:
+def oos_predictions(
+    ls: LadderSet, suite, lockbox: bool = False, cache_dir: str | None = "data/oos"
+) -> Dict[str, OOS]:
     if cache_dir:
         f = pathlib.Path(cache_dir) / "{}.pkl".format(_cache_key(ls, suite, lockbox))
         if f.exists():
@@ -72,6 +75,5 @@ def _compute(ls: LadderSet, suite, lockbox: bool) -> Dict[str, OOS]:
         for p in preds.values():
             ok &= np.isfinite(p).all(1)
         idx = np.flatnonzero(ok)
-        out[read] = OOS(read, sub.take(idx), {k: v[idx] for k, v in preds.items()},
-                        fold_of[idx], folds)
+        out[read] = OOS(read, sub.take(idx), {k: v[idx] for k, v in preds.items()}, fold_of[idx], folds)
     return out

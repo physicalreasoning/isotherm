@@ -13,6 +13,7 @@ Causality. Each forecast source is a *fixed function of the past*:
 Learned models (log pools, the neural model) then train only on earlier rows,
 through `splits.walk_forward`.
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -31,9 +32,9 @@ READS = {"d1_16": (-1, 16), "d0_08": (0, 8), "d0_12": (0, 12)}
 FORECASTS = {"emos_gfs": ("GFS", "n_x", "2015-01-01"), "emos_nbm": ("NBS", "txn", "2021-01-01")}
 EMBARGO = pd.Timedelta(days=2)
 MIN_FIT_DAYS = 365
-EPS = 1e-3            # probability floor; a tenth of Kalshi's 1¢ tick
+EPS = 1e-3  # probability floor; a tenth of Kalshi's 1¢ tick
 DATA = pathlib.Path("data")
-VERSION = 10           # bump when anything below changes what a row contains
+VERSION = 10  # bump when anything below changes what a row contains
 
 
 @dataclass
@@ -54,15 +55,21 @@ class LadderSet:
 
     def take(self, idx) -> "LadderSet":
         idx = np.asarray(idx)
-        return LadderSet(self.meta.iloc[idx].reset_index(drop=True), self.lo[idx], self.hi[idx],
-                         self.mask[idx], self.y[idx], {k: v[idx] for k, v in self.probs.items()},
-                         {k: v[idx] for k, v in self.quotes.items()})
+        return LadderSet(
+            self.meta.iloc[idx].reset_index(drop=True),
+            self.lo[idx],
+            self.hi[idx],
+            self.mask[idx],
+            self.y[idx],
+            {k: v[idx] for k, v in self.probs.items()},
+            {k: v[idx] for k, v in self.quotes.items()},
+        )
 
     def complete(self, names) -> "LadderSet":
         """Rows where every named source has a forecast: the identical-rows rule."""
         ok = np.ones(len(self), bool)
         for n in names:
-            ok &= np.isfinite(self.probs[n]).all(1)     # missing rows are all-NaN by construction
+            ok &= np.isfinite(self.probs[n]).all(1)  # missing rows are all-NaN by construction
         return self.take(np.flatnonzero(ok))
 
     @staticmethod
@@ -72,17 +79,19 @@ class LadderSet:
 
         def padk(a, fill):
             return np.pad(a, ((0, 0), (0, k - a.shape[1])), constant_values=fill)
+
         names = set.intersection(*(set(p.probs) for p in parts))
         qnames = set.intersection(*(set(p.quotes) for p in parts))
         fill = {"bid": 0.0, "ask": 1.0, "vol_after": 0.0}
-        return LadderSet(pd.concat([p.meta for p in parts], ignore_index=True),
-                         np.concatenate([padk(p.lo, np.nan) for p in parts]),
-                         np.concatenate([padk(p.hi, np.nan) for p in parts]),
-                         np.concatenate([padk(p.mask, False) for p in parts]),
-                         np.concatenate([p.y for p in parts]),
-                         {n: np.concatenate([padk(p.probs[n], 0.0) for p in parts]) for n in names},
-                         {n: np.concatenate([padk(p.quotes[n], fill.get(n, 0.0)) for p in parts])
-                          for n in qnames})
+        return LadderSet(
+            pd.concat([p.meta for p in parts], ignore_index=True),
+            np.concatenate([padk(p.lo, np.nan) for p in parts]),
+            np.concatenate([padk(p.hi, np.nan) for p in parts]),
+            np.concatenate([padk(p.mask, False) for p in parts]),
+            np.concatenate([p.y for p in parts]),
+            {n: np.concatenate([padk(p.probs[n], 0.0) for p in parts]) for n in names},
+            {n: np.concatenate([padk(p.quotes[n], fill.get(n, 0.0)) for p in parts]) for n in qnames},
+        )
 
 
 def regime(rules: str) -> str:
@@ -95,7 +104,8 @@ def regime(rules: str) -> str:
 
 def local_read_utc(days: pd.Series, tz: str, dd: int, hh: int) -> pd.Series:
     t = (days + pd.Timedelta(days=dd) + pd.Timedelta(hours=hh)).dt.tz_localize(
-        tz, nonexistent="shift_forward", ambiguous=False)
+        tz, nonexistent="shift_forward", ambiguous=False
+    )
     return t.dt.tz_convert("UTC")
 
 
@@ -113,44 +123,53 @@ def _ladders(panel: pd.DataFrame, city: City) -> LadderSet:
         panel = panel[~panel["event"].isin(bad)]
     metas, los, his, mids, ys, bids, asks, vols = [], [], [], [], [], [], [], []
     for (ev, read), g in panel.groupby(["event", "read"], sort=False):
-        iv = [bucket_interval(s, f, c) for s, f, c in
-              zip(g.strike_type, g["floor"], g["cap"], strict=True)]
+        iv = [bucket_interval(s, f, c) for s, f, c in zip(g.strike_type, g["floor"], g["cap"], strict=True)]
         order = np.argsort([a for a, _ in iv])
         g = g.iloc[order]
         iv = [iv[i] for i in order]
         y = g["y"].to_numpy()
         if y.sum() != 1 or not is_partition(iv):
-            continue                                   # not a ladder (see is_partition)
+            continue  # not a ladder (see is_partition)
         b, a = g["bid"].to_numpy(float), g["ask"].to_numpy(float)
         if np.all(np.isnan(b) & np.isnan(a)):
-            continue                                   # market not open at this read
+            continue  # market not open at this read
         b = np.nan_to_num(b, nan=0.0)
         a = np.where(np.isnan(a) | (a <= 0), 1.0, a)
         mid = (a + b) / 2
-        metas.append({"event": ev, "city": city.key, "day": g["day"].iloc[0], "read": read,
-                      "read_ts": int(g["read_ts"].iloc[0]), "close_ts": int(g["close_ts"].max()),
-                      "tickers": tuple(g["ticker"]),
-                      "n_buckets": len(g), "settle": float(g["settle"].iloc[0]),
-                      "spread": float(np.median(a - b)), "overround": float(mid.sum()),
-                      "cum_volume": float(g["cum_volume"].sum()),
-                      "regime": regime(str(g["rules"].iloc[0])),
-                      "period": "{}H{}".format(g["day"].iloc[0].year,
-                                               1 + (g["day"].iloc[0].month > 6))})
+        metas.append(
+            {
+                "event": ev,
+                "city": city.key,
+                "day": g["day"].iloc[0],
+                "read": read,
+                "read_ts": int(g["read_ts"].iloc[0]),
+                "close_ts": int(g["close_ts"].max()),
+                "tickers": tuple(g["ticker"]),
+                "n_buckets": len(g),
+                "settle": float(g["settle"].iloc[0]),
+                "spread": float(np.median(a - b)),
+                "overround": float(mid.sum()),
+                "cum_volume": float(g["cum_volume"].sum()),
+                "regime": regime(str(g["rules"].iloc[0])),
+                "period": "{}H{}".format(g["day"].iloc[0].year, 1 + (g["day"].iloc[0].month > 6)),
+            }
+        )
         los.append([x for x, _ in iv])
         his.append([x for _, x in iv])
         mids.append(mid)
         bids.append(b)
         asks.append(a)
-        vols.append(np.clip(g["market_volume"].to_numpy(float) - g["cum_volume"].to_numpy(float),
-                            0, None))
+        vols.append(np.clip(g["market_volume"].to_numpy(float) - g["cum_volume"].to_numpy(float), 0, None))
         ys.append(int(np.argmax(y)))
     if not metas:
-        return LadderSet(pd.DataFrame(), np.zeros((0, 1)), np.zeros((0, 1)),
-                         np.zeros((0, 1), bool), np.zeros(0, int))
+        return LadderSet(
+            pd.DataFrame(), np.zeros((0, 1)), np.zeros((0, 1)), np.zeros((0, 1), bool), np.zeros(0, int)
+        )
     k = max(len(x) for x in los)
 
     def pad(rows, fill):
         return np.array([list(r) + [fill] * (k - len(r)) for r in rows], dtype=float)
+
     lo, hi, mid = pad(los, np.nan), pad(his, np.nan), pad(mids, 0.0)
     mask = np.array([[True] * len(r) + [False] * (k - len(r)) for r in los])
     meta = pd.DataFrame(metas)
@@ -200,13 +219,17 @@ def _attach_gaussians(ls: LadderSet, city: City) -> None:
                 continue
             hist = cli[cli["target"] >= start].copy()
             hist["read_time"] = local_read_utc(hist["target"], city.tz, dd, hh)
-            hist = hist.join(forecast_at(table, hist[["target", "read_time"]])).dropna(
-                subset=["fcst"])
-            fits = _monthly_fits(hist, months[rs].unique(),
-                                 lambda h: fit_emos(h["fcst"], h["high"], h["doy"]))
+            hist = hist.join(forecast_at(table, hist[["target", "read_time"]])).dropna(subset=["fcst"])
+            fits = _monthly_fits(
+                hist, months[rs].unique(), lambda h: fit_emos(h["fcst"], h["high"], h["doy"])
+            )
             days = ls.meta.loc[rs, "day"]
-            fc = forecast_at(table, pd.DataFrame({"target": days.to_numpy(), "read_time":
-                                                  local_read_utc(days, city.tz, dd, hh).to_numpy()}))
+            fc = forecast_at(
+                table,
+                pd.DataFrame(
+                    {"target": days.to_numpy(), "read_time": local_read_utc(days, city.tz, dd, hh).to_numpy()}
+                ),
+            )
             fc_all[rs] = fc["fcst"].to_numpy()
             lead_all[rs] = fc["lead_h"].to_numpy()
             idx = np.flatnonzero(rs)
@@ -235,8 +258,8 @@ def unix_s(t: pd.Series) -> np.ndarray:
     return ((t - pd.Timestamp("1970-01-01", tz="UTC")) // pd.Timedelta(seconds=1)).to_numpy()
 
 
-OBS_LAG = 15 * 60          # seconds: a METAR is on the wire within minutes; 15 is generous
-OBS_MARGIN = 1.5           # °F: CLI high >= round(hourly max) - 1 on 99.85% (NY) and 100% (CHI) of days
+OBS_LAG = 15 * 60  # seconds: a METAR is on the wire within minutes; 15 is generous
+OBS_MARGIN = 1.5  # °F: CLI high >= round(hourly max) - 1 on 99.85% (NY) and 100% (CHI) of days
 
 
 def _attach_obs(ls: LadderSet, city: City) -> None:
@@ -256,16 +279,16 @@ def _attach_obs(ls: LadderSet, city: City) -> None:
         o = pd.read_parquet(f).sort_values("valid")
         ts = unix_s(o["valid"])
         t = o["tmpf"].to_numpy()
-        start = unix_s((ls.meta["day"] - pd.Timedelta(hours=city.std_offset_h))
-                       .dt.tz_localize("UTC"))
+        start = unix_s((ls.meta["day"] - pd.Timedelta(hours=city.std_offset_h)).dt.tz_localize("UTC"))
         end = ls.meta["read_ts"].to_numpy() - OBS_LAG
         a, b = np.searchsorted(ts, start, "left"), np.searchsorted(ts, end, "right")
         for i in np.flatnonzero(b > a):
-            w = t[a[i]:b[i]]
+            w = t[a[i] : b[i]]
             obs_max[i], obs_last[i], obs_n[i] = w.max(), w[-1], len(w)
     ls.meta["obs_max"], ls.meta["obs_last"], ls.meta["obs_n"] = obs_max, obs_last, obs_n
 
     from scipy.stats import norm
+
     base = ls.probs.get("emos_nbm")
     if base is None:
         return
@@ -296,8 +319,11 @@ def build_city(key: str, cache: bool = True) -> LadderSet:
     pp = DATA / "panel" / "{}.parquet".format(key)
     if not pp.exists():
         raise FileNotFoundError(pp)
-    inputs = [pp] + sorted((DATA / "forecasts").glob(city.station + "_*.parquet")) + \
-        sorted((DATA / "obs").glob(city.station + ".parquet"))
+    inputs = (
+        [pp]
+        + sorted((DATA / "forecasts").glob(city.station + "_*.parquet"))
+        + sorted((DATA / "obs").glob(city.station + ".parquet"))
+    )
     h = hashlib.sha256(repr((VERSION, [(str(f), f.stat().st_mtime_ns) for f in inputs])).encode())
     cp = DATA / "features" / "{}_{}.pkl".format(key, h.hexdigest()[:12])
     if cache and cp.exists():

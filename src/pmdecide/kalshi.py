@@ -25,6 +25,7 @@ What changed since pm-jepa (verified against the live API on 2026-10-04):
     reads both.
   - Trades carry `taker_side`, so trade direction is observed, not inferred.
 """
+
 from __future__ import annotations
 
 import calendar
@@ -43,13 +44,14 @@ from base64 import b64encode
 from typing import Dict, Iterator, List, Optional, Tuple
 
 BASE = "https://api.elections.kalshi.com/trade-api/v2"
-MIN_INTERVAL = float(os.environ.get("KALSHI_MIN_INTERVAL", 0.12))   # anonymous: stay polite
+MIN_INTERVAL = float(os.environ.get("KALSHI_MIN_INTERVAL", 0.12))  # anonymous: stay polite
 KEY_ID = os.environ.get("KALSHI_API_KEY_ID")
 KEY_PATH = os.environ.get("KALSHI_PRIVATE_KEY_PATH")
 MAX_RETRIES = 6
 
-CACHE = pathlib.Path(os.environ.get("PMDECIDE_CACHE",
-                                   pathlib.Path(__file__).resolve().parents[2] / "data_cache" / "http"))
+CACHE = pathlib.Path(
+    os.environ.get("PMDECIDE_CACHE", pathlib.Path(__file__).resolve().parents[2] / "data_cache" / "http")
+)
 
 _lock = threading.Lock()
 _last_call = [0.0]
@@ -60,6 +62,7 @@ _key: list = []
 def _private_key():
     if not _key:
         from cryptography.hazmat.primitives import serialization
+
         data = pathlib.Path(KEY_PATH).expanduser().read_bytes()
         _key.append(serialization.load_pem_private_key(data, password=None))
     return _key[0]
@@ -73,13 +76,16 @@ def sign(private_key, method: str, url: str, ts_ms: str) -> str:
     """
     from cryptography.hazmat.primitives import hashes
     from cryptography.hazmat.primitives.asymmetric import ed25519, padding
+
     msg = (ts_ms + method + urllib.parse.urlparse(url).path).encode()
     if isinstance(private_key, ed25519.Ed25519PrivateKey):
         sig = private_key.sign(msg)
     else:
-        sig = private_key.sign(msg, padding.PSS(mgf=padding.MGF1(hashes.SHA256()),
-                                                salt_length=padding.PSS.DIGEST_LENGTH),
-                               hashes.SHA256())
+        sig = private_key.sign(
+            msg,
+            padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.DIGEST_LENGTH),
+            hashes.SHA256(),
+        )
     return b64encode(sig).decode()
 
 
@@ -87,8 +93,11 @@ def auth_headers(method: str, url: str) -> Dict[str, str]:
     if not (KEY_ID and KEY_PATH):
         return {}
     ts_ms = str(int(time.time() * 1000))
-    return {"KALSHI-ACCESS-KEY": KEY_ID, "KALSHI-ACCESS-TIMESTAMP": ts_ms,
-            "KALSHI-ACCESS-SIGNATURE": sign(_private_key(), method, url, ts_ms)}
+    return {
+        "KALSHI-ACCESS-KEY": KEY_ID,
+        "KALSHI-ACCESS-TIMESTAMP": ts_ms,
+        "KALSHI-ACCESS-SIGNATURE": sign(_private_key(), method, url, ts_ms),
+    }
 
 
 def _throttle() -> None:
@@ -108,8 +117,11 @@ def get(path: str, _cache: bool = False, **params) -> Dict:
     q = urllib.parse.urlencode({k: v for k, v in params.items() if v is not None}, safe=",")
     url = "{}/{}{}".format(BASE, path.lstrip("/"), ("?" + q) if q else "")
     if _cache:
-        f = CACHE / hashlib.sha256(url.encode()).hexdigest()[:2] / (
-            hashlib.sha256(url.encode()).hexdigest()[:24] + ".json.gz")
+        f = (
+            CACHE
+            / hashlib.sha256(url.encode()).hexdigest()[:2]
+            / (hashlib.sha256(url.encode()).hexdigest()[:24] + ".json.gz")
+        )
         if f.exists():
             try:
                 return json.loads(gzip.decompress(f.read_bytes()), strict=False)
@@ -139,8 +151,7 @@ def _fetch(url: str) -> Dict:
                 delay *= 2
                 continue
             raise
-        except (urllib.error.URLError, TimeoutError, http.client.IncompleteRead,
-                ConnectionError):
+        except (urllib.error.URLError, TimeoutError, http.client.IncompleteRead, ConnectionError):
             if attempt < MAX_RETRIES - 1:
                 time.sleep(delay)
                 delay *= 2
@@ -174,8 +185,8 @@ def is_historical(market: Dict) -> bool:
 
 # ---------------------------------------------------------------- listing
 
-def _paginate(path: str, key: str, max_pages: int, _cache: bool = False,
-              **params) -> Iterator[Dict]:
+
+def _paginate(path: str, key: str, max_pages: int, _cache: bool = False, **params) -> Iterator[Dict]:
     cursor = None
     for _ in range(max_pages):
         d = get(path, _cache=_cache, cursor=cursor, **params)
@@ -188,8 +199,7 @@ def _paginate(path: str, key: str, max_pages: int, _cache: bool = False,
 
 def settled_events(series: str, max_pages: int = 200) -> List[Dict]:
     """All settled events of a series, live and historical. /events is not purged."""
-    return list(_paginate("events", "events", max_pages, series_ticker=series,
-                          status="settled", limit=200))
+    return list(_paginate("events", "events", max_pages, series_ticker=series, status="settled", limit=200))
 
 
 def event_markets(event_ticker: str) -> List[Dict]:
@@ -197,8 +207,7 @@ def event_markets(event_ticker: str) -> List[Dict]:
     rows = get("markets", event_ticker=event_ticker, limit=1000).get("markets", [])
     if rows and all(r.get("result") in ("yes", "no") for r in rows):
         return rows
-    hist = get("historical/markets", _cache=True, event_ticker=event_ticker,
-               limit=1000).get("markets", [])
+    hist = get("historical/markets", _cache=True, event_ticker=event_ticker, limit=1000).get("markets", [])
     return hist or rows
 
 
@@ -212,8 +221,10 @@ def series_markets(series: str, historical: bool, max_pages: int = 500) -> Itera
 
 # ---------------------------------------------------------------- prices
 
-def candles(market: Dict, interval: int = 60,
-            start_ts: Optional[int] = None, end_ts: Optional[int] = None) -> List[Dict]:
+
+def candles(
+    market: Dict, interval: int = 60, start_ts: Optional[int] = None, end_ts: Optional[int] = None
+) -> List[Dict]:
     """OHLC of yes_bid / yes_ask plus volume and OI. interval in minutes (1, 60, 1440)."""
     s = start_ts if start_ts is not None else ts(market["open_time"])
     e = end_ts if end_ts is not None else ts(market["close_time"])
@@ -224,8 +235,10 @@ def candles(market: Dict, interval: int = 60,
         series = market.get("series_ticker") or t.split("-")[0]
         path = "series/{}/markets/{}/candlesticks".format(series, t)
     settled = market.get("result") in ("yes", "no")
-    return get(path, _cache=settled, start_ts=s, end_ts=e,
-               period_interval=interval).get("candlesticks", []) or []
+    return (
+        get(path, _cache=settled, start_ts=s, end_ts=e, period_interval=interval).get("candlesticks", [])
+        or []
+    )
 
 
 def _ohlc(c: Dict, side: str, field: str = "close") -> Optional[float]:
@@ -247,11 +260,11 @@ def trades(market: Dict, max_pages: int = 50) -> List[Dict]:
     """Every print in a market, with `taker_side`. Cached once the market has settled."""
     path = "historical/trades" if is_historical(market) else "markets/trades"
     settled = market.get("result") in ("yes", "no")
-    return list(_paginate(path, "trades", max_pages, _cache=settled, ticker=market["ticker"],
-                          limit=1000))
+    return list(_paginate(path, "trades", max_pages, _cache=settled, ticker=market["ticker"], limit=1000))
 
 
 # ---------------------------------------------------------------- rows
+
 
 def volume(row: Dict) -> float:
     return to_float(row.get("volume_fp", row.get("volume"))) or 0.0

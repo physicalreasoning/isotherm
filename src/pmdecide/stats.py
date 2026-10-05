@@ -1,16 +1,17 @@
 """Strategy statistics that survive scrutiny: Sharpe with honest CIs, DSR, PBO.
 
-  sharpe            per-period mean / sd of daily PnL (zero-PnL days included)
-  stationary boot   Politis & Romano (1994): resamples blocks of random length,
-                    so day-to-day dependence (weather regimes) is preserved
-  newey_west_t      t-stat of mean daily PnL with HAC variance
-  deflated_sharpe   Bailey & López de Prado (2014): probability the true Sharpe
-                    exceeds the best you would expect from N unskilled trials,
-                    adjusted for skew and fat tails
-  pbo_cscv          Bailey, Borwein, López de Prado & Zhu (2017): probability that
-                    the configuration that looks best in-sample ranks below the
-                    median out-of-sample, over all symmetric splits of the history
+sharpe            per-period mean / sd of daily PnL (zero-PnL days included)
+stationary boot   Politis & Romano (1994): resamples blocks of random length,
+                  so day-to-day dependence (weather regimes) is preserved
+newey_west_t      t-stat of mean daily PnL with HAC variance
+deflated_sharpe   Bailey & López de Prado (2014): probability the true Sharpe
+                  exceeds the best you would expect from N unskilled trials,
+                  adjusted for skew and fat tails
+pbo_cscv          Bailey, Borwein, López de Prado & Zhu (2017): probability that
+                  the configuration that looks best in-sample ranks below the
+                  median out-of-sample, over all symmetric splits of the history
 """
+
 from __future__ import annotations
 
 from itertools import combinations
@@ -63,8 +64,10 @@ def expected_max_sharpe(n_trials: int, var_sr: float) -> float:
     """E[max SR] of n_trials unskilled strategies whose SRs have variance var_sr."""
     if n_trials <= 1:
         return 0.0
-    return float(np.sqrt(var_sr) * ((1 - EULER) * norm.ppf(1 - 1 / n_trials)
-                                    + EULER * norm.ppf(1 - 1 / (n_trials * np.e))))
+    return float(
+        np.sqrt(var_sr)
+        * ((1 - EULER) * norm.ppf(1 - 1 / n_trials) + EULER * norm.ppf(1 - 1 / (n_trials * np.e)))
+    )
 
 
 def deflated_sharpe(x, n_trials: int, var_sr_trials: float) -> Dict[str, float]:
@@ -74,10 +77,17 @@ def deflated_sharpe(x, n_trials: int, var_sr_trials: float) -> Dict[str, float]:
     t = len(x)
     g3, g4 = float(skew(x)), float(kurtosis(x, fisher=False))
     sr0 = expected_max_sharpe(n_trials, var_sr_trials)
-    den = np.sqrt(max(1 - g3 * sr + (g4 - 1) / 4 * sr ** 2, 1e-12))
+    den = np.sqrt(max(1 - g3 * sr + (g4 - 1) / 4 * sr**2, 1e-12))
     z = (sr - sr0) * np.sqrt(t - 1) / den
-    return {"sr_daily": sr, "sr0_daily": sr0, "dsr": float(norm.cdf(z)), "skew": g3,
-            "kurtosis": g4, "n_trials": int(n_trials), "t": int(t)}
+    return {
+        "sr_daily": sr,
+        "sr0_daily": sr0,
+        "dsr": float(norm.cdf(z)),
+        "skew": g3,
+        "kurtosis": g4,
+        "n_trials": int(n_trials),
+        "t": int(t),
+    }
 
 
 def pbo_cscv(M: np.ndarray, s: int = 12) -> Dict[str, float]:
@@ -98,6 +108,10 @@ def pbo_cscv(M: np.ndarray, s: int = 12) -> Dict[str, float]:
         lam.append(np.log(w / (1 - w)))
         degr.append(sr_oos[best] - np.median(sr_oos))
     lam = np.array(lam)
-    return {"pbo": float((lam <= 0).mean()), "splits": len(lam), "blocks": s,
-            "median_logit": float(np.median(lam)),
-            "oos_sr_best_minus_median": float(np.median(degr))}
+    return {
+        "pbo": float((lam <= 0).mean()),
+        "splits": len(lam),
+        "blocks": s,
+        "median_logit": float(np.median(lam)),
+        "oos_sr_best_minus_median": float(np.median(degr)),
+    }

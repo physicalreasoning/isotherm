@@ -14,6 +14,7 @@ schema error, never a guess.
         Score(stat="quantiles", q=[0.1, 0.5, 0.9]),
     ])
 """
+
 from __future__ import annotations
 
 from typing import List, Literal, Optional, Union
@@ -25,6 +26,7 @@ from scipy.stats import norm
 
 class Bucket(BaseModel):
     """An inclusive integer range; open-ended when a bound is omitted."""
+
     lo: Optional[int] = None
     hi: Optional[int] = None
     label: Optional[str] = None
@@ -112,12 +114,18 @@ def answer(dist: IntegerDistribution, questions: List[Question]) -> List[Answer]
         if isinstance(q, Choice):
             pr = np.array([dist.mass(b) for b in q.options])
             i = int(pr.argmax())
-            out.append(Answer(kind="choice", value=i, probabilities=pr.tolist(),
-                              confidence=float(pr[i]), uncovered_mass=float(1 - pr.sum())))
+            out.append(
+                Answer(
+                    kind="choice",
+                    value=i,
+                    probabilities=pr.tolist(),
+                    confidence=float(pr[i]),
+                    uncovered_mass=float(1 - pr.sum()),
+                )
+            )
         elif isinstance(q, Noul):
             p = dist.mass(q.set)
-            out.append(Answer(kind="noul", value=p >= 0.5, probabilities=[p],
-                              confidence=max(p, 1 - p)))
+            out.append(Answer(kind="noul", value=p >= 0.5, probabilities=[p], confidence=max(p, 1 - p)))
         elif isinstance(q, Score):
             if q.stat == "mean":
                 val = dist.mean()

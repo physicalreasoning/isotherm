@@ -11,6 +11,7 @@ Writes data/sports/mlb_game_probs.parquet and results/sports_ratings.json.
 
     uv run scripts/sports_ratings.py
 """
+
 from __future__ import annotations
 
 import json
@@ -53,7 +54,7 @@ def main():
     q_away = pd.DataFrame({"pitcher": e["away_sp"], "season": e["season"], "day": e["day"]})
     e["fip_home"] = pitcher_quality(logs, q_home)
     e["fip_away"] = pitcher_quality(logs, q_away)
-    e["fip_gap"] = e["fip_away"] - e["fip_home"]          # > 0: home starter is better
+    e["fip_gap"] = e["fip_away"] - e["fip_home"]  # > 0: home starter is better
     X = e[["elo_logit", "fip_gap"]].to_numpy()
     fit = e["season"].isin(list(FIT)).to_numpy()
     w = fit_logistic(X[fit], y[fit])
@@ -62,13 +63,30 @@ def main():
     report = {"elo_params": asdict(prm), "elo_tune_logloss": ll_tune, "elo_sp_weights": w.tolist()}
     for name, rng in (("check_2021_2024", CHECK), ("kalshi_2025_on", range(KALSHI_FROM, 2100))):
         s = e["season"].isin(list(rng)).to_numpy()
-        report[name] = {"games": int(s.sum()), "home_rate": float(y[s].mean()),
-                        "logloss_coin": logloss(np.full(s.sum(), y[s].mean()), y[s]),
-                        "logloss_elo": logloss(e.loc[s, "p_elo"].to_numpy(), y[s]),
-                        "logloss_elo_sp": logloss(e.loc[s, "p_elo_sp"].to_numpy(), y[s])}
+        report[name] = {
+            "games": int(s.sum()),
+            "home_rate": float(y[s].mean()),
+            "logloss_coin": logloss(np.full(s.sum(), y[s].mean()), y[s]),
+            "logloss_elo": logloss(e.loc[s, "p_elo"].to_numpy(), y[s]),
+            "logloss_elo_sp": logloss(e.loc[s, "p_elo_sp"].to_numpy(), y[s]),
+        }
     print(json.dumps(report, indent=1))
-    cols = ["game_pk", "season", "day", "start", "home_id", "away_id", "home_won", "p_elo",
-            "p_elo_sp", "elo_logit", "fip_home", "fip_away", "home_sp", "away_sp"]
+    cols = [
+        "game_pk",
+        "season",
+        "day",
+        "start",
+        "home_id",
+        "away_id",
+        "home_won",
+        "p_elo",
+        "p_elo_sp",
+        "elo_logit",
+        "fip_home",
+        "fip_away",
+        "home_sp",
+        "away_sp",
+    ]
     e[cols].to_parquet(D / "mlb_game_probs.parquet", index=False)
     pathlib.Path("results").mkdir(exist_ok=True)
     pathlib.Path("results/sports_ratings.json").write_text(json.dumps(report, indent=2))

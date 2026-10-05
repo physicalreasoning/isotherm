@@ -8,6 +8,7 @@ irrelevant to a pre-game order, so it is never downloaded. Settled pages are cac
 
     uv run scripts/sports_fetch_trades.py
 """
+
 from __future__ import annotations
 
 import argparse
@@ -22,18 +23,25 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 from pmdecide import kalshi  # noqa: E402
 
 D = pathlib.Path("data/sports")
-WINDOWS = ((86400, 72000), (10800, 0))      # seconds before first pitch: (from, to)
+WINDOWS = ((86400, 72000), (10800, 0))  # seconds before first pitch: (from, to)
 
 
 def market_trades(ticker, T, historical):
     path = "historical/trades" if historical else "markets/trades"
     out = []
     for a, b in WINDOWS:
-        for x in kalshi._paginate(path, "trades", 200, _cache=True, ticker=ticker, limit=1000,
-                                  min_ts=T - a, max_ts=T - b):
-            out.append({"ticker": ticker, "ts": kalshi.ts(x["created_time"]),
-                        "yes_price": float(x["yes_price_dollars"]), "count": float(x["count_fp"]),
-                        "taker_yes": x["taker_side"] == "yes"})
+        for x in kalshi._paginate(
+            path, "trades", 200, _cache=True, ticker=ticker, limit=1000, min_ts=T - a, max_ts=T - b
+        ):
+            out.append(
+                {
+                    "ticker": ticker,
+                    "ts": kalshi.ts(x["created_time"]),
+                    "yes_price": float(x["yes_price_dollars"]),
+                    "count": float(x["count_fp"]),
+                    "taker_yes": x["taker_side"] == "yes",
+                }
+            )
     return out
 
 
@@ -47,8 +55,10 @@ def main():
     cut = kalshi.cutoff_ts()
     rows, bad = [], 0
     with cf.ThreadPoolExecutor(a.workers) as ex:
-        futs = {ex.submit(market_trades, r.ticker, int(r.first_pitch_ts),
-                          int(r.first_pitch_ts) < cut): r.ticker for r in mk.itertuples()}
+        futs = {
+            ex.submit(market_trades, r.ticker, int(r.first_pitch_ts), int(r.first_pitch_ts) < cut): r.ticker
+            for r in mk.itertuples()
+        }
         for i, f in enumerate(cf.as_completed(futs), 1):
             try:
                 rows.extend(f.result())
@@ -61,8 +71,12 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     df = pd.DataFrame(rows).drop_duplicates()
     df.to_parquet(out / "mlb.parquet", index=False)
-    print("wrote {} prints for {} markets, {} failed ({:.0f}s)".format(
-        len(df), df["ticker"].nunique() if len(df) else 0, bad, time.time() - t0), flush=True)
+    print(
+        "wrote {} prints for {} markets, {} failed ({:.0f}s)".format(
+            len(df), df["ticker"].nunique() if len(df) else 0, bad, time.time() - t0
+        ),
+        flush=True,
+    )
 
 
 if __name__ == "__main__":

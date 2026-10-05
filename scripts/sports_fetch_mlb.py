@@ -7,6 +7,7 @@ season he started plus the season before (the prior that point-in-time FIP uses)
 
     uv run scripts/sports_fetch_mlb.py
 """
+
 from __future__ import annotations
 
 import argparse
@@ -34,16 +35,23 @@ def main():
 
     sched = pd.concat([mlbapi.schedule(s) for s in range(a.first, a.last + 1)], ignore_index=True)
     sched.to_parquet(OUT / "mlb_schedule.parquet", index=False)
-    print("schedule: {} game records, {} final, seasons {}-{} ({:.0f}s)".format(
-        len(sched), int((sched["coded"] == "F").sum()), a.first, a.last, time.time() - t0),
-        flush=True)
+    print(
+        "schedule: {} game records, {} final, seasons {}-{} ({:.0f}s)".format(
+            len(sched), int((sched["coded"] == "F").sum()), a.first, a.last, time.time() - t0
+        ),
+        flush=True,
+    )
 
     teams = pd.concat([mlbapi.teams(s) for s in range(a.first, a.last + 1)], ignore_index=True)
     teams.to_parquet(OUT / "mlb_teams.parquet", index=False)
 
     s = sched[sched["season"] >= a.pitchers_from]
-    sp = pd.concat([s[["away_sp", "season"]].rename(columns={"away_sp": "pid"}),
-                    s[["home_sp", "season"]].rename(columns={"home_sp": "pid"})]).dropna()
+    sp = pd.concat(
+        [
+            s[["away_sp", "season"]].rename(columns={"away_sp": "pid"}),
+            s[["home_sp", "season"]].rename(columns={"home_sp": "pid"}),
+        ]
+    ).dropna()
     sp["pid"] = sp["pid"].astype(int)
     jobs = set()
     for pid, season in sp.drop_duplicates().itertuples(index=False):
@@ -64,8 +72,12 @@ def main():
                 print("   {}/{} ({:.0f}s)".format(i, len(jobs), time.time() - t0), flush=True)
     logs = pd.concat(logs, ignore_index=True)
     logs.to_parquet(OUT / "mlb_pitcher_logs.parquet", index=False)
-    print("pitcher logs: {} appearances, {} pitchers ({:.0f}s)".format(
-        len(logs), logs["pitcher"].nunique(), time.time() - t0), flush=True)
+    print(
+        "pitcher logs: {} appearances, {} pitchers ({:.0f}s)".format(
+            len(logs), logs["pitcher"].nunique(), time.time() - t0
+        ),
+        flush=True,
+    )
 
 
 if __name__ == "__main__":

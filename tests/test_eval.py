@@ -1,4 +1,5 @@
 """Evaluation harness: scoring rules, splits, pooling, and the typed API."""
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -20,8 +21,7 @@ def synthetic(n=600, k=6, seed=0, start="2023-01-01"):
     days = pd.date_range(start, periods=n, freq="D")
     meta = pd.DataFrame({"day": days, "city": "X", "read": "d0_08", "regime": "nws_cli"})
     lo = np.tile(np.arange(k, dtype=float), (n, 1))
-    return LadderSet(meta, lo, lo + 1, np.ones((n, k), bool), y,
-                     {"market": truth, "noise": noise})
+    return LadderSet(meta, lo, lo + 1, np.ones((n, k), bool), y, {"market": truth, "noise": noise})
 
 
 def test_log_score_is_proper():
@@ -91,11 +91,11 @@ def test_source_is_passthrough():
 
 # ------------------------------------------------------------------ typed API
 
+
 def test_answers_are_coherent_across_question_types():
     d = IntegerDistribution.gaussian(81.2, 2.4)
-    ladder = Choice(options=[Bucket(hi=79), Bucket(lo=80, hi=81), Bucket(lo=82, hi=83),
-                             Bucket(lo=84)])
-    ch, = answer(d, [ladder])
+    ladder = Choice(options=[Bucket(hi=79), Bucket(lo=80, hi=81), Bucket(lo=82, hi=83), Bucket(lo=84)])
+    (ch,) = answer(d, [ladder])
     assert np.isclose(sum(ch.probabilities), 1.0)
     # Noul thresholds are monotone and agree with the Choice tails
     ps = [answer(d, [Noul(set=Bucket(lo=k))])[0].probabilities[0] for k in range(75, 90)]
@@ -107,26 +107,30 @@ def test_answers_are_coherent_across_question_types():
 
 def test_schema_rejects_malformed_questions():
     with pytest.raises(ValidationError):
-        Choice(options=[Bucket(lo=80, hi=82), Bucket(lo=82, hi=84)])     # overlap
+        Choice(options=[Bucket(lo=80, hi=82), Bucket(lo=82, hi=84)])  # overlap
     with pytest.raises(ValidationError):
-        Bucket()                                                          # unbounded
+        Bucket()  # unbounded
     with pytest.raises(ValidationError):
         Bucket(lo=5, hi=4)
     with pytest.raises(ValidationError):
-        Choice(options=[Bucket(lo=1)])                                    # one option
+        Choice(options=[Bucket(lo=1)])  # one option
 
 
 def test_market_label_control_learns_nothing_beyond_the_market():
     # Synthetic ladders where the market IS the truth: a net trained on market-sampled labels
     # must not beat the market on real outcomes.
     from pmdecide.model import LadderNet
+
     ls = synthetic(n=900, k=6)
     ls.meta["city"] = "NY"
     ls.meta["day"] = pd.date_range("2024-01-01", periods=900, freq="D")
     for s in ("emos_gfs", "emos_nbm", "emos_nbm_obs", "climatology"):
         ls.probs[s] = ls.probs["noise"]
-    ls.quotes = {"bid": ls.probs["market"] * 0.9, "ask": ls.probs["market"] * 1.1,
-                 "vol_after": np.ones_like(ls.lo)}
+    ls.quotes = {
+        "bid": ls.probs["market"] * 0.9,
+        "ask": ls.probs["market"] * 1.1,
+        "vol_after": np.ones_like(ls.lo),
+    }
     tr, te = ls.take(np.arange(700)), ls.take(np.arange(700, 900))
     m = LadderNet(market_labels=True, seeds=1, epochs=60).fit(tr)
     gain = metrics.log_score(te.probs["market"], te.y).mean() - metrics.log_score(m.predict(te), te.y).mean()

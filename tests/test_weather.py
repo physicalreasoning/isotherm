@@ -1,4 +1,5 @@
 """Invariants the whole programme rests on: label arithmetic and point-in-time forecasts."""
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -12,11 +13,14 @@ from pmdecide.weather import (
 )
 
 
-@pytest.mark.parametrize("st,floor,cap,inside,outside", [
-    ("less", None, 80, [79, -10], [80, 81]),
-    ("greater", 87, None, [88, 120], [87, 86]),
-    ("between", 80, 81, [80, 81], [79, 82]),
-])
+@pytest.mark.parametrize(
+    "st,floor,cap,inside,outside",
+    [
+        ("less", None, 80, [79, -10], [80, 81]),
+        ("greater", 87, None, [88, 120], [87, 86]),
+        ("between", 80, 81, [80, 81], [79, 82]),
+    ],
+)
 def test_bucket_membership_matches_kalshi_semantics(st, floor, cap, inside, outside):
     # KXHIGHNY-26AUG03: T80 = "<80", B80.5 = "80-81", T87 = ">87"
     assert all(bucket_contains(st, floor, cap, v) for v in inside)
@@ -24,15 +28,20 @@ def test_bucket_membership_matches_kalshi_semantics(st, floor, cap, inside, outs
 
 
 def test_a_full_ladder_partitions_the_integers():
-    ladder = [("less", None, 80), ("between", 80, 81), ("between", 82, 83),
-              ("between", 84, 85), ("between", 86, 87), ("greater", 87, None)]
+    ladder = [
+        ("less", None, 80),
+        ("between", 80, 81),
+        ("between", 82, 83),
+        ("between", 84, 85),
+        ("between", 86, 87),
+        ("greater", 87, None),
+    ]
     for v in range(40, 120):
         assert sum(bucket_contains(s, f, c, v) for s, f, c in ladder) == 1, v
 
 
 def test_gaussian_bucket_probs_sum_to_one_over_a_partition():
-    ladder = [("less", None, 80), ("between", 80, 81), ("between", 82, 83),
-              ("greater", 83, None)]
+    ladder = [("less", None, 80), ("between", 80, 81), ("between", 82, 83), ("greater", 83, None)]
     p = gaussian_bucket_probs(81.3, 2.5, [bucket_interval(*b) for b in ladder])
     assert np.isclose(p.sum(), 1.0)
     assert p.argmax() == 1
@@ -41,15 +50,19 @@ def test_gaussian_bucket_probs_sum_to_one_over_a_partition():
 def _mos(runs):
     rows = []
     for rt, val in runs:
-        rows.append({"runtime": pd.Timestamp(rt, tz="UTC"),
-                     "ftime": pd.Timestamp("2026-08-04 00:00", tz="UTC"), "n_x": val})
+        rows.append(
+            {
+                "runtime": pd.Timestamp(rt, tz="UTC"),
+                "ftime": pd.Timestamp("2026-08-04 00:00", tz="UTC"),
+                "n_x": val,
+            }
+        )
     return pd.DataFrame(rows)
 
 
 def test_mos_uses_only_runs_public_at_read_time():
     day = pd.Timestamp("2026-08-03")
-    mos = _mos([("2026-08-02 12:00", 84.0), ("2026-08-03 00:00", 82.0),
-                ("2026-08-03 12:00", 80.0)])
+    mos = _mos([("2026-08-02 12:00", 84.0), ("2026-08-03 00:00", 82.0), ("2026-08-03 12:00", 80.0)])
     # 08:00 EDT = 12:00Z. The 12Z run is not public yet; 00Z became public at 05Z.
     t = pd.Timestamp("2026-08-03 12:00", tz="UTC")
     got = mos_daytime_max(mos, day, t)
@@ -67,6 +80,7 @@ def test_mos_returns_none_when_nothing_is_public():
 
 def test_vectorised_forecast_join_matches_reference():
     from pmdecide.emos import daytime_max_table, forecast_at
+
     rng = np.random.default_rng(0)
     runs = pd.date_range("2026-07-01", "2026-07-20", freq="6h", tz="UTC")
     rows = []
@@ -86,21 +100,36 @@ def test_vectorised_forecast_join_matches_reference():
 
 def test_partition_rejects_single_and_overlapping_thresholds():
     from pmdecide.weather import is_partition
-    ladder = [bucket_interval("less", None, 80), bucket_interval("between", 80, 81),
-              bucket_interval("greater", 81, None)]
+
+    ladder = [
+        bucket_interval("less", None, 80),
+        bucket_interval("between", 80, 81),
+        bucket_interval("greater", 81, None),
+    ]
     assert is_partition(ladder)
-    assert not is_partition([bucket_interval("greater", 77, None)])          # 2021 single market
-    assert not is_partition([bucket_interval("greater", 77, None),
-                             bucket_interval("greater", 80, None)])          # overlapping
-    assert not is_partition(ladder[:2])                                     # missing upper tail
+    assert not is_partition([bucket_interval("greater", 77, None)])  # 2021 single market
+    assert not is_partition(
+        [bucket_interval("greater", 77, None), bucket_interval("greater", 80, None)]
+    )  # overlapping
+    assert not is_partition(ladder[:2])  # missing upper tail
 
 
 def test_rules_text_strikes_parse_to_kalshi_semantics():
     from pmdecide.weather import normalise_strikes
-    df = pd.DataFrame({"strike_type": [None, None, None, "between"],
-                       "floor": [np.nan, np.nan, np.nan, 1.0], "cap": [np.nan, np.nan, np.nan, 2.0],
-                       "rules": ["... is between 42-43°, then", "... is greater than 44°, the",
-                                 "... is less than 38°, then", "api row"]})
+
+    df = pd.DataFrame(
+        {
+            "strike_type": [None, None, None, "between"],
+            "floor": [np.nan, np.nan, np.nan, 1.0],
+            "cap": [np.nan, np.nan, np.nan, 2.0],
+            "rules": [
+                "... is between 42-43°, then",
+                "... is greater than 44°, the",
+                "... is less than 38°, then",
+                "api row",
+            ],
+        }
+    )
     out = normalise_strikes(df)
     assert list(out.strike_type) == ["between", "greater", "less", "between"]
     assert bucket_contains("greater", out["floor"][1], None, 45)
@@ -115,21 +144,27 @@ def test_kalshi_signature_verifies_and_ignores_query_string():
     from cryptography.hazmat.primitives.asymmetric import padding, rsa
 
     from pmdecide.kalshi import BASE, sign
+
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     url = BASE + "/markets?event_ticker=KXHIGHNY-26AUG03&limit=1000"
     sig = sign(key, "GET", url, "1700000000000")
-    key.public_key().verify(b64decode(sig), b"1700000000000GET/trade-api/v2/markets",
-                            padding.PSS(mgf=padding.MGF1(hashes.SHA256()),
-                                        salt_length=padding.PSS.DIGEST_LENGTH), hashes.SHA256())
+    key.public_key().verify(
+        b64decode(sig),
+        b"1700000000000GET/trade-api/v2/markets",
+        padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.DIGEST_LENGTH),
+        hashes.SHA256(),
+    )
 
 
 def test_kalshi_json_tolerates_control_characters_in_rules_text():
     import json
+
     raw = '{"rules_primary": "line one\\u0000\tline two\x0b"}'
     assert json.loads(raw, strict=False)["rules_primary"].startswith("line one")
     import inspect
 
     from pmdecide import iem, kalshi
+
     for mod in (kalshi, iem):
         assert "strict=True" not in inspect.getsource(mod).replace("zip(", "")
 
@@ -140,6 +175,7 @@ def test_kalshi_signature_supports_ed25519_keys():
     from cryptography.hazmat.primitives.asymmetric import ed25519
 
     from pmdecide.kalshi import BASE, sign
+
     key = ed25519.Ed25519PrivateKey.generate()
     sig = sign(key, "GET", BASE + "/portfolio/balance?x=1", "1700000000000")
     key.public_key().verify(b64decode(sig), b"1700000000000GET/trade-api/v2/portfolio/balance")
@@ -147,6 +183,7 @@ def test_kalshi_signature_supports_ed25519_keys():
 
 def test_unix_seconds_is_resolution_independent():
     from pmdecide.dataset import unix_s
+
     for unit in ("ns", "us", "s"):
         t = pd.Series(pd.to_datetime(["2026-08-03 00:00"]).as_unit(unit)).dt.tz_localize("UTC")
         assert unix_s(t)[0] == 1785715200
@@ -157,14 +194,18 @@ def test_no_observations_before_the_climate_day():
 
     from pmdecide.dataset import LadderSet, _attach_obs
     from pmdecide.weather import CITIES
+
     if not pathlib.Path("data/obs/KNYC.parquet").exists():
         pytest.skip("obs not fetched")
     day = pd.Timestamp("2025-07-02")
-    reads = {"d1_16": pd.Timestamp("2025-07-01 16:00", tz="America/New_York"),
-             "d0_12": pd.Timestamp("2025-07-02 12:00", tz="America/New_York")}
-    meta = pd.DataFrame({"day": [day, day], "read": list(reads),
-                         "read_ts": [int(t.timestamp()) for t in reads.values()]})
+    reads = {
+        "d1_16": pd.Timestamp("2025-07-01 16:00", tz="America/New_York"),
+        "d0_12": pd.Timestamp("2025-07-02 12:00", tz="America/New_York"),
+    }
+    meta = pd.DataFrame(
+        {"day": [day, day], "read": list(reads), "read_ts": [int(t.timestamp()) for t in reads.values()]}
+    )
     ls = LadderSet(meta, np.zeros((2, 2)), np.ones((2, 2)), np.ones((2, 2), bool), np.zeros(2, int))
     _attach_obs(ls, CITIES["NY"])
-    assert np.isnan(ls.meta["obs_max"].iloc[0])                    # day before: nothing yet
-    assert 60 < ls.meta["obs_max"].iloc[1] <= 89                    # by noon; CLI high was 84
+    assert np.isnan(ls.meta["obs_max"].iloc[0])  # day before: nothing yet
+    assert 60 < ls.meta["obs_max"].iloc[1] <= 89  # by noon; CLI high was 84
