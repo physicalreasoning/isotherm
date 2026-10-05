@@ -85,7 +85,7 @@ def run(ls, suite, lockbox, boot):
             d = (ref - losses[best])[s]
             pc[c] = {"n": int(s.sum()), "gain": float(d.mean()),
                      "ci": metrics.date_bootstrap_mean(ev.meta["day"].to_numpy()[s], d, boot)}
-        for g in ("regime",):
+        for g in ("regime", "period"):
             for v in sorted(ev.meta[g].unique()):
                 s = (ev.meta[g] == v).to_numpy()
                 d = (ref - losses[best])[s]
