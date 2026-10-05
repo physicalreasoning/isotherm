@@ -68,10 +68,66 @@ variance.
 City, read time, settlement regime (`nws_cli` / `twc`), and from G2 on: season, forecast surprise,
 volume tercile. A pooled gain driven by one city is reported as that.
 
+## Backtest (`scripts/backtest.py`)
+
+Proper scores say whether the probabilities are better. The backtest asks whether they are
+better **by more than it costs to act on them**.
+
+### Execution
+
+| | Taker | Maker |
+|---|---|---|
+| Price | the ask (YES) or 1 − bid (NO) at the read time; `slip` ticks worse in sweeps | join the touch, or improve it by 1¢ when the spread is ≥ 2¢ |
+| Fill | immediate, capped at `participation` × contracts traded in the bucket after the read | only by later prints from the opposite taker side **strictly through** our price, within `horizon` |
+| Fees | Kalshi quadratic taker fee, rounded up to the cent per order | none for these series (`fee_type: quadratic`); 0.0175 in sweeps |
+| Why this is conservative | no queue priority, no price improvement, no maker rebates | a print through our level fills any order resting there, so no queue model is needed; and those are exactly the fills that arrive when the price moves against us, so adverse selection is modelled for free |
+
+Positions are held to settlement. Post-read volume is used only as a capacity cap, never as a
+signal.
+
+### Sizing
+
+*Threshold:* every instrument with EV per contract above θ after fees, at a fixed stake.
+*Ladder Kelly:* the buckets are mutually exclusive and exhaustive, so a ladder is one bet. Holdings
+in every YES and NO contract are chosen jointly to maximise E[log wealth] under the model (a concave
+program), then scaled by a Kelly fraction to absorb the model's own estimation error.
+
+### Selection, and how we avoid fooling ourselves
+
+- **Headline = nested walk-forward.** Each quarter trades the configuration with the best Sharpe on
+  *earlier quarters only*; the first quarters use a pre-registered default. This is the number that
+  could actually have been earned. The full-period best configuration is shown only as a ceiling.
+- **Deflated Sharpe** (Bailey & López de Prado 2014) for the number of configurations tried and the
+  dispersion of their Sharpes, with skew and kurtosis. Believe it at ≥ 0.95.
+- **PBO via CSCV** (Bailey et al. 2017): over every symmetric split of the history, how often does
+  the in-sample winner land below the median out of sample? Believe the selection at ≤ 0.2.
+- Sharpe CIs by **stationary bootstrap** (weather persists for days), mean daily PnL by
+  **Newey-West t**.
+
+### Engine checks (each must hold before any PnL is read)
+
+| Check | Must |
+|---|---|
+| Oracle (true outcome as the model) | never lose a trade |
+| Coherent in-spread market distribution as the model (taker) | make zero trades |
+| Uninformed market maker quoting around that distribution (maker) | is the bar a maker strategy must beat, not zero |
+| Noise around the market with matched turnover | lose roughly what it pays in costs |
+
+### Diagnostics
+
+- **Attribution:** PnL = alpha vs mid + spread paid + fees. Tells you whether information is
+  missing or merely too expensive to act on.
+- **Edge realisation:** ex-ante EV per contract against realised PnL per contract, by quantile.
+  Realised far below predicted is the winner's curse: trading where the model disagrees most with
+  the market also selects the model's errors.
+- **Robustness:** slippage, fee multiplier, participation, size, fill rule, order horizon.
+- **By period and city:** a pooled profit carried by one half-year or one city is reported as that.
+
 ## What this cannot tell you
 
-- **Whether the edge is tradeable.** Log score against the mid ignores the spread you would pay and
-  the depth you could fill. That is G4's backtest, with fees and a conservative fill model.
+- **What a live order would actually get.** Hourly candles carry no depth, and trade-through fills
+  ignore queue position at our own level. The maker model is a lower bound on fills; the touch
+  variant an upper bound. Only G5's shadow trading measures the truth.
 - **Whether it holds live.** Backfilled candles are not a live feed; G5 is four weeks of shadow
   scoring to measure that.
 - **Anything about other venues or other contracts.** Seven cities, one exchange, one contract
