@@ -18,7 +18,7 @@ import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 from isotherm import iem  # noqa: E402
-from isotherm.weather import CITIES  # noqa: E402
+from isotherm.weather import ALL_CITIES, CITIES  # noqa: E402
 
 OUT = pathlib.Path("data/forecasts")
 KEEP = {"GFS": ["runtime", "ftime", "n_x", "tmp"], "NBS": ["runtime", "ftime", "txn", "xnd", "tmp", "tsd"]}
@@ -44,7 +44,7 @@ def main():
     a = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     for k in a.cities:
-        st = CITIES[k].station
+        st = ALL_CITIES[k].station
         print("== {} {}".format(k, st), flush=True)
         cli = pd.concat([iem.cli(st, y) for y in range(a.start, a.end + 1)], ignore_index=True)
         cli.to_parquet(OUT / "{}_cli.parquet".format(st), index=False)

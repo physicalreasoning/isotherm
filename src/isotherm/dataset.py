@@ -26,7 +26,15 @@ import numpy as np
 import pandas as pd
 
 from .emos import daytime_max_table, fit_climatology, fit_emos, forecast_at, interval_probs
-from .weather import AVAILABILITY_LAG, CITIES, City, bucket_interval, is_partition, normalise_strikes
+from .weather import (
+    ALL_CITIES,
+    AVAILABILITY_LAG,
+    CITIES,
+    City,
+    bucket_interval,
+    is_partition,
+    normalise_strikes,
+)
 
 READS = {"d1_16": (-1, 16), "d0_08": (0, 8), "d0_12": (0, 12), "d0_14": (0, 14)}
 FORECASTS = {"emos_gfs": ("GFS", "n_x", "2015-01-01"), "emos_nbm": ("NBS", "txn", "2021-01-01")}
@@ -367,7 +375,7 @@ def _finish(p, mask):
 
 
 def build_city(key: str, cache: bool = True) -> LadderSet:
-    city = CITIES[key]
+    city = ALL_CITIES[key]
     pp = DATA / "panel" / "{}.parquet".format(key)
     if not pp.exists():
         raise FileNotFoundError(pp)

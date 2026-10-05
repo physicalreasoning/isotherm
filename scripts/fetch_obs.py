@@ -17,7 +17,7 @@ import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 from isotherm import iem  # noqa: E402
-from isotherm.weather import CITIES  # noqa: E402
+from isotherm.weather import ALL_CITIES, CITIES  # noqa: E402
 
 OUT = pathlib.Path("data/obs")
 
@@ -32,7 +32,7 @@ def main():
     if a.five_min:
         iem.MIN_INTERVAL = 5.0  # shared with other IEM users; be slow
         for k in a.cities:
-            c = CITIES[k]
+            c = ALL_CITIES[k]
             qs = pd.date_range("{}-01-01".format(a.start), "{}-01-01".format(a.end + 1), freq="QS")
             parts = [
                 iem.asos1min(c.asos, str(x.date()), str(y.date()))
@@ -44,7 +44,7 @@ def main():
         return
     OUT.mkdir(parents=True, exist_ok=True)
     for k in a.cities:
-        c = CITIES[k]
+        c = ALL_CITIES[k]
         df = pd.concat([iem.asos(c.asos, y) for y in range(a.start, a.end + 1)], ignore_index=True)
         df.to_parquet(OUT / "{}.parquet".format(c.station), index=False)
         print(
