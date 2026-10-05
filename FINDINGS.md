@@ -332,3 +332,25 @@ edge is gone: about $1 a day against $63 a day in the backtest. The placebos fli
 profit to loss say the in-sample PnL came largely from a newly launched market's miscalibration,
 and that has been corrected. It is the highs story (§3, §10) in five weeks. Lows are not added
 to live trading.
+
+## 15 · G3: synthetic pretraining helps only when real data is scarce (2026-10-05)
+
+Full record: `docs/G3.md`; raw: `results/g3_learning_curve.{json,md}`. 92,452 synthetic
+day-before ladders from 55 ASOS stations that Kalshi does not list (none of the seven settlement
+stations, enforced by a test), with a market simulator fit to the real panel. The simulator
+matches the real market's log score gap to EMOS-NBM (−0.110 vs −0.109), its overround (1.065 vs
+1.050) and spread (4.0¢ vs 4.5¢).
+
+| Real training data | Pretrained minus none, Δ log score |
+|---|---|
+| 10% | **+0.017** [+0.013, +0.022] |
+| 25% | +0.002 [−0.002, +0.005] |
+| 50% | −0.006 [−0.011, −0.002] |
+| 100% | −0.005 [−0.009, −0.001] |
+
+The gate (PLAN §6) fails on both clauses: pretrained on 50% of real data is 0.009 worse than no
+pretraining on 100%, and at 100% pretraining slightly hurts. Pretraining is not added to
+LadderNet. It is worth keeping for new contracts with little history, where it doubles the gain at
+10% data. Caveat: the pretrained control is +0.005, not zero, so up to that much of any pretrained
+gain may come from the synthetic stage rather than real outcomes; it can only flatter the
+pretrained arms, so it does not change the verdict.

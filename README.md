@@ -35,7 +35,7 @@ backtests in [results/backtest_g2.md](results/backtest_g2.md); every headline nu
 | Daily lows | same pipeline, a market launched Dec 2025 | backtest cleared every bar (DSR 0.98, PBO 0.06), sealed test made $36 in five weeks; rain not modelable yet ([LOWS_RAIN](docs/LOWS_RAIN.md), [§14](FINDINGS.md)) |
 | Same-day | do finer obs and a 14:00 read help | probabilities yes (+0.017 nats recent at 14:00, best of any read); trading no, books too thin ([§12](FINDINGS.md)) |
 | G5 | does it hold live | running: paper trades at 16:00 local daily with a decay alarm, ledger on [`shadow-ledger`](../../tree/shadow-ledger) |
-| G3 | synthetic pretraining | not started |
+| G3 | synthetic pretraining (92k ladders, 55 stations) | fails the gate: +0.017 nats with 10% of real data, slightly worse at 100% ([G3](docs/G3.md), [§15](FINDINGS.md)) |
 
 ## Reproduce
 
