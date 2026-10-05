@@ -47,6 +47,7 @@ ladder over the market; intervals are 95% date-block bootstraps [14].
 | Sealed test, highs (Jul to Oct 2026) | +$1,851, Newey-West *t* 1.77 [10]; monthly $1,029, $517, $246 |
 | Sealed test, lows (Sep to Oct 2026) | +$36 after a backtest with deflated Sharpe 0.98 |
 | MLB game winners | no edge, within ±0.001 of the market |
+| Transformer over buckets | within 0.004 of the MLP; fails its pre-registered gate, not adopted |
 
 The edge was large in 2023 and has mostly decayed: the market now prices the National Blend of
 Models but still underweights GFS MOS. Every result, correction and negative finding is in
