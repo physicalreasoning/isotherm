@@ -29,6 +29,15 @@ def write_report(root: pathlib.Path, r: dict):
         "|---|---|",
         "| Settled ladders | {} |".format(r.get("settled_ladders", 0)),
     ]
+    dec = r.get("decay")
+    if dec:
+        L.insert(
+            4,
+            "**Status: {}** (stop rule: last two {}-day windows both below zero, CI included)".format(
+                dec["status"], dec["window_days"]
+            ),
+        )
+        L.insert(5, "")
     if "log_score_gain_vs_market" in r:
         ci = r.get("gain_ci")
         L.append(
@@ -43,6 +52,14 @@ def write_report(root: pathlib.Path, r: dict):
         ]
         L += ["", "| Month | PnL |", "|---|---:|"]
         L += ["| {} | ${:,.0f} |".format(k, v) for k, v in r["by_month"].items()]
+        if r.get("by_regime"):
+            L += ["", "| Settlement source | PnL |", "|---|---:|"]
+            L += ["| {} | ${:,.0f} |".format(k, v) for k, v in r["by_regime"].items()]
+    if dec and dec["windows"]:
+        L += ["", "| Window | Settled days | Log score gain vs market [95% CI] |", "|---|---:|---|"]
+        for w in dec["windows"]:
+            ci = " [{:+.4f}, {:+.4f}]".format(*w["ci"]) if "ci" in w else ""
+            L.append("| {} to {} | {} | {:+.4f}{} |".format(w["from"], w["to"], w["days"], w["gain"], ci))
     (root / "REPORT.md").write_text("\n".join(L) + "\n")
 
 
