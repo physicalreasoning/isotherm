@@ -242,11 +242,23 @@ class Maker:
 
     def configs(self):
         return [
-            MakerConfig(m, theta=t, horizon_h=h)
+            MakerConfig(m, theta=t, horizon_h=h, cancel_on=c)
             for m in MODELS
             for t in (0.0, 0.01, 0.02, 0.04)
-            for h in (1.0, 4.0)
+            for h, c in ((1.0, None), (4.0, None), (48.0, "gfs"))
         ]
+
+    def touch_bound(self, picks, configs):
+        """PnL of the same nested picks under at-touch fills (50% queue share): the upper bound."""
+        fold_by_day = pd.Series(self.o.fold, index=self.o.rows.meta["day"]).groupby(level=0).first()
+        by_name = {c.name: c for c in configs}
+        total = 0.0
+        for i, pk in enumerate(picks):
+            cfg = MakerConfig(**{**by_name[pk["config"]].__dict__, "fill": "touch"})
+            led = self.simulate(cfg)
+            if len(led):
+                total += float(led.loc[led["day"].map(fold_by_day) == i, "pnl"].sum())
+        return total
 
     def simulate(self, cfg, probs=None, rows=None):
         rows = rows if rows is not None else self.o.rows
@@ -363,6 +375,8 @@ def run_read(ex, boot):
             }
     top = pd.Series([p["config"] for p in picks]).mode().iloc[0]
     cfg = next(c for c in configs if c.name == top)
+    if hasattr(ex, "touch_bound"):
+        res["selected"]["touch_bound_pnl"] = ex.touch_bound(picks, configs)
     res["robustness_config"] = top
     res["robustness"] = ex.robustness(cfg)
     res["placebos"] = ex.placebos(cfg, res["selected"]["trades"])
@@ -401,6 +415,8 @@ def markdown(res):
             "| PBO (CSCV) | **{:.2f}** ({} splits; ≤0.2 to believe) |".format(pbo["pbo"], pbo["splits"]),
             "| Max drawdown | ${:,.0f} |".format(s["max_drawdown"]),
         ]
+        if "touch_bound_pnl" in s:
+            L.append("| Same picks, at-touch fills (upper bound) | ${:,.0f} |".format(s["touch_bound_pnl"]))
         if "attribution" in s:
             a = s["attribution"]
             L += [

@@ -1,7 +1,7 @@
 {
   "NY": {
-    "markets": 9676,
-    "events": 1881,
+    "markets": 9682,
+    "events": 1882,
     "unparsed_markets": 0,
     "arithmetic_agreement_ladders": 1.0,
     "kalshi_record_contradictions": [],
@@ -11,7 +11,7 @@
     },
     "no_settle_value": 5066,
     "one_yes_share": 1.0,
-    "ladder_events": 1620,
+    "ladder_events": 1621,
     "non_ladder_events": 261,
     "non_ladder_years": {
       "2021": 145,
@@ -34,16 +34,16 @@
       "diffs": {}
     },
     "cli_twc": {
-      "days": 51,
+      "days": 52,
       "agree": 1.0,
       "first": "2026-08-14",
-      "last": "2026-10-03",
+      "last": "2026-10-04",
       "diffs": {}
     }
   },
   "CHI": {
-    "markets": 9673,
-    "events": 1869,
+    "markets": 9679,
+    "events": 1870,
     "unparsed_markets": 0,
     "arithmetic_agreement_ladders": 1.0,
     "kalshi_record_contradictions": [
@@ -66,7 +66,7 @@
     },
     "no_settle_value": 5048,
     "one_yes_share": 1.0,
-    "ladder_events": 1621,
+    "ladder_events": 1622,
     "non_ladder_events": 248,
     "non_ladder_years": {
       "2021": 132,
@@ -93,16 +93,16 @@
       }
     },
     "cli_twc": {
-      "days": 51,
+      "days": 52,
       "agree": 1.0,
       "first": "2026-08-14",
-      "last": "2026-10-03",
+      "last": "2026-10-04",
       "diffs": {}
     }
   },
   "MIA": {
-    "markets": 7442,
-    "events": 1241,
+    "markets": 7448,
+    "events": 1242,
     "unparsed_markets": 0,
     "arithmetic_agreement_ladders": 1.0,
     "kalshi_record_contradictions": [],
@@ -112,7 +112,7 @@
     },
     "no_settle_value": 3661,
     "one_yes_share": 1.0,
-    "ladder_events": 1240,
+    "ladder_events": 1241,
     "non_ladder_events": 1,
     "non_ladder_years": {
       "2026": 1
@@ -128,18 +128,18 @@
       }
     },
     "cli_twc": {
-      "days": 51,
-      "agree": 0.9803921568627451,
+      "days": 52,
+      "agree": 0.9807692307692307,
       "first": "2026-08-14",
-      "last": "2026-10-03",
+      "last": "2026-10-04",
       "diffs": {
         "5.0": 1
       }
     }
   },
   "AUS": {
-    "markets": 7425,
-    "events": 1238,
+    "markets": 7431,
+    "events": 1239,
     "unparsed_markets": 0,
     "arithmetic_agreement_ladders": 1.0,
     "kalshi_record_contradictions": [],
@@ -149,7 +149,7 @@
     },
     "no_settle_value": 3610,
     "one_yes_share": 1.0,
-    "ladder_events": 1238,
+    "ladder_events": 1239,
     "non_ladder_events": 0,
     "non_ladder_years": {},
     "cli_nws_cli": {
@@ -160,11 +160,13 @@
       "diffs": {}
     },
     "cli_twc": {
-      "days": 51,
-      "agree": 1.0,
+      "days": 52,
+      "agree": 0.9807692307692307,
       "first": "2026-08-14",
-      "last": "2026-10-03",
-      "diffs": {}
+      "last": "2026-10-04",
+      "diffs": {
+        "1.0": 1
+      }
     }
   },
   "LAX": {
@@ -201,8 +203,8 @@
     }
   },
   "DEN": {
-    "markets": 4098,
-    "events": 683,
+    "markets": 4104,
+    "events": 684,
     "unparsed_markets": 0,
     "arithmetic_agreement_ladders": 1.0,
     "kalshi_record_contradictions": [],
@@ -212,7 +214,7 @@
     },
     "no_settle_value": 802,
     "one_yes_share": 1.0,
-    "ladder_events": 683,
+    "ladder_events": 684,
     "non_ladder_events": 0,
     "non_ladder_years": {},
     "cli_nws_cli": {
@@ -225,16 +227,16 @@
       }
     },
     "cli_twc": {
-      "days": 51,
+      "days": 52,
       "agree": 1.0,
       "first": "2026-08-14",
-      "last": "2026-10-03",
+      "last": "2026-10-04",
       "diffs": {}
     }
   },
   "PHIL": {
-    "markets": 4098,
-    "events": 683,
+    "markets": 4104,
+    "events": 684,
     "unparsed_markets": 0,
     "arithmetic_agreement_ladders": 1.0,
     "kalshi_record_contradictions": [],
@@ -244,7 +246,7 @@
     },
     "no_settle_value": 808,
     "one_yes_share": 1.0,
-    "ladder_events": 683,
+    "ladder_events": 684,
     "non_ladder_events": 0,
     "non_ladder_years": {},
     "cli_nws_cli": {
@@ -257,10 +259,10 @@
       }
     },
     "cli_twc": {
-      "days": 51,
+      "days": 52,
       "agree": 1.0,
       "first": "2026-08-14",
-      "last": "2026-10-03",
+      "last": "2026-10-04",
       "diffs": {}
     }
   }

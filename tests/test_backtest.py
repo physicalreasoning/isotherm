@@ -171,3 +171,24 @@ def test_maker_oracle_never_loses():
     }
     led = run_maker(ls, np.eye(3)[[1]], MakerConfig("o", theta=0.0, stake=1e4), trades)
     assert len(led) and (led.pnl > 0).all()
+
+
+def test_next_gfs_release_and_cancel_on_new_run():
+    from pmdecide.backtest import MakerConfig, next_gfs_public, run_maker
+
+    t = 1785715200  # 2026-08-03 00:00Z
+    assert next_gfs_public(t) == t + 5 * 3600
+    assert next_gfs_public(t + 5 * 3600) == t + 11 * 3600
+    assert next_gfs_public(t + 23 * 3600 + 1) == t + 86400 + 5 * 3600
+    # an order resting from 00:00Z is cancelled at 05:00Z, so a print through it at 06:00Z does not fill
+    ls = _with_meta(
+        _ladder([0.1, 0.8, 0.1], bid=[0.05, 0.50, 0.05], ask=[0.10, 0.60, 0.10], y=1),
+        read_ts=t,
+        close_ts=t + 86400,
+    )
+    trades = {"T1": _tr([t + 6 * 3600], [0.40], [30], [False])}
+    keep = run_maker(ls, ls.probs["model"], MakerConfig("m", theta=0.0, horizon_h=48), trades)
+    gone = run_maker(
+        ls, ls.probs["model"], MakerConfig("m", theta=0.0, horizon_h=48, cancel_on="gfs"), trades
+    )
+    assert len(keep) == 1 and gone.empty

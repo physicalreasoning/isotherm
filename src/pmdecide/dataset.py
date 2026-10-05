@@ -28,13 +28,13 @@ import pandas as pd
 from .emos import daytime_max_table, fit_climatology, fit_emos, forecast_at, interval_probs
 from .weather import AVAILABILITY_LAG, CITIES, City, bucket_interval, is_partition, normalise_strikes
 
-READS = {"d1_16": (-1, 16), "d0_08": (0, 8), "d0_12": (0, 12)}
+READS = {"d1_16": (-1, 16), "d0_08": (0, 8), "d0_12": (0, 12), "d0_14": (0, 14)}
 FORECASTS = {"emos_gfs": ("GFS", "n_x", "2015-01-01"), "emos_nbm": ("NBS", "txn", "2021-01-01")}
 EMBARGO = pd.Timedelta(days=2)
 MIN_FIT_DAYS = 365
 EPS = 1e-3  # probability floor; a tenth of Kalshi's 1¢ tick
 DATA = pathlib.Path("data")
-VERSION = 10  # bump when anything below changes what a row contains
+VERSION = 11  # bump when anything below changes what a row contains
 
 
 @dataclass
@@ -259,6 +259,7 @@ def unix_s(t: pd.Series) -> np.ndarray:
 
 
 OBS_LAG = 15 * 60  # seconds: a METAR is on the wire within minutes; 15 is generous
+OBS5_LAG = 10 * 60  # seconds; a live 5-minute feed posts within minutes
 OBS_MARGIN = 1.5  # °F: CLI high >= round(hourly max) - 1 on 99.85% (NY) and 100% (CHI) of days
 
 
@@ -287,6 +288,23 @@ def _attach_obs(ls: LadderSet, city: City) -> None:
             obs_max[i], obs_last[i], obs_n[i] = w.max(), w[-1], len(w)
     ls.meta["obs_max"], ls.meta["obs_last"], ls.meta["obs_n"] = obs_max, obs_last, obs_n
 
+    # 5-minute obs (IEM 1-minute archive) catch more of the true peak than hourly METARs.
+    f5 = DATA / "obs" / "{}_5min.parquet".format(city.station)
+    obs5 = np.full(n, np.nan)
+    if f5.exists():
+        o = pd.read_parquet(f5).sort_values("valid")
+        ts = unix_s(o["valid"])
+        t = o["tmpf"].to_numpy()
+        start = unix_s((ls.meta["day"] - pd.Timedelta(hours=city.std_offset_h)).dt.tz_localize("UTC"))
+        end = ls.meta["read_ts"].to_numpy() - OBS5_LAG
+        a, b = np.searchsorted(ts, start, "left"), np.searchsorted(ts, end, "right")
+        for i in np.flatnonzero(b > a):
+            obs5[i] = t[a[i] : b[i]].max()
+    ls.meta["obs5_max"] = obs5
+    best = np.fmax(obs_max, obs5)
+    ls.meta["obs_best"] = best
+    _attach_nbm_rest(ls, city)
+
     from scipy.stats import norm
 
     base = ls.probs.get("emos_nbm")
@@ -294,15 +312,49 @@ def _attach_obs(ls: LadderSet, city: City) -> None:
         return
     mu, sg = ls.meta["mu_nbs"].to_numpy(), ls.meta["sigma_nbs"].to_numpy()
     p = base.copy()
-    has = np.isfinite(obs_max) & np.isfinite(mu)
+    has = np.isfinite(best) & np.isfinite(mu)
     if has.any():
-        lb = (np.round(obs_max[has]) - OBS_MARGIN)[:, None]
+        lb = (np.round(best[has]) - OBS_MARGIN)[:, None]
         lo = np.maximum(ls.lo[has], lb)
         hi = np.maximum(ls.hi[has], lb)
         m_, s_ = mu[has][:, None], sg[has][:, None]
         q = norm.cdf((hi - m_) / s_) - norm.cdf((lo - m_) / s_)
         p[has] = _finish(np.where(ls.mask[has], q, 0.0), ls.mask[has])
     ls.probs["emos_nbm_obs"] = p
+
+
+def _attach_nbm_rest(ls: LadderSet, city: City) -> None:
+    """NBM's forecast max over the rest of the climate day, from the latest run public at the read.
+
+    At a same-day read the question is how much warmer it still gets; NBM's 3-hourly
+    temperature path for the remaining hours answers that directly. NaN at the day-before
+    read, where the whole day is still ahead and `mu_nbs` already covers it.
+    """
+    f = DATA / "forecasts" / "{}_NBS.parquet".format(city.station)
+    n = len(ls)
+    rest = np.full(n, np.nan)
+    if f.exists():
+        nb = pd.read_parquet(f, columns=["runtime", "ftime", "tmp"]).dropna(subset=["tmp"])
+        nb["public"] = unix_s(nb["runtime"]) + int(AVAILABILITY_LAG["NBS"].total_seconds())
+        nb["ft"] = unix_s(nb["ftime"])
+        runs = {r: g.sort_values("ft") for r, g in nb.groupby("public")}
+        pubs = np.array(sorted(runs))
+        day_end = unix_s(
+            (ls.meta["day"] + pd.Timedelta(days=1) - pd.Timedelta(hours=city.std_offset_h)).dt.tz_localize(
+                "UTC"
+            )
+        )
+        read = ls.meta["read_ts"].to_numpy()
+        same_day = (ls.meta["read"] != "d1_16").to_numpy()
+        for i in np.flatnonzero(same_day):
+            j = np.searchsorted(pubs, read[i], "right") - 1
+            if j < 0:
+                continue
+            g = runs[pubs[j]]
+            w = g.loc[(g["ft"] > read[i]) & (g["ft"] <= day_end[i]), "tmp"]
+            if len(w):
+                rest[i] = w.max()
+    ls.meta["nbm_rest_max"] = rest
 
 
 def _finish(p, mask):

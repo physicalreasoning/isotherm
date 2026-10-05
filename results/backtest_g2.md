@@ -6,39 +6,39 @@
 
 | | |
 |---|---|
-| PnL (nested, out-of-sample) | **$11,884** over 1095 days, 6193 trades |
-| Sharpe (ann.) | **1.21** [0.12, 2.29] stationary bootstrap |
-| Newey-West t | 2.01 |
-| Deflated Sharpe | **0.330** (28 configs tried; ≥0.95 to believe) |
-| PBO (CSCV) | **0.61** (924 splits; ≤0.2 to believe) |
+| PnL (nested, out-of-sample) | **$16,071** over 1095 days, 7178 trades |
+| Sharpe (ann.) | **1.51** [0.37, 2.63] stationary bootstrap |
+| Newey-West t | 2.39 |
+| Deflated Sharpe | **0.540** (28 configs tried; ≥0.95 to believe) |
+| PBO (CSCV) | **0.45** (924 splits; ≤0.2 to believe) |
 | Max drawdown | $3,209 |
-| Hit rate | 71.6% |
-| Return on outlay | +2.73% |
-| EV vs realised per contract | +0.0406 vs +0.0142 |
-| Attribution | alpha vs mid $33,177 · spread $-12,709 · fees $-8,584 |
+| Hit rate | 70.7% |
+| Return on outlay | +2.86% |
+| EV vs realised per contract | +0.0404 vs +0.0159 |
+| Attribution | alpha vs mid $44,358 · spread $-17,850 · fees $-10,437 |
 
 By period:
 
 | Period | PnL | Trades | per contract |
 |---|---:|---:|---:|
-| 2023H2 | $797 | 476 | +0.0715 |
-| 2024H1 | $642 | 680 | +0.0262 |
-| 2024H2 | $-183 | 447 | -0.0036 |
-| 2025H1 | $410 | 924 | +0.0087 |
-| 2025H2 | $6,335 | 1756 | +0.0199 |
-| 2026H1 | $3,883 | 1910 | +0.0101 |
+| 2023H2 | $675 | 485 | +0.0607 |
+| 2024H1 | $1,032 | 680 | +0.0391 |
+| 2024H2 | $1,889 | 796 | +0.0264 |
+| 2025H1 | $3,290 | 1610 | +0.0135 |
+| 2025H2 | $4,976 | 1703 | +0.0180 |
+| 2026H1 | $4,210 | 1904 | +0.0110 |
 
 By city:
 
 | City | PnL | Trades | per contract |
 |---|---:|---:|---:|
-| AUS | $-170 | 1344 | -0.0013 |
-| CHI | $1,914 | 1345 | +0.0103 |
-| DEN | $987 | 708 | +0.0107 |
-| LAX | $1,946 | 646 | +0.0212 |
-| MIA | $3,247 | 954 | +0.0256 |
-| NY | $-5 | 669 | -0.0000 |
-| PHIL | $3,965 | 527 | +0.0377 |
+| AUS | $1,434 | 1514 | +0.0089 |
+| CHI | $4,602 | 1514 | +0.0199 |
+| DEN | $-1,542 | 904 | -0.0120 |
+| LAX | $2,724 | 741 | +0.0242 |
+| MIA | $5,508 | 1126 | +0.0352 |
+| NY | $649 | 777 | +0.0058 |
+| PHIL | $2,695 | 602 | +0.0246 |
 
 Engine checks:
 
@@ -47,69 +47,70 @@ Engine checks:
 | oracle (must never lose) | 24685 | $1,194,529 | 0 |
 | in-spread market (must not trade) | 0 | $0 | 0 |
 | normalised mid | 3586 | $-13,001 | 1555 |
-| noise_matched_turnover | 5518 | $-5,629 | 2200 |
+| noise_matched_turnover | 6589 | $-22,676 | 2912 |
 | arbitrage_ladders | 718 | $0 | 0 |
 
-Robustness (LadderNet · kelly 0.25):
+Robustness (pool · market+GFS+obs · 365d · θ 0.01):
 
 | Scenario | PnL | Sharpe | Trades |
 |---|---:|---:|---:|
-| base | $4,899 | 1.30 | 8460 |
-| slip +1¢ | $2,619 | 0.86 | 4293 |
-| slip +2¢ | $2,145 | 0.84 | 2668 |
-| fees ×1.5 | $3,208 | 0.94 | 7243 |
-| participation 1% | $-227 | -0.07 | 8187 |
-| participation 20% | $7,170 | 1.72 | 8535 |
-| size ×10 | $-13,791 | -0.52 | 8520 |
+| base | $29,907 | 2.17 | 7184 |
+| slip +1¢ | $11,786 | 1.12 | 4834 |
+| slip +2¢ | $3,171 | 0.37 | 3436 |
+| fees ×1.5 | $19,077 | 1.57 | 6054 |
+| participation 1% | $16,883 | 1.91 | 7043 |
+| participation 20% | $23,310 | 1.50 | 7234 |
+| size ×10 | $98,356 | 1.50 | 7184 |
 
 Top configs over the full period (in-sample ceiling, not a result):
 
 | Config | PnL | Sharpe | Trades |
 |---|---:|---:|---:|
-| pool · market+GFS+obs · 365d · θ 0.01 | $26,351 | 1.94 | 7173 |
+| pool · market+GFS+obs · 365d · θ 0.01 | $29,907 | 2.17 | 7184 |
 | pool · market+GFS · θ 0.04 | $13,943 | 1.94 | 2498 |
 | pool · market+GFS · kelly 0.25 | $8,942 | 1.89 | 9034 |
 | pool · market+GFS · θ 0.01 | $23,819 | 1.86 | 6536 |
+| pool · market+GFS+obs · 365d · θ 0.02 | $21,072 | 1.83 | 4785 |
 | pool · market+GFS · kelly 0.10 | $3,676 | 1.83 | 8952 |
-| pool · market+GFS · kelly 0.50 | $15,740 | 1.76 | 9064 |
 
 ## d0_08 · maker
 
 | | |
 |---|---|
-| PnL (nested, out-of-sample) | **$1,629** over 1095 days, 9844 trades |
-| Sharpe (ann.) | **0.13** [-0.99, 1.29] stationary bootstrap |
-| Newey-West t | 0.22 |
-| Deflated Sharpe | **0.002** (32 configs tried; ≥0.95 to believe) |
-| PBO (CSCV) | **0.29** (924 splits; ≤0.2 to believe) |
-| Max drawdown | $10,320 |
-| Hit rate | 58.6% |
-| Return on outlay | +0.28% |
-| EV vs realised per contract | +0.0725 vs +0.0012 |
-| Attribution | alpha vs mid $-62,998 · spread $64,627 · fees $-0 |
+| PnL (nested, out-of-sample) | **$10,108** over 1095 days, 8855 trades |
+| Sharpe (ann.) | **0.82** [-0.39, 1.99] stationary bootstrap |
+| Newey-West t | 1.36 |
+| Deflated Sharpe | **0.023** (48 configs tried; ≥0.95 to believe) |
+| PBO (CSCV) | **0.21** (924 splits; ≤0.2 to believe) |
+| Max drawdown | $7,193 |
+| Same picks, at-touch fills (upper bound) | $15,843 |
+| Hit rate | 58.3% |
+| Return on outlay | +1.94% |
+| EV vs realised per contract | +0.0763 vs +0.0084 |
+| Attribution | alpha vs mid $-48,975 · spread $59,082 · fees $-0 |
 
 By period:
 
 | Period | PnL | Trades | per contract |
 |---|---:|---:|---:|
-| 2023H2 | $-689 | 875 | -0.0073 |
-| 2024H1 | $-354 | 934 | -0.0043 |
-| 2024H2 | $7,283 | 1379 | +0.0327 |
-| 2025H1 | $-4,701 | 1873 | -0.0160 |
-| 2025H2 | $-459 | 2334 | -0.0015 |
+| 2023H2 | $-1,242 | 856 | -0.0134 |
+| 2024H1 | $1,059 | 841 | +0.0146 |
+| 2024H2 | $10,042 | 1396 | +0.0438 |
+| 2025H1 | $-662 | 1337 | -0.0030 |
+| 2025H2 | $362 | 1976 | +0.0014 |
 | 2026H1 | $549 | 2449 | +0.0017 |
 
 By city:
 
 | City | PnL | Trades | per contract |
 |---|---:|---:|---:|
-| AUS | $-3,966 | 1731 | -0.0182 |
-| CHI | $776 | 1779 | +0.0035 |
-| DEN | $-1,770 | 888 | -0.0160 |
-| LAX | $2,162 | 1111 | +0.0140 |
-| MIA | $5,275 | 1651 | +0.0271 |
-| NY | $172 | 1750 | +0.0006 |
-| PHIL | $-1,020 | 934 | -0.0078 |
+| AUS | $-393 | 1559 | -0.0020 |
+| CHI | $2,512 | 1611 | +0.0121 |
+| DEN | $-1,468 | 768 | -0.0148 |
+| LAX | $2,845 | 888 | +0.0222 |
+| MIA | $5,610 | 1569 | +0.0303 |
+| NY | $1,279 | 1598 | +0.0049 |
+| PHIL | $-277 | 862 | -0.0023 |
 
 Engine checks:
 
@@ -117,53 +118,53 @@ Engine checks:
 |---|---:|---:|---:|
 | oracle (must never lose) | 12808 | $511,839 | 0 |
 | uninformed market maker | 17080 | $-42,779 | 7990 |
-| noise_matched_turnover | 10221 | $-19,321 | 5185 |
+| noise_matched_turnover | 9081 | $-17,353 | 4760 |
 
-Robustness (LadderNet · maker θ 0.02 · 1h):
+Robustness (LadderNet · maker θ 0.04 · 1h):
 
 | Scenario | PnL | Sharpe | Trades |
 |---|---:|---:|---:|
-| base: trade-through fills | $6,028 | 0.53 | 9253 |
-| touch fills, 50% queue share | $10,425 | 0.88 | 10539 |
-| maker fee 0.0175 | $2,130 | 0.20 | 8564 |
-| no price improvement | $5,346 | 0.48 | 8421 |
-| horizon 1h | $6,028 | 0.53 | 9253 |
-| horizon to close | $-59,280 | -2.83 | 17144 |
-| size ×10 | $-27,346 | -0.71 | 9253 |
+| base: trade-through fills | $5,625 | 0.64 | 5108 |
+| touch fills, 50% queue share | $8,704 | 0.95 | 5745 |
+| maker fee 0.0175 | $3,594 | 0.42 | 4735 |
+| no price improvement | $7,068 | 0.80 | 4673 |
+| horizon 1h | $5,625 | 0.64 | 5108 |
+| horizon to close | $-42,904 | -2.62 | 10835 |
+| size ×10 | $-8,875 | -0.30 | 5108 |
 
 Top configs over the full period (in-sample ceiling, not a result):
 
 | Config | PnL | Sharpe | Trades |
 |---|---:|---:|---:|
 | pool · market+GFS · maker θ 0.02 · 1h | $16,178 | 1.16 | 10070 |
-| pool · market+GFS+obs · 365d · maker θ 0.02 · 1h | $14,317 | 1.04 | 10183 |
+| pool · market+GFS+obs · 365d · maker θ 0.02 · 1h | $13,436 | 0.97 | 10173 |
 | pool · market+GFS · maker θ 0.04 · 1h | $10,093 | 0.91 | 6225 |
-| pool · market+GFS+obs · 365d · maker θ 0.04 · 1h | $9,242 | 0.81 | 6172 |
-| pool · market+GFS+obs · 365d · maker θ 0.01 · 1h | $10,878 | 0.73 | 13020 |
-| pool · market+GFS · maker θ 0.01 · 1h | $9,967 | 0.66 | 13070 |
+| pool · market+GFS+obs · 365d · maker θ 0.04 · 1h | $9,430 | 0.83 | 6159 |
+| LadderNet · maker θ 0.04 · 4h | $11,269 | 0.80 | 8335 |
+| pool · market+GFS+obs · 365d · maker θ 0.01 · 1h | $11,889 | 0.79 | 13031 |
 
 ## d0_12 · taker
 
 | | |
 |---|---|
-| PnL (nested, out-of-sample) | **$592** over 1095 days, 702 trades |
-| Sharpe (ann.) | **0.37** [-0.89, 1.65] stationary bootstrap |
-| Newey-West t | 0.62 |
-| Deflated Sharpe | **0.139** (28 configs tried; ≥0.95 to believe) |
-| PBO (CSCV) | **0.47** (924 splits; ≤0.2 to believe) |
-| Max drawdown | $1,292 |
-| Hit rate | 59.0% |
-| Return on outlay | +2.81% |
-| EV vs realised per contract | +0.0523 vs +0.0171 |
-| Attribution | alpha vs mid $2,233 · spread $-1,150 · fees $-490 |
+| PnL (nested, out-of-sample) | **$727** over 1095 days, 746 trades |
+| Sharpe (ann.) | **0.37** [-0.79, 1.56] stationary bootstrap |
+| Newey-West t | 0.63 |
+| Deflated Sharpe | **0.211** (28 configs tried; ≥0.95 to believe) |
+| PBO (CSCV) | **0.48** (924 splits; ≤0.2 to believe) |
+| Max drawdown | $1,339 |
+| Hit rate | 61.3% |
+| Return on outlay | +2.74% |
+| EV vs realised per contract | +0.0552 vs +0.0171 |
+| Attribution | alpha vs mid $2,721 · spread $-1,383 · fees $-611 |
 
 By period:
 
 | Period | PnL | Trades | per contract |
 |---|---:|---:|---:|
-| 2023H2 | $125 | 241 | +0.0366 |
+| 2023H2 | $267 | 231 | +0.0845 |
 | 2024H1 | $542 | 235 | +0.0759 |
-| 2024H2 | $-277 | 117 | -0.0430 |
+| 2024H2 | $-284 | 171 | -0.0193 |
 | 2025H2 | $-201 | 67 | -0.0184 |
 | 2026H1 | $403 | 42 | +0.0605 |
 
@@ -171,13 +172,13 @@ By city:
 
 | City | PnL | Trades | per contract |
 |---|---:|---:|---:|
-| AUS | $86 | 307 | +0.0082 |
-| CHI | $1,101 | 122 | +0.1621 |
-| DEN | $-276 | 11 | -0.1388 |
+| AUS | $470 | 300 | +0.0441 |
+| CHI | $867 | 125 | +0.1188 |
+| DEN | $-324 | 28 | -0.0719 |
 | LAX | $343 | 14 | +0.1663 |
-| MIA | $-437 | 81 | -0.0925 |
-| NY | $-289 | 147 | -0.0540 |
-| PHIL | $64 | 20 | +0.0202 |
+| MIA | $-576 | 103 | -0.0708 |
+| NY | $-17 | 155 | -0.0026 |
+| PHIL | $-36 | 21 | -0.0105 |
 
 Engine checks:
 
@@ -186,7 +187,7 @@ Engine checks:
 | oracle (must never lose) | 18914 | $939,953 | 0 |
 | in-spread market (must not trade) | 2 | $740 | 1 |
 | normalised mid | 2169 | $3,577 | 1228 |
-| noise_matched_turnover | 805 | $418 | 400 |
+| noise_matched_turnover | 786 | $1,936 | 384 |
 | arbitrage_ladders | 378 | $0 | 0 |
 
 Robustness (market (tempered) · θ 0.04):
@@ -216,39 +217,40 @@ Top configs over the full period (in-sample ceiling, not a result):
 
 | | |
 |---|---|
-| PnL (nested, out-of-sample) | **$-24,577** over 1095 days, 8538 trades |
-| Sharpe (ann.) | **-2.10** [-3.22, -0.94] stationary bootstrap |
-| Newey-West t | -3.44 |
-| Deflated Sharpe | **0.000** (32 configs tried; ≥0.95 to believe) |
+| PnL (nested, out-of-sample) | **$-23,991** over 1095 days, 8233 trades |
+| Sharpe (ann.) | **-1.96** [-3.13, -0.76] stationary bootstrap |
+| Newey-West t | -3.04 |
+| Deflated Sharpe | **0.000** (48 configs tried; ≥0.95 to believe) |
 | PBO (CSCV) | **0.00** (924 splits; ≤0.2 to believe) |
-| Max drawdown | $26,238 |
-| Hit rate | 52.3% |
-| Return on outlay | -5.12% |
-| EV vs realised per contract | +0.0687 vs -0.0190 |
-| Attribution | alpha vs mid $-104,455 · spread $79,878 · fees $-0 |
+| Max drawdown | $25,698 |
+| Same picks, at-touch fills (upper bound) | $-21,312 |
+| Hit rate | 50.4% |
+| Return on outlay | -5.32% |
+| EV vs realised per contract | +0.0795 vs -0.0192 |
+| Attribution | alpha vs mid $-105,101 · spread $81,110 · fees $-0 |
 
 By period:
 
 | Period | PnL | Trades | per contract |
 |---|---:|---:|---:|
-| 2023H2 | $-6,589 | 863 | -0.0745 |
-| 2024H1 | $-135 | 588 | -0.0035 |
-| 2024H2 | $1,016 | 1277 | +0.0068 |
-| 2025H1 | $-15,480 | 3102 | -0.0248 |
-| 2025H2 | $-4,659 | 1926 | -0.0164 |
+| 2023H2 | $-6,532 | 878 | -0.0702 |
+| 2024H1 | $-379 | 609 | -0.0093 |
+| 2024H2 | $1,937 | 1192 | +0.0130 |
+| 2025H1 | $-11,536 | 2324 | -0.0239 |
+| 2025H2 | $-8,751 | 2448 | -0.0233 |
 | 2026H1 | $1,270 | 782 | +0.0116 |
 
 By city:
 
 | City | PnL | Trades | per contract |
 |---|---:|---:|---:|
-| AUS | $-3,075 | 1498 | -0.0149 |
-| CHI | $-4,962 | 1484 | -0.0226 |
-| DEN | $-538 | 971 | -0.0030 |
-| LAX | $-3,385 | 763 | -0.0212 |
-| MIA | $-3,606 | 1478 | -0.0179 |
-| NY | $-4,808 | 1533 | -0.0216 |
-| PHIL | $-4,206 | 811 | -0.0397 |
+| AUS | $-5,443 | 1436 | -0.0277 |
+| CHI | $-4,278 | 1436 | -0.0204 |
+| DEN | $-354 | 907 | -0.0021 |
+| LAX | $-2,360 | 757 | -0.0152 |
+| MIA | $-1,992 | 1431 | -0.0098 |
+| NY | $-5,102 | 1489 | -0.0237 |
+| PHIL | $-4,462 | 777 | -0.0439 |
 
 Engine checks:
 
@@ -256,7 +258,7 @@ Engine checks:
 |---|---:|---:|---:|
 | oracle (must never lose) | 11764 | $545,805 | 0 |
 | uninformed market maker | 19196 | $-101,869 | 9808 |
-| noise_matched_turnover | 8453 | $-34,834 | 4658 |
+| noise_matched_turnover | 8433 | $-39,587 | 4677 |
 
 Robustness (pool · market+GFS · maker θ 0.04 · 1h):
 
@@ -275,32 +277,173 @@ Top configs over the full period (in-sample ceiling, not a result):
 | Config | PnL | Sharpe | Trades |
 |---|---:|---:|---:|
 | pool · market+GFS · maker θ 0.04 · 1h | $-5,786 | -0.55 | 6572 |
-| LadderNet · maker θ 0.04 · 1h | $-15,034 | -1.35 | 6643 |
-| pool · market+GFS+obs · 365d · maker θ 0.04 · 1h | $-15,957 | -1.38 | 6991 |
-| pool · market+GFS+obs · 365d · maker θ 0.02 · 1h | $-27,903 | -1.85 | 11124 |
+| pool · market+GFS+obs · 365d · maker θ 0.04 · 1h | $-16,354 | -1.39 | 6953 |
+| LadderNet · maker θ 0.04 · 1h | $-17,728 | -1.56 | 6713 |
+| pool · market+GFS+obs · 365d · maker θ 0.02 · 1h | $-26,189 | -1.69 | 11106 |
 | market (tempered) · maker θ 0.04 · 1h | $-17,210 | -1.92 | 6136 |
 | pool · market+GFS · maker θ 0.02 · 1h | $-28,088 | -2.08 | 10757 |
 
-## d1_16 · taker
+## d0_14 · taker
 
 | | |
 |---|---|
-| PnL (nested, out-of-sample) | **$22,122** over 1089 days, 6662 trades |
-| Sharpe (ann.) | **2.05** [0.81, 3.27] stationary bootstrap |
-| Newey-West t | 3.17 |
-| Deflated Sharpe | **0.849** (28 configs tried; ≥0.95 to believe) |
-| PBO (CSCV) | **0.26** (924 splits; ≤0.2 to believe) |
-| Max drawdown | $5,195 |
-| Hit rate | 71.0% |
-| Return on outlay | +4.60% |
-| EV vs realised per contract | +0.0483 vs +0.0259 |
-| Attribution | alpha vs mid $43,561 · spread $-12,434 · fees $-9,005 |
+| PnL (nested, out-of-sample) | **$2,316** over 1095 days, 322 trades |
+| Sharpe (ann.) | **1.14** [0.20, 2.11] stationary bootstrap |
+| Newey-West t | 1.99 |
+| Deflated Sharpe | **0.421** (28 configs tried; ≥0.95 to believe) |
+| PBO (CSCV) | **0.12** (924 splits; ≤0.2 to believe) |
+| Max drawdown | $337 |
+| Hit rate | 75.2% |
+| Return on outlay | +13.14% |
+| EV vs realised per contract | +0.1227 vs +0.0870 |
+| Attribution | alpha vs mid $3,191 · spread $-503 · fees $-373 |
 
 By period:
 
 | Period | PnL | Trades | per contract |
 |---|---:|---:|---:|
-| 2023H2 | $396 | 587 | +0.0267 |
+| 2023H2 | $79 | 116 | +0.0396 |
+| 2024H1 | $-122 | 46 | -0.0980 |
+| 2024H2 | $368 | 33 | +0.0856 |
+| 2025H1 | $396 | 40 | +0.0729 |
+| 2025H2 | $367 | 30 | +0.0864 |
+| 2026H1 | $1,227 | 57 | +0.1305 |
+
+By city:
+
+| City | PnL | Trades | per contract |
+|---|---:|---:|---:|
+| AUS | $123 | 102 | +0.0212 |
+| CHI | $98 | 54 | +0.0178 |
+| DEN | $-77 | 18 | -0.0283 |
+| LAX | $80 | 3 | +0.2120 |
+| MIA | $175 | 48 | +0.0496 |
+| NY | $401 | 71 | +0.0912 |
+| PHIL | $1,515 | 26 | +0.3537 |
+
+Engine checks:
+
+| Check | Trades | PnL | Losing trades |
+|---|---:|---:|---:|
+| oracle (must never lose) | 13687 | $592,892 | 0 |
+| in-spread market (must not trade) | 0 | $0 | 0 |
+| normalised mid | 1736 | $8,978 | 1354 |
+| noise_matched_turnover | 304 | $-463 | 183 |
+| arbitrage_ladders | 193 | $0 | 0 |
+
+Robustness (pool · market+GFS · θ 0.08):
+
+| Scenario | PnL | Sharpe | Trades |
+|---|---:|---:|---:|
+| base | $2,633 | 1.32 | 208 |
+| slip +1¢ | $1,298 | 0.75 | 139 |
+| slip +2¢ | $1,414 | 0.96 | 107 |
+| fees ×1.5 | $1,495 | 0.82 | 154 |
+| participation 1% | $1,077 | 0.92 | 194 |
+| participation 20% | $2,764 | 1.31 | 211 |
+| size ×10 | $4,054 | 0.45 | 208 |
+
+Top configs over the full period (in-sample ceiling, not a result):
+
+| Config | PnL | Sharpe | Trades |
+|---|---:|---:|---:|
+| market (tempered) · θ 0.08 | $2,755 | 1.34 | 210 |
+| pool · market+GFS · θ 0.08 | $2,633 | 1.32 | 208 |
+| LadderNet · kelly 0.10 | $2,514 | 1.10 | 4591 |
+| pool · market+GFS · kelly 0.10 | $2,145 | 0.90 | 5130 |
+| market (tempered) · kelly 0.10 | $2,126 | 0.89 | 5145 |
+| LadderNet · kelly 0.25 | $3,377 | 0.81 | 4619 |
+
+## d0_14 · maker
+
+| | |
+|---|---|
+| PnL (nested, out-of-sample) | **$-30,573** over 1095 days, 7389 trades |
+| Sharpe (ann.) | **-2.68** [-3.88, -1.51] stationary bootstrap |
+| Newey-West t | -4.55 |
+| Deflated Sharpe | **0.000** (48 configs tried; ≥0.95 to believe) |
+| PBO (CSCV) | **0.00** (924 splits; ≤0.2 to believe) |
+| Max drawdown | $30,799 |
+| Same picks, at-touch fills (upper bound) | $-26,753 |
+| Hit rate | 58.3% |
+| Return on outlay | -6.53% |
+| EV vs realised per contract | +0.1007 vs -0.0300 |
+| Attribution | alpha vs mid $-115,517 · spread $84,943 · fees $-0 |
+
+By period:
+
+| Period | PnL | Trades | per contract |
+|---|---:|---:|---:|
+| 2023H2 | $-4,851 | 564 | -0.0732 |
+| 2024H1 | $99 | 421 | +0.0035 |
+| 2024H2 | $-428 | 1127 | -0.0034 |
+| 2025H1 | $-19,127 | 2136 | -0.0532 |
+| 2025H2 | $-3,657 | 1841 | -0.0132 |
+| 2026H1 | $-2,609 | 1300 | -0.0161 |
+
+By city:
+
+| City | PnL | Trades | per contract |
+|---|---:|---:|---:|
+| AUS | $-9,997 | 1638 | -0.0458 |
+| CHI | $-3,016 | 1191 | -0.0192 |
+| DEN | $-4,928 | 935 | -0.0331 |
+| LAX | $-1,598 | 494 | -0.0186 |
+| MIA | $-1,423 | 973 | -0.0111 |
+| NY | $-3,788 | 1271 | -0.0242 |
+| PHIL | $-5,823 | 887 | -0.0464 |
+
+Engine checks:
+
+| Check | Trades | PnL | Losing trades |
+|---|---:|---:|---:|
+| oracle (must never lose) | 8674 | $423,291 | 0 |
+| uninformed market maker | 15584 | $-127,513 | 8420 |
+| noise_matched_turnover | 7450 | $-61,837 | 4492 |
+
+Robustness (pool · market+GFS+obs · 365d · maker θ 0.04 · 1h):
+
+| Scenario | PnL | Sharpe | Trades |
+|---|---:|---:|---:|
+| base: trade-through fills | $-23,802 | -2.09 | 6639 |
+| touch fills, 50% queue share | $-19,906 | -1.72 | 6952 |
+| maker fee 0.0175 | $-21,991 | -2.01 | 6348 |
+| no price improvement | $-29,727 | -2.62 | 6222 |
+| horizon 1h | $-23,802 | -2.09 | 6639 |
+| horizon to close | $-63,820 | -4.55 | 9141 |
+| size ×10 | $-298,887 | -4.76 | 6639 |
+
+Top configs over the full period (in-sample ceiling, not a result):
+
+| Config | PnL | Sharpe | Trades |
+|---|---:|---:|---:|
+| market (tempered) · maker θ 0.04 · 1h | $-20,712 | -1.92 | 7138 |
+| pool · market+GFS · maker θ 0.04 · 1h | $-21,515 | -2.03 | 7109 |
+| pool · market+GFS+obs · 365d · maker θ 0.04 · 1h | $-23,802 | -2.09 | 6639 |
+| LadderNet · maker θ 0.04 · 1h | $-25,040 | -2.36 | 6220 |
+| pool · market+GFS · maker θ 0.02 · 1h | $-31,922 | -2.68 | 9311 |
+| market (tempered) · maker θ 0.02 · 1h | $-32,888 | -2.80 | 9293 |
+
+## d1_16 · taker
+
+| | |
+|---|---|
+| PnL (nested, out-of-sample) | **$22,311** over 1089 days, 6679 trades |
+| Sharpe (ann.) | **2.06** [0.82, 3.30] stationary bootstrap |
+| Newey-West t | 3.20 |
+| Deflated Sharpe | **0.865** (28 configs tried; ≥0.95 to believe) |
+| PBO (CSCV) | **0.24** (924 splits; ≤0.2 to believe) |
+| Max drawdown | $5,195 |
+| Hit rate | 71.0% |
+| Return on outlay | +4.63% |
+| EV vs realised per contract | +0.0483 vs +0.0262 |
+| Attribution | alpha vs mid $43,748 · spread $-12,426 · fees $-9,012 |
+
+By period:
+
+| Period | PnL | Trades | per contract |
+|---|---:|---:|---:|
+| 2023H2 | $586 | 604 | +0.0378 |
 | 2024H1 | $1,413 | 385 | +0.0614 |
 | 2024H2 | $1,109 | 281 | +0.0293 |
 | 2025H1 | $1,186 | 1444 | +0.0051 |
@@ -311,12 +454,12 @@ By city:
 
 | City | PnL | Trades | per contract |
 |---|---:|---:|---:|
-| AUS | $4,549 | 908 | +0.0444 |
-| CHI | $1,985 | 1139 | +0.0139 |
+| AUS | $4,589 | 910 | +0.0448 |
+| CHI | $2,094 | 1142 | +0.0146 |
 | DEN | $4,533 | 710 | +0.0465 |
 | LAX | $4,191 | 768 | +0.0399 |
-| MIA | $6,651 | 1455 | +0.0376 |
-| NY | $-1,751 | 904 | -0.0151 |
+| MIA | $6,647 | 1458 | +0.0376 |
+| NY | $-1,706 | 913 | -0.0147 |
 | PHIL | $1,964 | 778 | +0.0175 |
 
 Engine checks:
@@ -326,7 +469,7 @@ Engine checks:
 | oracle (must never lose) | 29204 | $1,569,263 | 0 |
 | in-spread market (must not trade) | 0 | $0 | 0 |
 | normalised mid | 3446 | $-6,727 | 1238 |
-| noise_matched_turnover | 5876 | $-15,646 | 2609 |
+| noise_matched_turnover | 5854 | $-18,674 | 2624 |
 | arbitrage_ladders | 548 | $0 | 0 |
 
 Robustness (pool · market+GFS · θ 0.04):
@@ -356,67 +499,68 @@ Top configs over the full period (in-sample ceiling, not a result):
 
 | | |
 |---|---|
-| PnL (nested, out-of-sample) | **$-2,419** over 1089 days, 4672 trades |
-| Sharpe (ann.) | **-0.32** [-1.58, 0.99] stationary bootstrap |
-| Newey-West t | -0.53 |
-| Deflated Sharpe | **0.000** (32 configs tried; ≥0.95 to believe) |
-| PBO (CSCV) | **0.31** (924 splits; ≤0.2 to believe) |
-| Max drawdown | $5,111 |
-| Hit rate | 59.0% |
-| Return on outlay | -1.02% |
-| EV vs realised per contract | +0.0737 vs -0.0051 |
-| Attribution | alpha vs mid $-16,170 · spread $13,751 · fees $-0 |
+| PnL (nested, out-of-sample) | **$2,985** over 1089 days, 4700 trades |
+| Sharpe (ann.) | **0.42** [-0.81, 1.70] stationary bootstrap |
+| Newey-West t | 0.67 |
+| Deflated Sharpe | **0.000** (48 configs tried; ≥0.95 to believe) |
+| PBO (CSCV) | **0.40** (924 splits; ≤0.2 to believe) |
+| Max drawdown | $2,794 |
+| Same picks, at-touch fills (upper bound) | $4,820 |
+| Hit rate | 59.8% |
+| Return on outlay | +1.29% |
+| EV vs realised per contract | +0.0718 vs +0.0065 |
+| Attribution | alpha vs mid $-10,830 · spread $13,815 · fees $-0 |
 
 By period:
 
 | Period | PnL | Trades | per contract |
 |---|---:|---:|---:|
-| 2023H2 | $-680 | 694 | -0.0097 |
-| 2024H1 | $1,000 | 635 | +0.0200 |
-| 2024H2 | $404 | 661 | +0.0066 |
-| 2025H1 | $-129 | 965 | -0.0012 |
-| 2025H2 | $-2,009 | 901 | -0.0239 |
-| 2026H1 | $-1,004 | 816 | -0.0097 |
+| 2023H2 | $-372 | 698 | -0.0053 |
+| 2024H1 | $1,486 | 566 | +0.0343 |
+| 2024H2 | $634 | 545 | +0.0125 |
+| 2025H1 | $680 | 1040 | +0.0062 |
+| 2025H2 | $1,769 | 1346 | +0.0133 |
+| 2026H1 | $-1,212 | 505 | -0.0217 |
 
 By city:
 
 | City | PnL | Trades | per contract |
 |---|---:|---:|---:|
-| AUS | $245 | 842 | +0.0031 |
-| CHI | $-2,875 | 943 | -0.0269 |
-| DEN | $54 | 336 | +0.0015 |
-| LAX | $1,208 | 349 | +0.0297 |
-| MIA | $-23 | 1006 | -0.0002 |
-| NY | $-2,017 | 825 | -0.0229 |
-| PHIL | $989 | 371 | +0.0315 |
+| AUS | $991 | 815 | +0.0141 |
+| CHI | $-2,188 | 917 | -0.0233 |
+| DEN | $1,797 | 313 | +0.0567 |
+| LAX | $3,228 | 407 | +0.0571 |
+| MIA | $-1,292 | 1064 | -0.0134 |
+| NY | $-735 | 811 | -0.0086 |
+| PHIL | $1,184 | 373 | +0.0422 |
 
 Engine checks:
 
 | Check | Trades | PnL | Losing trades |
 |---|---:|---:|---:|
-| oracle (must never lose) | 16240 | $549,707 | 0 |
-| uninformed market maker | 23453 | $-66,702 | 10412 |
-| noise_matched_turnover | 5231 | $-15,491 | 2222 |
+| oracle (must never lose) | 13032 | $400,311 | 0 |
+| uninformed market maker | 18459 | $-52,290 | 8071 |
+| noise_matched_turnover | 4005 | $-10,558 | 1709 |
 
-Robustness (pool · market+GFS+obs · 365d · maker θ 0.04 · 4h):
+Robustness (LadderNet · maker θ 0.04 · until next GFS):
 
 | Scenario | PnL | Sharpe | Trades |
 |---|---:|---:|---:|
-| base: trade-through fills | $7,037 | 0.76 | 6168 |
-| touch fills, 50% queue share | $10,964 | 1.13 | 6892 |
-| maker fee 0.0175 | $7,610 | 0.84 | 5683 |
-| no price improvement | $8,274 | 0.86 | 5949 |
-| horizon 1h | $2,212 | 0.46 | 3141 |
-| horizon to close | $-52,947 | -2.95 | 11441 |
-| size ×10 | $-15,326 | -0.53 | 6168 |
+| base: trade-through fills | $5,869 | 0.94 | 3922 |
+| touch fills, 50% queue share | $7,289 | 1.13 | 4492 |
+| maker fee 0.0175 | $4,382 | 0.74 | 3545 |
+| no price improvement | $2,800 | 0.43 | 3813 |
+| horizon 1h | $2,099 | 0.50 | 2565 |
+| horizon to close | $5,869 | 0.94 | 3922 |
+| size ×10 | $905 | 0.05 | 3922 |
 
 Top configs over the full period (in-sample ceiling, not a result):
 
 | Config | PnL | Sharpe | Trades |
 |---|---:|---:|---:|
+| LadderNet · maker θ 0.04 · until next GFS | $5,869 | 0.94 | 3922 |
+| pool · market+GFS+obs · 365d · maker θ 0.04 · until next GFS | $6,503 | 0.92 | 4739 |
+| pool · market+GFS · maker θ 0.04 · until next GFS | $5,644 | 0.85 | 4431 |
 | pool · market+GFS+obs · 365d · maker θ 0.04 · 4h | $7,037 | 0.76 | 6168 |
-| LadderNet · maker θ 0.04 · 1h | $2,836 | 0.66 | 2642 |
-| pool · market+GFS · maker θ 0.02 · 1h | $3,148 | 0.50 | 5936 |
-| LadderNet · maker θ 0.04 · 4h | $3,986 | 0.49 | 5241 |
-| pool · market+GFS+obs · 365d · maker θ 0.04 · 1h | $2,212 | 0.46 | 3141 |
-| pool · market+GFS+obs · 365d · maker θ 0.02 · 4h | $5,248 | 0.43 | 11477 |
+| LadderNet · maker θ 0.04 · 4h | $4,862 | 0.63 | 5135 |
+| market (tempered) · maker θ 0.04 · until next GFS | $2,347 | 0.55 | 2399 |

@@ -159,3 +159,32 @@ def asos(station3: str, year: int) -> pd.DataFrame:
     df["valid"] = pd.to_datetime(df["valid"], utc=True)
     df["tmpf"] = pd.to_numeric(df["tmpf"], errors="coerce")
     return df.dropna(subset=["tmpf"])[["station", "valid", "tmpf"]]
+
+
+def asos1min(station3: str, start: str, end: str, sample: str = "5min") -> pd.DataFrame:
+    """ASOS 1-minute archive, resampled server-side (default 5-minute). UTC.
+
+    Finer than hourly METARs, so the day's maximum so far misses less of the true peak.
+    IEM receives this archive with a delay: a live system needs a real-time 5-minute feed
+    to use it, which is noted wherever results depend on it.
+    """
+    q = urllib.parse.urlencode(
+        {
+            "station": station3,
+            "vars": "tmpf",
+            "sts": start + "T00:00Z",
+            "ets": end + "T00:00Z",
+            "sample": sample,
+            "what": "download",
+            "tz": "UTC",
+        }
+    )
+    closed = pd.Timestamp(end, tz="UTC") < pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=2)
+    body = _cached("{}/cgi-bin/request/asos1min.py?{}".format(BASE, q), cache=closed)
+    df = pd.read_csv(io.BytesIO(body), na_values=["M"])
+    if df.empty:
+        return df
+    df = df.rename(columns={"valid(UTC)": "valid"})
+    df["valid"] = pd.to_datetime(df["valid"], utc=True)
+    df["tmpf"] = pd.to_numeric(df["tmpf"], errors="coerce")
+    return df.dropna(subset=["tmpf"])[["station", "valid", "tmpf"]]
