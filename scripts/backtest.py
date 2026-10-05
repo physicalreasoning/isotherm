@@ -41,11 +41,10 @@ from pmdecide.backtest import (  # noqa: E402
     run,
     run_maker,
 )
-from pmdecide.baselines import default_suite  # noqa: E402
+from pmdecide.baselines import default_suite, g2_suite  # noqa: E402
 from pmdecide.evaluation import oos_predictions  # noqa: E402
 
-MODELS = ["pool · all", "pool · market+NBM", "EMOS · NBM", "market (tempered)"]
-DEFAULT = Config("pool · all", "kelly", fraction=0.25)       # pre-registered, folds w/o history
+MODELS = ["pool · all", "pool · market+NBM", "EMOS · NBM", "market (tempered)"]   # [0] = default
 
 
 def grid():
@@ -170,8 +169,12 @@ def robustness(o, cfg, cache):
 
 
 class Taker:
+    """Pre-registered default for folds with no history: the suite's primary model."""
     label = "taker"
-    default = DEFAULT
+
+    @property
+    def default(self):
+        return Config(MODELS[0], "kelly", fraction=0.25)
 
     def __init__(self, o):
         self.o, self.caches = o, {m: {} for m in MODELS}
@@ -194,7 +197,10 @@ class Taker:
 
 class Maker:
     label = "maker"
-    default = MakerConfig("pool · all", theta=0.02, horizon_h=4.0)
+
+    @property
+    def default(self):
+        return MakerConfig(MODELS[0], theta=0.02, horizon_h=4.0)
 
     def __init__(self, o, trades):
         self.o, self.trades = o, trades
@@ -354,11 +360,15 @@ def main():
     ap.add_argument("--reads", nargs="*")
     ap.add_argument("--boot", type=int, default=1000)
     ap.add_argument("--execution", nargs="+", default=["taker", "maker"], choices=["taker", "maker"])
+    ap.add_argument("--suite", default="g1", choices=["g1", "g2"])
     ap.add_argument("--out", default="results/backtest")
     a = ap.parse_args()
     t0 = time.time()
     ls = dataset.load(a.cities)
-    oos = oos_predictions(ls, default_suite())
+    if a.suite == "g2":
+        MODELS[:] = ["LadderNet", "pool · market+GFS+obs · 365d", "pool · market+GFS",
+                     "market (tempered)"]
+    oos = oos_predictions(ls, g2_suite() if a.suite == "g2" else default_suite())
     trades = load_trades(sorted(ls.meta["city"].unique())) if "maker" in a.execution else {}
     results = {}
     for read, o in oos.items():
