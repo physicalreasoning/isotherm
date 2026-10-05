@@ -238,3 +238,17 @@ It is a narrow one on 95 days, and the monthly PnL halves each month and falls a
 The Weather Company. Three months cannot tell renewed decay, the regime change and noise apart.
 The honest next step is G5: shadow-score it live on new days, with the decay as the thing to watch,
 before any capital is involved.
+
+## 11 · Sports (MLB game winners): no edge (2026-10-04)
+
+Full record: `docs/SPORTS.md`; raw: `results/sports_benchmark.json`, `results/sports_backtest.{md,json}`.
+4,484 games linked to the MLB Stats API (96.3% of 4,658 settled; drops counted by reason), Kalshi
+result = official result on 100% of rows, 5.21M pre-game prints. Elo (tuned on 2016-19) plus
+point-in-time starting-pitcher quality, frozen before Kalshi's first MLB game.
+
+Gate 0 fails as registered and as amended: the best blend is within ±0.001 nats of the market at
+24h, 3h and 15min before first pitch, every CI spanning zero; Elo + starters alone is 0.001-0.003
+worse than the market. No taker or maker cell passes (DSR ≤ 0.14, PBO 0.34-0.49); the best, the
+3h maker at +$3,826, has a Sharpe CI including zero and was negative in 2026 H2. With 1¢ spreads and
+about 1.2M contracts per game, MLB on Kalshi prices everything free public data can see. The
+survey's prediction (§1: "the most efficient category on the exchange") holds.

@@ -31,6 +31,7 @@ backtests in [results/backtest_taker.md](results/backtest_taker.md) and
 | Backtest (G1) | | **No robust strategy.** Taker: ~1 tick of edge at the day-before read (Sharpe 1.67, fails DSR/PBO, dies at +1¢ slip). Maker: loses to adverse selection, though the model beats an uninformed market maker by ~2/3. [FINDINGS §6-7](FINDINGS.md) |
 | G2 | does a learned model beat the best baseline | **yes:** LadderNet +0.033 to +0.071 nats vs market, best calibrated, positive every half-year; control ≈ market. [FINDINGS §8](FINDINGS.md) |
 | Lockbox | the one-shot held-out test (2026-07 to 2026-10) | **PASS, marginally:** +$1,851 on 95 unseen days, NW t 1.77, survives +1¢; but monthly PnL halves each month. [FINDINGS §9-10](FINDINGS.md) |
+| Sports | same pipeline on MLB game winners | **no edge:** Elo + starters within ±0.001 nats of the market; no backtest passes. [docs/SPORTS.md](docs/SPORTS.md) |
 | G3, G5 | synthetic pretraining, live shadow | not started |
 
 ## Reproduce
