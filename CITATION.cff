@@ -7,6 +7,7 @@ authors:
 repository-code: "https://github.com/physicalreasoning/isotherm"
 url: "https://physicalreasoning.ai/isotherm/"
 license: Apache-2.0
+version: "0.1.0"
 date-released: "2026-10-05"
 keywords:
   - prediction markets

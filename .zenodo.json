@@ -1,0 +1,12 @@
+{
+  "title": "isotherm: Calibrated decision models for prediction markets",
+  "upload_type": "software",
+  "description": "A calibrated, typed decision model for prediction markets, evaluated on Kalshi daily temperature markets against the market's own price. Includes the point-in-time data pipeline, walk-forward benchmark with proper scoring rules, cost-aware taker and maker backtests with deflated Sharpe and PBO, pre-registered sealed tests, and a live shadow record.",
+  "creators": [{"name": "Physical Reasoning"}],
+  "license": "Apache-2.0",
+  "keywords": ["prediction markets", "probabilistic forecasting", "calibration", "proper scoring rules", "backtesting", "weather"],
+  "related_identifiers": [
+    {"identifier": "https://physicalreasoning.ai/blog/the-weather-market-learned-to-read-the-forecast/", "relation": "isDescribedBy", "resource_type": "publication-other"},
+    {"identifier": "https://github.com/physicalreasoning/isotherm", "relation": "isSupplementTo", "resource_type": "software"}
+  ]
+}
