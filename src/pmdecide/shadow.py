@@ -57,22 +57,17 @@ def _ladder(rows):
     return [rows[i] for i in order], [iv[i] for i in order]
 
 
-def score_city(key: str, now_utc: pd.Timestamp, frozen: dict, force: bool = False) -> Dict:
+def predict_city(key: str, day: pd.Timestamp, now_utc: pd.Timestamp, frozen: dict):
+    """The frozen model on the live ladder for `day`, using only what is public at `now_utc`.
+
+    Returns a dict of arrays (bucket order) or a status string when there is no ladder or
+    no forecast. Shared by the scheduled scorer and the API, so both run the same model.
+    """
     city = CITIES[key]
-    day, is_due = due(city, now_utc, frozen["strategy"]["window_local_hours"])
     ev = event_ticker(city.series, day)
-    base = {
-        "scored_at": now_utc.isoformat(),
-        "city": key,
-        "event": ev,
-        "day": str(day.date()),
-        "model_hash": frozen["hash"],
-    }
-    if not (is_due or force):
-        return {**base, "status": "not_due"}
     rows, iv = _ladder(kalshi.get("markets", event_ticker=ev, limit=100).get("markets", []))
     if not rows or not is_partition(iv):
-        return {**base, "status": "no_ladder"}
+        return "no_ladder"
     mos = iem.mos(
         city.station,
         "GFS",
@@ -86,7 +81,7 @@ def score_city(key: str, now_utc: pd.Timestamp, frozen: dict, force: bool = Fals
         else None
     )
     if fc is None or not np.isfinite(fc["fcst"].iloc[0]):
-        return {**base, "status": "no_forecast"}
+        return "no_forecast"
     f = frozen["emos_gfs"][key]
     em = GaussianModel("emos", np.array(f["beta"]), np.array(f["gamma"]))
     mu, sg = em.params(np.array([fc["fcst"].iloc[0]]), np.array([day.dayofyear]))
@@ -97,12 +92,49 @@ def score_city(key: str, now_utc: pd.Timestamp, frozen: dict, force: bool = Fals
     bid = np.array([kalshi.to_float(r.get("yes_bid_dollars")) or 0.0 for r in rows])
     ask = np.array([kalshi.to_float(r.get("yes_ask_dollars")) or 1.0 for r in rows])
     ask = np.where(ask <= 0, 1.0, ask)
+    if np.all(bid <= 0) and np.all(ask >= 1):
+        return "no_quotes"  # listed but not yet trading: an empty book is not a market price
     pm = np.clip((bid + ask) / 2, EPS, None)
     pm /= pm.sum()
     w = frozen["pool_weights"]
     z = w["market"] * np.log(pm) + w["emos_gfs"] * np.log(pf)
     p = np.exp(z - z.max())
     p /= p.sum()
+    return {
+        "event": ev,
+        "rows": rows,
+        "iv": iv,
+        "bid": bid,
+        "ask": ask,
+        "p_market": pm,
+        "p_emos": pf,
+        "p_model": p,
+        "mu": float(mu[0]),
+        "sigma": float(sg[0]),
+        "gfs_fcst": float(fc["fcst"].iloc[0]),
+        "gfs_runtime": str(fc["runtime"].iloc[0]),
+    }
+
+
+def score_city(key: str, now_utc: pd.Timestamp, frozen: dict, force: bool = False) -> Dict:
+    city = CITIES[key]
+    day, is_due = due(city, now_utc, frozen["strategy"]["window_local_hours"])
+    ev = event_ticker(city.series, day)
+    base = {
+        "scored_at": now_utc.isoformat(),
+        "city": key,
+        "event": ev,
+        "day": str(day.date()),
+        "model_hash": frozen["hash"],
+    }
+    if not (is_due or force):
+        return {**base, "status": "not_due"}
+    out = predict_city(key, day, now_utc, frozen)
+    if isinstance(out, str):
+        return {**base, "status": out}
+    rows, iv, bid, ask = out["rows"], out["iv"], out["bid"], out["ask"]
+    pm, pf, p = out["p_market"], out["p_emos"], out["p_model"]
+    fc_val, fc_run = out["gfs_fcst"], out["gfs_runtime"]
     s = frozen["strategy"]
     mask = np.ones(len(rows), bool)
     price, cost, payoff, evs, ok = _instruments(p, bid, ask, mask, 0, 0.07)
@@ -123,8 +155,8 @@ def score_city(key: str, now_utc: pd.Timestamp, frozen: dict, force: bool = Fals
                 "p_market": pm[j],
                 "p_emos": pf[j],
                 "p_model": p[j],
-                "gfs_fcst": float(fc["fcst"].iloc[0]),
-                "gfs_runtime": str(fc["runtime"].iloc[0]),
+                "gfs_fcst": fc_val,
+                "gfs_runtime": fc_run,
                 "volume_at_read": kalshi.volume(r),
             }
         )

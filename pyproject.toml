@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.11"
 dependencies = [
     "cryptography>=50.0.2",
+    "fastapi>=0.142.2",
     "numpy>=2.4.6",
     "pandas>=3.0.6",
     "pyarrow>=25.0.1",
@@ -16,6 +17,7 @@ dependencies = [
     "scikit-learn>=1.9.1",
     "scipy>=1.17.1",
     "torch>=2.14.1",
+    "uvicorn>=0.54.0",
 ]
 
 [build-system]
@@ -24,6 +26,7 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "httpx2>=2.13.1",
     "pytest>=9.1.1",
     "ruff>=0.16.10",
 ]
