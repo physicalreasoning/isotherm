@@ -189,3 +189,26 @@ and it survives +1¢ slippage (+$6,513), +2¢ (+$4,516), 1.5× fees, 20% partici
 **Verdict.** Close to the bar, not over it: DSR 0.85 < 0.95 and PBO 0.26 > 0.2. The one remaining
 honest test is the lockbox (2026-07-01 onward, about 640 ladders per read), scored once with the
 configuration frozen as above. It has not been run.
+
+## 9 · Lockbox: pre-registration (written and pushed before any lockbox number was computed)
+
+**Strategy, frozen.** Read 16:00 local the day before; taker execution; configuration
+`pool · market+GFS · kelly 0.25`, chosen by the same rule nested selection uses every quarter
+(best Sharpe on all history before the test period); it is also the config nested selection
+picked for the last pre-lockbox quarter. Log pool of market + EMOS-GFS with per-read weights fit
+on every ladder before 2026-06-29 (2-day embargo); joint ladder Kelly at 0.25; $10,000 bankroll
+over 7 slots; 5% participation cap; Kalshi quadratic fees; held to settlement.
+
+**Data.** Every settled ladder from 2026-07-01 to 2026-10-03, all seven cities. Never used for any
+fit, selection or design decision. The period contains the settlement switch to The Weather
+Company (2026-08-14) and the one Miami day that settled 5°F from the NWS value.
+
+**Criteria.**
+- *Pass:* mean daily PnL > 0 with Newey-West t > 1.645 (one-sided 5%).
+- *Consistent but underpowered:* PnL > 0, t ≤ 1.645.
+- *Fail:* PnL ≤ 0.
+
+Secondary, reported regardless: PnL at +1¢ slippage; LadderNet Δ log score vs market at this read,
+CI by date; engine checks (oracle never loses, in-spread market never trades) and matched-turnover
+noise. About 95 days and ~640 ladders: the interval will be wide, and a pass on this sample is
+evidence, not proof.
