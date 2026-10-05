@@ -139,6 +139,21 @@ def transformer_suite():
     ]
 
 
+def transformer_large_suite():
+    """FINDINGS §18: a transformer about eight times larger than §16's, against the same MLP."""
+    from .model import IsothermNet, IsothermTransformer
+
+    big = dict(d=128, layers=4, ff=256)
+    return [
+        Source("market"),
+        IsothermNet("isotherm"),
+        IsothermTransformer("isotherm · transformer-L", **big),
+        IsothermTransformer(
+            "isotherm · transformer-L · market-sampled labels (control)", market_labels=True, seeds=3, **big
+        ),
+    ]
+
+
 def default_suite():
     """The G1 bar, in increasing order of strength."""
     return [

@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Score the pre-registered transformer gate (FINDINGS §16) from the cached walk-forward predictions.
+"""Score the pre-registered transformer gates (FINDINGS §16, §18) from the cached walk-forward predictions.
 
 uv run scripts/benchmark.py --suite transformer   # computes and caches the predictions
 uv run scripts/transformer_gate.py
+uv run scripts/benchmark.py --suite transformer-large && uv run scripts/transformer_gate.py --large
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import pathlib
 import sys
@@ -15,17 +17,24 @@ import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 from isotherm import dataset, metrics  # noqa: E402
-from isotherm.baselines import transformer_suite  # noqa: E402
+from isotherm.baselines import transformer_large_suite, transformer_suite  # noqa: E402
 from isotherm.evaluation import oos_predictions  # noqa: E402
 from isotherm.splits import LOCKBOX_START  # noqa: E402
 
 RECENT_FROM = LOCKBOX_START - pd.Timedelta(days=365)
-TF, NET = "isotherm · transformer", "isotherm"
-CTL = "isotherm · transformer · market-sampled labels (control)"
+NET = "isotherm"
 
 
 def main():
-    oos = oos_predictions(dataset.load(), transformer_suite())
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--large", action="store_true", help="score §18 (transformer-L) instead of §16")
+    a = ap.parse_args()
+    tf = "isotherm · transformer" + ("-L" if a.large else "")
+    gate, suite = (
+        ("FINDINGS §18", transformer_large_suite) if a.large else ("FINDINGS §16", transformer_suite)
+    )
+    TF, CTL = tf, tf + " · market-sampled labels (control)"
+    oos = oos_predictions(dataset.load(), suite())
     res, passing = {}, 0
     for read, o in oos.items():
         y, days = o.rows.y, o.rows.meta["day"]
@@ -59,13 +68,15 @@ def main():
     controls_ok = all(abs(r["control_vs_market_all"]) <= 0.005 for r in res.values())
     verdict = "PASS" if passing >= 3 and controls_ok else "FAIL"
     out = {
-        "gate": "FINDINGS §16",
+        "gate": gate,
         "reads_passing": passing,
         "controls_ok": controls_ok,
         "verdict": verdict,
         "results": res,
     }
-    pathlib.Path("results/transformer_gate.json").write_text(json.dumps(out, indent=2))
+    pathlib.Path("results/transformer{}_gate.json".format("_large" if a.large else "")).write_text(
+        json.dumps(out, indent=2)
+    )
     print("\nreads passing {}/4, controls within ±0.005: {} -> {}".format(passing, controls_ok, verdict))
 
 
