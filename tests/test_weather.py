@@ -106,3 +106,29 @@ def test_rules_text_strikes_parse_to_kalshi_semantics():
     assert bucket_contains("greater", out["floor"][1], None, 45)
     assert not bucket_contains("greater", out["floor"][1], None, 44)
     assert list(out.strike_source) == ["rules_text"] * 3 + ["api"]
+
+
+def test_kalshi_signature_verifies_and_ignores_query_string():
+    from base64 import b64decode
+
+    from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.asymmetric import padding, rsa
+
+    from pmdecide.kalshi import BASE, sign
+    key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    url = BASE + "/markets?event_ticker=KXHIGHNY-26AUG03&limit=1000"
+    sig = sign(key, "GET", url, "1700000000000")
+    key.public_key().verify(b64decode(sig), b"1700000000000GET/trade-api/v2/markets",
+                            padding.PSS(mgf=padding.MGF1(hashes.SHA256()),
+                                        salt_length=padding.PSS.DIGEST_LENGTH), hashes.SHA256())
+
+
+def test_kalshi_json_tolerates_control_characters_in_rules_text():
+    import json
+    raw = '{"rules_primary": "line one\\u0000\tline two\x0b"}'
+    assert json.loads(raw, strict=False)["rules_primary"].startswith("line one")
+    import inspect
+
+    from pmdecide import iem, kalshi
+    for mod in (kalshi, iem):
+        assert "strict=True" not in inspect.getsource(mod).replace("zip(", "")
