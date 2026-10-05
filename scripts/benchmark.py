@@ -24,13 +24,12 @@ import subprocess
 import sys
 import time
 
-import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 from pmdecide import dataset, metrics  # noqa: E402
 from pmdecide.baselines import default_suite  # noqa: E402
-from pmdecide.splits import walk_forward  # noqa: E402
+from pmdecide.evaluation import oos_predictions  # noqa: E402
 
 GATE0 = {"pool · market+NBM": "NBM", "pool · market+GFS": "GFS MOS"}
 
@@ -55,27 +54,15 @@ def score_block(name, p, ls, ref=None, boot=1000):
 
 def run(ls, suite, lockbox, boot):
     out, per_city, reliab = {}, {}, {}
-    for read in sorted(ls.meta["read"].unique()):
-        sub = ls.take(np.flatnonzero(ls.meta["read"].to_numpy() == read))
-        preds = {m.name: np.full(sub.mask.shape, np.nan) for m in suite}
-        folds = []
-        for f in walk_forward(sub.meta["day"], lockbox=lockbox):
-            tr, te = sub.take(f.train), sub.take(f.test)
-            folds.append({"fold": f.name, "train": len(f.train), "test": len(f.test)})
-            for m in suite:
-                preds[m.name][f.test] = m.fit(tr).predict(te)
-        scored = np.isfinite(preds["market"]).all(1)
-        for m in suite:
-            scored &= np.isfinite(preds[m.name]).all(1)
-        ev = sub.take(np.flatnonzero(scored))
-        P = {k: v[scored] for k, v in preds.items()}
+    for read, o in oos_predictions(ls, suite, lockbox).items():
+        ev, P = o.rows, o.preds
         ref = metrics.log_score(P["market"], ev.y)
         rows, losses = [], {}
         for m in suite:
             r, losses[m.name] = score_block(m.name, P[m.name], ev,
                                             None if m.name == "market" else ref, boot)
             rows.append(r)
-        out[read] = {"folds": folds, "rows": len(ev),
+        out[read] = {"folds": o.folds, "rows": len(ev),
                      "from": str(ev.meta["day"].min().date()), "to": str(ev.meta["day"].max().date()),
                      "leaderboard": sorted(rows, key=lambda r: r["log_score"])}
         best = min(rows, key=lambda r: r["log_score"])["model"]
