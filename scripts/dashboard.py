@@ -19,7 +19,8 @@ READS = ["d1_16", "d0_08", "d0_12", "d0_14"]
 
 def load(name):
     p = R / name
-    return json.loads(p.read_text()) if p.exists() else None
+    # Raw results predate the rename and call the model LadderNet; show it as isotherm.
+    return json.loads(p.read_text().replace("LadderNet", "isotherm")) if p.exists() else None
 
 
 def periods(slices):
@@ -84,7 +85,7 @@ def build():
             for r in x["leaderboard"]
         ]
         d["decay"][read] = {
-            "LadderNet": periods(b2["slices"][read]["slices"]),
+            "isotherm": periods(b2["slices"][read]["slices"]),
             "pool": periods(b1["slices"][read]["slices"]) if read in b1["slices"] else {},
         }
         d["recent"][read] = {
@@ -94,7 +95,7 @@ def build():
         d["reliability"][read] = b2["reliability"][read]
         d["cities"][read] = {
             c: {"gain": round(v["gain"], 4), "ci": [round(z, 4) for z in v["ci"]]}
-            for c, v in x["recent"]["LadderNet"]["by_city"].items()
+            for c, v in x["recent"]["isotherm"]["by_city"].items()
         }
     bt = load("backtest_g2.json")["results"]
     d["cells"] = {k: cell(r) for k, r in bt.items()}

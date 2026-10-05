@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""G3 ablation: does synthetic pretraining help LadderNet at the day-before read?
+"""G3 ablation: does synthetic pretraining help IsothermNet at the day-before read?
 
 PLAN §6 gate, made operational before any result was seen:
   (a) pretrained on 50% of real dates matches no pretraining on 100%:

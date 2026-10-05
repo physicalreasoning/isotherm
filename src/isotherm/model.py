@@ -1,4 +1,4 @@
-"""LadderNet: the typed decision model. One distribution per ladder, learned from outcomes.
+"""isotherm: the typed decision model. One distribution per ladder, learned from outcomes.
 
     score_j = Σ_s w_s · log p_s,j  +  MLP([x_j ; c])          p = softmax_j(score)
 
@@ -10,7 +10,7 @@
               observations so far, ladder overround and traded volume before the read
 
 The pool weights start at "market only" and the MLP's output layer starts at zero,
-so an untrained LadderNet *is* the market: training can only move it away from the
+so an untrained IsothermNet *is* the market: training can only move it away from the
 crowd where outcomes justify it. Loss is the log score (the proper scoring rule that
 Jev's RLCD amounts to for a discriminative head), with sample weights that halve
 every `half_life_days`, so the model tracks a market whose biases decay. Early
@@ -122,10 +122,10 @@ class _Net(nn.Module):
         return torch.log_softmax(score.masked_fill(~mask, -1e9), -1)
 
 
-class LadderNet:
+class IsothermNet:
     def __init__(
         self,
-        name="LadderNet",
+        name="isotherm",
         half_life_days=365.0,
         seeds=5,
         hidden=64,

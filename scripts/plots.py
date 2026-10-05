@@ -62,7 +62,8 @@ plt.rcParams.update(
 
 def load(name):
     p = R / name
-    return json.loads(p.read_text()) if p.exists() else None
+    # Raw results predate the rename and call the model LadderNet; show it as isotherm.
+    return json.loads(p.read_text().replace("LadderNet", "isotherm")) if p.exists() else None
 
 
 def save(fig, name, note):
@@ -134,7 +135,7 @@ def edge_decay():
             if k.startswith("period=")
         }
         xs = list(net)
-        ax.plot(xs, [net[x] for x in xs], color=MODEL, marker="o", ms=5, label="LadderNet", zorder=3)
+        ax.plot(xs, [net[x] for x in xs], color=MODEL, marker="o", ms=5, label="isotherm", zorder=3)
         if read in g1["slices"]:
             pool = {
                 k.split("=")[1]: v["gain"]
@@ -193,14 +194,14 @@ def forecast_split():
 def leaderboard():
     b = load("benchmark_g2.json")
     models = [
-        "LadderNet",
+        "isotherm",
         "pool · market+GFS+obs · 365d",
         "pool · all",
         "pool · market+GFS",
         "pool · market+NBM",
         "market (tempered)",
         "EMOS · NBM",
-        "LadderNet · market-sampled labels (control)",
+        "isotherm · market-sampled labels (control)",
     ]
     fig, axes = plt.subplots(1, 4, figsize=(11, 3.6), sharey=True)
     for ax, read in zip(axes, READS, strict=True):
@@ -208,7 +209,7 @@ def leaderboard():
         for i, m in enumerate(models):
             r = lb[m]
             g, (lo, hi) = r["gain_vs_market"], r["gain_vs_market_ci"]
-            c = MODEL if m == "LadderNet" else (INK if "control" in m else BASE)
+            c = MODEL if m == "isotherm" else (INK if "control" in m else BASE)
             ax.plot([lo, hi], [i, i], color=c, lw=1.4)
             ax.plot(g, i, "o", color=c, ms=5, mec=SURFACE, mew=1)
         ax.axvline(0, color=INK, lw=0.9, alpha=0.6)
@@ -217,7 +218,7 @@ def leaderboard():
         ax.set_xlabel("Δ log score vs market")
     axes[0].set_yticks(
         range(len(models)),
-        [m.replace("LadderNet · market-sampled labels (control)", "control (market labels)") for m in models],
+        [m.replace("isotherm · market-sampled labels (control)", "control (market labels)") for m in models],
     )
     axes[0].invert_yaxis()
     fig.suptitle(
@@ -240,7 +241,7 @@ def calibration():
     for ax, read in zip(axes, READS, strict=True):
         rel = b["reliability"][read]
         ax.plot([0, 1], [0, 1], color=FAINT, lw=1.2, zorder=1)
-        for k, c, lab in (("market", BASE, "market"), ("LadderNet", MODEL, "LadderNet")):
+        for k, c, lab in (("market", BASE, "market"), ("isotherm", MODEL, "isotherm")):
             r = rel[k]
             ax.plot(r["mean_prob"], r["freq"], marker="o", ms=4, color=c, label=lab, zorder=3)
         ax.set_title(READ_LABEL[read])
@@ -256,9 +257,9 @@ def calibration():
 
 def city_heatmap():
     b = load("benchmark_g2.json")
-    cities = sorted(b["results"]["d1_16"]["recent"]["LadderNet"]["by_city"])
+    cities = sorted(b["results"]["d1_16"]["recent"]["isotherm"]["by_city"])
     M = np.array(
-        [[b["results"][r]["recent"]["LadderNet"]["by_city"][c]["gain"] for r in READS] for c in cities]
+        [[b["results"][r]["recent"]["isotherm"]["by_city"][c]["gain"] for r in READS] for c in cities]
     )
     lim = np.nanmax(np.abs(M))
     from matplotlib.colors import LinearSegmentedColormap
@@ -269,12 +270,12 @@ def city_heatmap():
     ax.grid(False)
     for i in range(len(cities)):
         for j in range(len(READS)):
-            ci = b["results"][READS[j]]["recent"]["LadderNet"]["by_city"][cities[i]]["ci"]
+            ci = b["results"][READS[j]]["recent"]["isotherm"]["by_city"][cities[i]]["ci"]
             star = " *" if ci[0] > 0 else ""
             ax.text(j, i, "{:+.3f}{}".format(M[i, j], star), ha="center", va="center", fontsize=8, color=INK)
     ax.set_xticks(range(len(READS)), [READ_LABEL[r] for r in READS])
     ax.set_yticks(range(len(cities)), cities)
-    ax.set_title("LadderNet vs market, last 12 months, by city")
+    ax.set_title("isotherm vs market, last 12 months, by city")
     save(
         fig,
         "06_city_heatmap.png",

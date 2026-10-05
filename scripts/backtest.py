@@ -484,7 +484,7 @@ def main():
     t0 = time.time()
     ls = dataset.load(a.cities)
     if a.suite == "g2":
-        MODELS[:] = ["LadderNet", "pool · market+GFS+obs · 365d", "pool · market+GFS", "market (tempered)"]
+        MODELS[:] = ["isotherm", "pool · market+GFS+obs · 365d", "pool · market+GFS", "market (tempered)"]
     oos = oos_predictions(ls, g2_suite() if a.suite == "g2" else default_suite())
     trades = load_trades(sorted(ls.meta["city"].unique())) if "maker" in a.execution else {}
     results = {}

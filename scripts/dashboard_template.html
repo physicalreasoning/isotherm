@@ -112,11 +112,11 @@ footer a { color: var(--model); }
   <section class="panel" id="prob" role="tabpanel" aria-labelledby="tab-prob">
     <div class="controls"><label for="seg-read">Read time</label><div class="seg" id="seg-read" role="group" aria-label="Read time"></div></div>
     <div class="grid">
-      <div class="card"><h3>Edge over the market, by half-year</h3><p class="note">Log score gain in nats per ladder. The simple pools went to zero in 2025; LadderNet stays positive but decays.</p><div class="chart" id="c-decay"></div><div class="src">results/benchmark.json, benchmark_g2.json</div></div>
+      <div class="card"><h3>Edge over the market, by half-year</h3><p class="note">Log score gain in nats per ladder. The simple pools went to zero in 2025; isotherm stays positive but decays.</p><div class="chart" id="c-decay"></div><div class="src">results/benchmark.json, benchmark_g2.json</div></div>
       <div class="card"><h3>Leaderboard on identical rows</h3><p class="note">Every model against the market with a 95% date-block CI. The control is trained on labels sampled from the market, so it can only win if the pipeline leaks.</p><div class="chart" id="c-board"></div><div class="src">results/benchmark_g2.json</div></div>
       <div class="card"><h3>Calibration</h3><p class="note">Every bucket as a yes/no question: predicted probability against how often it happened.</p><div class="chart" id="c-calib"></div><div class="src">results/benchmark_g2.json · reliability</div></div>
       <div class="card"><h3>Which forecast the market already prices</h3><p class="note">Last 12 months. Adding NBM, the forecast behind weather.gov, no longer helps. GFS MOS still does.</p><div class="chart" id="c-split"></div><div class="src">results/benchmark_g2.json · recent slice</div></div>
-      <div class="card wide"><h3>By city, last 12 months</h3><p class="note">LadderNet minus market. Blue is better than the market, red worse; a dot marks a CI that excludes zero.</p><div class="chart" id="c-city"></div><div class="src">results/benchmark_g2.json</div></div>
+      <div class="card wide"><h3>By city, last 12 months</h3><p class="note">isotherm minus market. Blue is better than the market, red worse; a dot marks a CI that excludes zero.</p><div class="chart" id="c-city"></div><div class="src">results/benchmark_g2.json</div></div>
     </div>
   </section>
 
@@ -189,7 +189,7 @@ function plot(id, traces, lay) { Plotly.react($(id), traces, lay, CFG); }
 function header() {
   const s = D.sealed, sh = D.shadow;
   const pills = [
-    ["good", "LadderNet beats the market at every read"],
+    ["good", "isotherm beats the market at every read"],
     ["warn", "Highs sealed test: pass, shrinking monthly"],
     ["bad", "Lows sealed test: flat"],
     ["bad", "MLB: no edge"],
@@ -198,7 +198,7 @@ function header() {
      "Live: " + (sh.decay ? sh.decay.status.replace("_", " ").toLowerCase() : "collecting, " + (sh.settled_ladders || 0) + " settled")],
   ];
   $("pills").innerHTML = pills.map(([k, t]) => `<span class="pill ${k}"><i></i>${t}</span>`).join("");
-  const best = D.reads.map((r) => [r, D.recent[r].LadderNet]).sort((a, b) => b[1].gain - a[1].gain)[0];
+  const best = D.reads.map((r) => [r, D.recent[r].isotherm]).sort((a, b) => b[1].gain - a[1].gain)[0];
   const k = [
     ["Model vs market, last 12 months", fmt.nats(best[1].gain), `nats per ladder at ${LBL[best[0]]} · CI ${fmt.nats(best[1].ci[0])} to ${fmt.nats(best[1].ci[1])}`],
     ["Highs sealed test", fmt.usd(s.highs.lb.pnl), `Newey-West t ${s.highs.lb.nw_t} · ${s.highs.lb.trades} trades · 95 days`],
@@ -215,18 +215,18 @@ function readSeg() {
 }
 function prob() {
   const t = theme();
-  const dec = D.decay[READ], xs = Object.keys(dec.LadderNet);
-  const tr = [{ x: xs, y: xs.map((x) => dec.LadderNet[x]), name: "LadderNet", mode: "lines+markers", line: { color: t.model, width: 2.5 }, marker: { size: 7 }, hovertemplate: "%{x}<br>LadderNet %{y:+.4f} nats<extra></extra>" }];
+  const dec = D.decay[READ], xs = Object.keys(dec.isotherm);
+  const tr = [{ x: xs, y: xs.map((x) => dec.isotherm[x]), name: "isotherm", mode: "lines+markers", line: { color: t.model, width: 2.5 }, marker: { size: 7 }, hovertemplate: "%{x}<br>isotherm %{y:+.4f} nats<extra></extra>" }];
   if (Object.keys(dec.pool).length) tr.push({ x: xs, y: xs.map((x) => dec.pool[x] ?? null), name: "best simple pool", mode: "lines+markers", line: { color: t.base, width: 2, dash: "dash" }, marker: { size: 5 }, hovertemplate: "%{x}<br>pool %{y:+.4f} nats<extra></extra>" });
   plot("c-decay", tr, layout(t, { showlegend: true, yaxis: Object.assign(layout(t).yaxis, { title: { text: "nats", font: { size: 11 } }, zeroline: true }) }));
 
-  const keep = ["LadderNet", "pool · market+GFS+obs · 365d", "pool · all", "pool · market+GFS", "pool · market+NBM", "market (tempered)", "LadderNet · market-sampled labels (control)"];
+  const keep = ["isotherm", "pool · market+GFS+obs · 365d", "pool · all", "pool · market+GFS", "pool · market+NBM", "market (tempered)", "isotherm · market-sampled labels (control)"];
   const rows = D.leaderboard[READ].filter((r) => keep.includes(r.model)).sort((a, b) => keep.indexOf(a.model) - keep.indexOf(b.model));
-  const nm = (m) => m.replace("LadderNet · market-sampled labels (control)", "control (market labels)");
+  const nm = (m) => m.replace("isotherm · market-sampled labels (control)", "control (market labels)");
   plot("c-board", [{
     x: rows.map((r) => r.gain), y: rows.map((r) => nm(r.model)), mode: "markers", type: "scatter",
     error_x: { type: "data", symmetric: false, array: rows.map((r) => r.ci[1] - r.gain), arrayminus: rows.map((r) => r.gain - r.ci[0]), color: t.muted, thickness: 1.2, width: 3 },
-    marker: { size: 9, color: rows.map((r) => r.model === "LadderNet" ? t.model : (r.model.includes("control") ? t.ink : t.base)) },
+    marker: { size: 9, color: rows.map((r) => r.model === "isotherm" ? t.model : (r.model.includes("control") ? t.ink : t.base)) },
     customdata: rows.map((r) => [r.ci[0], r.ci[1], r.ece]),
     hovertemplate: "%{y}<br>Δ %{x:+.4f} [%{customdata[0]:+.4f}, %{customdata[1]:+.4f}]<br>ECE %{customdata[2]:.4f}<extra></extra>",
   }], layout(t, { margin: { l: 190, r: 14, t: 8, b: 40 }, yaxis: Object.assign(layout(t).yaxis, { autorange: "reversed" }), xaxis: Object.assign(layout(t).xaxis, { title: { text: "Δ log score vs market (nats)", font: { size: 11 } }, zeroline: true }) }));
@@ -235,7 +235,7 @@ function prob() {
   plot("c-calib", [
     { x: [0, 1], y: [0, 1], mode: "lines", line: { color: t.rule, width: 1.5 }, hoverinfo: "skip", showlegend: false },
     { x: rel.market.mean_prob, y: rel.market.freq, name: "market", mode: "lines+markers", line: { color: t.base, width: 2 }, customdata: rel.market.n, hovertemplate: "market<br>predicted %{x:.2f} · observed %{y:.2f}<br>n %{customdata}<extra></extra>" },
-    { x: rel.LadderNet.mean_prob, y: rel.LadderNet.freq, name: "LadderNet", mode: "lines+markers", line: { color: t.model, width: 2.5 }, customdata: rel.LadderNet.n, hovertemplate: "LadderNet<br>predicted %{x:.2f} · observed %{y:.2f}<br>n %{customdata}<extra></extra>" },
+    { x: rel.isotherm.mean_prob, y: rel.isotherm.freq, name: "isotherm", mode: "lines+markers", line: { color: t.model, width: 2.5 }, customdata: rel.isotherm.n, hovertemplate: "isotherm<br>predicted %{x:.2f} · observed %{y:.2f}<br>n %{customdata}<extra></extra>" },
   ], layout(t, { showlegend: true, xaxis: Object.assign(layout(t).xaxis, { title: { text: "predicted probability", font: { size: 11 } }, range: [0, 1] }), yaxis: Object.assign(layout(t).yaxis, { title: { text: "observed frequency", font: { size: 11 } }, range: [0, 1] }) }));
 
   const reads = D.reads, lab = reads.map((r) => LBL[r]);

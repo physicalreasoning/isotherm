@@ -119,7 +119,7 @@ def test_schema_rejects_malformed_questions():
 def test_market_label_control_learns_nothing_beyond_the_market():
     # Synthetic ladders where the market IS the truth: a net trained on market-sampled labels
     # must not beat the market on real outcomes.
-    from isotherm.model import LadderNet
+    from isotherm.model import IsothermNet
 
     ls = synthetic(n=900, k=6)
     ls.meta["city"] = "NY"
@@ -132,6 +132,6 @@ def test_market_label_control_learns_nothing_beyond_the_market():
         "vol_after": np.ones_like(ls.lo),
     }
     tr, te = ls.take(np.arange(700)), ls.take(np.arange(700, 900))
-    m = LadderNet(market_labels=True, seeds=1, epochs=60).fit(tr)
+    m = IsothermNet(market_labels=True, seeds=1, epochs=60).fit(tr)
     gain = metrics.log_score(te.probs["market"], te.y).mean() - metrics.log_score(m.predict(te), te.y).mean()
     assert gain < 0.02

@@ -17,7 +17,8 @@ R = pathlib.Path("results")
 
 def load(name):
     p = R / name
-    return json.loads(p.read_text()) if p.exists() else None
+    # Raw results predate the rename and call the model LadderNet; show it as isotherm.
+    return json.loads(p.read_text().replace("LadderNet", "isotherm")) if p.exists() else None
 
 
 def bench(b):
@@ -139,13 +140,13 @@ def main():
         L += [
             "## Probabilities vs the market (log score, nats, lower is better)",
             "",
-            "| Read | Market | LadderNet | Δ vs market [95% CI] | Δ last 12 months "
-            "| ECE market → LadderNet |",
+            "| Read | Market | IsothermNet | Δ vs market [95% CI] | Δ last 12 months "
+            "| ECE market → IsothermNet |",
             "|---|---:|---:|---|---|---|",
         ]
         for read, x in m["benchmark_g2"].items():
-            mk, ln = x["models"]["market"], x["models"]["LadderNet"]
-            rec = x["last_12m"].get("LadderNet", {})
+            mk, ln = x["models"]["market"], x["models"]["isotherm"]
+            rec = x["last_12m"].get("isotherm", {})
             L.append(
                 "| {} | {:.4f} | {:.4f} | {:+.4f} [{:+.4f}, {:+.4f}] | {} | {:.4f} → {:.4f} |".format(
                     read,
