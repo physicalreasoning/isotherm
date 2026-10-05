@@ -174,10 +174,11 @@ def is_historical(market: Dict) -> bool:
 
 # ---------------------------------------------------------------- listing
 
-def _paginate(path: str, key: str, max_pages: int, **params) -> Iterator[Dict]:
+def _paginate(path: str, key: str, max_pages: int, _cache: bool = False,
+              **params) -> Iterator[Dict]:
     cursor = None
     for _ in range(max_pages):
-        d = get(path, cursor=cursor, **params)
+        d = get(path, _cache=_cache, cursor=cursor, **params)
         rows = d.get(key, []) or []
         yield from rows
         cursor = d.get("cursor")
@@ -243,8 +244,11 @@ def candle_volume(c: Dict) -> float:
 
 
 def trades(market: Dict, max_pages: int = 50) -> List[Dict]:
+    """Every print in a market, with `taker_side`. Cached once the market has settled."""
     path = "historical/trades" if is_historical(market) else "markets/trades"
-    return list(_paginate(path, "trades", max_pages, ticker=market["ticker"], limit=1000))
+    settled = market.get("result") in ("yes", "no")
+    return list(_paginate(path, "trades", max_pages, _cache=settled, ticker=market["ticker"],
+                          limit=1000))
 
 
 # ---------------------------------------------------------------- rows
