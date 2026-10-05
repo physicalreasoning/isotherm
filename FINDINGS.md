@@ -110,3 +110,30 @@ participation or 10× size turn it deeply negative; realised edge is +1.7¢ per 
 predicted (winner's curse); and it misses both overfitting bars (DSR 0.62 < 0.95, PBO 0.27 > 0.2).
 The information is there; crossing the spread to act on it costs about all of it. The next test is
 the one that stops paying the spread: maker execution with trade-through fills.
+
+## 7 · Maker backtest: information is real, adverse selection is larger (2026-10-04)
+
+`scripts/backtest.py --execution maker`, 17.0M prints over 40,553 markets (trade sums cover
+99.3-99.8% of reported volume, 0 failed fetches), 32 configurations, nested selection. Quotes join or
+improve the touch; fills only on later prints strictly through our price. Full tables:
+`results/backtest_maker.md`.
+
+| Read | Model as maker | Uninformed market maker | Matched noise | Sharpe [95% CI] |
+|---|---:|---:|---:|---|
+| 08:00 | −$12,477 | −$42,779 | −$29,195 | −1.02 [−2.25, +0.21] |
+| 12:00 | −$34,665 | −$101,869 | −$34,834 | −2.31 [−3.71, −1.10] |
+| 16:00 day before | −$8,071 | −$25,116 | −$12,141 | −0.91 [−2.20, +0.40] |
+
+Attribution at 08:00: **+$57,946 of spread captured, −$70,423 alpha vs mid.** Resting orders are
+filled when the price moves through them, i.e. when someone better informed is trading. The model's
+information cuts that loss by roughly two thirds relative to quoting with no information, which is
+the same information §5 measures; it does not cut it to zero. The conclusion holds at both fill
+bounds (trade-through and 50% at-touch), with a 1.75¢ maker fee, without price improvement, and
+gets far worse with longer-lived quotes (to the close: −$243,506), as stale quotes are picked off.
+
+**Where this leaves the programme.** Public NWS guidance in a 2-4 parameter pool carries real,
+measurable information (§5), worth about one tick per contract at the day-before read (§6). Taking
+liquidity pays the spread away; providing it pays it away to adverse selection. Neither execution
+style turns these probabilities into a robust, deflated-Sharpe-significant strategy. A better model
+(G2: intraday observations, time-varying weights, a nonlinear learner) has to buy more than a tick
+of edge to change that, and the backtest now exists to say whether it does.

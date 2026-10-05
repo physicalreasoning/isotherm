@@ -19,14 +19,15 @@ distribution, so answers to different question types cannot contradict each othe
 Pre-registered plan in [docs/PLAN.md](docs/PLAN.md); domain choice and the survey behind it in
 [docs/01-market-selection.md](docs/01-market-selection.md); evaluation protocol in
 [docs/EVALS.md](docs/EVALS.md); latest leaderboard in [results/benchmark.md](results/benchmark.md),
-backtests in [results/backtest_taker.md](results/backtest_taker.md).
+backtests in [results/backtest_taker.md](results/backtest_taker.md) and
+[results/backtest_maker.md](results/backtest_maker.md).
 
 | Gate | | Status |
 |---|---|---|
 | Survey | which market is worth modelling | **done:** weather highs, 7 cities, ~8,200 city-days |
 | Labels | settlement, strikes, ladder structure | **clean** on NY: 100% arithmetic agreement, CLI = settlement 1,545/1,546 days |
 | G0 | does a free forecast add information the market lacks | **7 cities: the market now prices NBM fully but still underweights GFS MOS** (+0.009 to +0.020 nats on the last 12 months, CIs > 0 at every read). [FINDINGS §5](FINDINGS.md) |
-| Backtest | does it survive fees, spread, capacity | **taker: ~1 tick of edge at the day-before read** (Sharpe 1.67, fails DSR/PBO, dies at +1¢ slippage). Maker run pending. [FINDINGS §6](FINDINGS.md) |
+| Backtest | does it survive fees, spread, capacity | **No robust strategy yet.** Taker: ~1 tick of edge at the day-before read (Sharpe 1.67, fails DSR/PBO, dies at +1¢ slip). Maker: loses to adverse selection, though the model beats an uninformed market maker by ~2/3. [FINDINGS §6-7](FINDINGS.md) |
 | G1-G5 | baselines, model, synthetic pretraining, backtest, live shadow | not started |
 
 ## Reproduce
