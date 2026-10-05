@@ -8,10 +8,15 @@ may only look at folds < i.
 """
 from __future__ import annotations
 
+import hashlib
+import inspect
+import pathlib
+import pickle
 from dataclasses import dataclass
 from typing import Dict, List
 
 import numpy as np
+import pandas as pd
 
 from .dataset import LadderSet
 from .splits import walk_forward
@@ -26,7 +31,31 @@ class OOS:
     folds: List[dict]
 
 
-def oos_predictions(ls: LadderSet, suite, lockbox: bool = False) -> Dict[str, OOS]:
+def _cache_key(ls: LadderSet, suite, lockbox: bool) -> str:
+    """Data identity + every predictor's config + the source of the modules that define them."""
+    from . import baselines, model
+    h = hashlib.sha256()
+    h.update(repr((lockbox, [(m.name, sorted(vars(m).items(), key=str)) for m in suite])).encode())
+    h.update(pd.util.hash_pandas_object(ls.meta[["event", "read", "day"]], index=False).values)
+    for mod in (baselines, model):
+        h.update(inspect.getsource(mod).encode())
+    return h.hexdigest()[:16]
+
+
+def oos_predictions(ls: LadderSet, suite, lockbox: bool = False,
+                    cache_dir: str | None = "data/oos") -> Dict[str, OOS]:
+    if cache_dir:
+        f = pathlib.Path(cache_dir) / "{}.pkl".format(_cache_key(ls, suite, lockbox))
+        if f.exists():
+            return pickle.loads(f.read_bytes())
+    out = _compute(ls, suite, lockbox)
+    if cache_dir:
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_bytes(pickle.dumps(out))
+    return out
+
+
+def _compute(ls: LadderSet, suite, lockbox: bool) -> Dict[str, OOS]:
     out = {}
     for read in sorted(ls.meta["read"].unique()):
         sub = ls.take(np.flatnonzero(ls.meta["read"].to_numpy() == read))
