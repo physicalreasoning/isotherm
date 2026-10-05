@@ -71,7 +71,7 @@ it is not free.
 ## Verified facts this rests on (2026-10-04)
 
 - `GET /historical/*` serves every market settled before 2026-08-05, back to each series' first
-  event. The rolling purge `pm-jepa` raced is gone.
+  event. The rolling purge our earlier pm-jepa project had to race is gone.
 - Bucket arithmetic in `pmdecide.weather.bucket_interval` reproduces Kalshi's `result` on every
   market checked (48/48 in the smoke panel; the full panel re-checks every row).
 - NWS CLI for KNYC 2026-08-03 = 80°F = Kalshi `expiration_value` for `KXHIGHNY-26AUG03`.

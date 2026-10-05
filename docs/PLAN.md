@@ -239,7 +239,7 @@ never on the lockbox.
 - **Registry:** each model artifact carries git SHA, data manifest hash, config, and its eval
   report; promotion is champion/challenger on the trailing 60 days with a CI, never by eye.
 - **Jobs:** daily ingest (settled events, new forecasts), scoring at each read time, a paper-trade
-  ledger. GitHub Actions cron to start; nothing heavier until it hurts (`pm-jepa/PIPELINE.md`).
+  ledger. GitHub Actions cron to start; nothing heavier until it hurts.
 - **Monitoring:** rolling log score vs market, calibration drift per head, feature PSI, data
   freshness (missing forecast run = alarm), **contract-change detection** (hash of `rules_primary`
   per series; the TWC switch would have fired this), and new strike layouts.

@@ -1,6 +1,6 @@
 """Kalshi public market-data client.
 
-Adapted from physicalreasoning/pm-jepa `data/kalshi.py`. Every endpoint used here
+Adapted from our earlier internal project pm-jepa. Every endpoint used here
 serves market rows, candlesticks, trades and settlement without a key. We only
 ever issue GETs for market data; nothing here can place an order.
 
