@@ -39,7 +39,8 @@ uv run pytest
 ```
 
 Everything uses unauthenticated public endpoints: Kalshi's market-data API (including
-`/historical/*`) and the Iowa Environmental Mesonet. No keys, no accounts. Settled responses are
+`/historical/*`) and the Iowa Environmental Mesonet. No keys, no accounts. An optional Kalshi API
+key only raises the rate limit (see `src/pmdecide/kalshi.py`, `scripts/kalshi_auth_check.py`). Settled responses are
 cached immutably under `data_cache/`, so reruns are free.
 
 ## Layout
