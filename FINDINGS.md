@@ -375,3 +375,27 @@ last 12 months before the lockbox (2025-07-01 to 2026-06-30), 95% date-block boo
   times, and the transformer's market-label control stays within ±0.005 of the market.
 - *Otherwise* the MLP stays and this is recorded as a negative result.
 The lockbox is not used.
+
+## 17 · Bucket transformer: fails its gate (2026-10-05)
+
+`scripts/transformer_gate.py` against §16 (pre-registered in commit fd6d027). Raw:
+`results/transformer_gate.json`, `results/benchmark_transformer.md`.
+
+Transformer minus isotherm, log score gain on the last 12 months before the lockbox, paired on
+identical rows, 95% date-block CI:
+
+| Read | Difference | CI |
+|---|---|---|
+| 08:00 | +0.0016 | [−0.0012, +0.0044] |
+| 12:00 | +0.0004 | [−0.0022, +0.0031] |
+| 14:00 | −0.0003 | [−0.0026, +0.0020] |
+| 16:00 day before | **+0.0040** | **[+0.0010, +0.0069]** |
+
+One read of four clears zero against the three required, so **the gate fails and the per-bucket
+MLP stays**. The transformer's market-label control sits within −0.0004 to +0.0008 of the market,
+so the comparison is clean. Attention across a ladder's buckets lands within a few thousandths of
+the MLP: with about 6,000 ladders per read time and the edge limited by information rather than
+capacity, the extra machinery has little to work with.
+
+The one clear difference falls at the read the trading strategy uses. Acting on it now would be
+selection after seeing the result; it can only become a new pre-registered test of its own.
