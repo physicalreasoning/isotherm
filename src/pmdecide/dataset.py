@@ -25,7 +25,7 @@ import numpy as np
 import pandas as pd
 
 from .emos import daytime_max_table, fit_climatology, fit_emos, forecast_at, interval_probs
-from .weather import AVAILABILITY_LAG, CITIES, City, bucket_interval
+from .weather import AVAILABILITY_LAG, CITIES, City, bucket_interval, is_partition, normalise_strikes
 
 READS = {"d1_16": (-1, 16), "d0_08": (0, 8), "d0_12": (0, 12)}
 FORECASTS = {"emos_gfs": ("GFS", "n_x", "2015-01-01"), "emos_nbm": ("NBS", "txn", "2021-01-01")}
@@ -33,7 +33,7 @@ EMBARGO = pd.Timedelta(days=2)
 MIN_FIT_DAYS = 365
 EPS = 1e-3            # probability floor; a tenth of Kalshi's 1¢ tick
 DATA = pathlib.Path("data")
-VERSION = 3           # bump when anything below changes what a row contains
+VERSION = 6           # bump when anything below changes what a row contains
 
 
 @dataclass
@@ -79,7 +79,7 @@ class LadderSet:
 def regime(rules: str) -> str:
     if "Weather Company" in rules:
         return "twc"
-    if "Climatological Report" in rules:
+    if "Climatological Report" in rules or "Climate Report" in rules:
         return "nws_cli"
     return "other"
 
@@ -96,6 +96,9 @@ def _normalise(p, mask):
 
 
 def _ladders(panel: pd.DataFrame, city: City) -> LadderSet:
+    panel = normalise_strikes(panel)
+    unparsed = panel.loc[panel["strike_type"].isna(), "event"].unique()
+    panel = panel[~panel["event"].isin(unparsed)]
     if "candles_ok" in panel:
         bad = panel.loc[~panel["candles_ok"], "event"].unique()
         panel = panel[~panel["event"].isin(bad)]
@@ -107,8 +110,8 @@ def _ladders(panel: pd.DataFrame, city: City) -> LadderSet:
         g = g.iloc[order]
         iv = [iv[i] for i in order]
         y = g["y"].to_numpy()
-        if y.sum() != 1:
-            continue
+        if y.sum() != 1 or not is_partition(iv):
+            continue                                   # not a ladder (see is_partition)
         b, a = g["bid"].to_numpy(float), g["ask"].to_numpy(float)
         if np.all(np.isnan(b) & np.isnan(a)):
             continue                                   # market not open at this read
@@ -119,7 +122,9 @@ def _ladders(panel: pd.DataFrame, city: City) -> LadderSet:
                       "n_buckets": len(g), "settle": float(g["settle"].iloc[0]),
                       "spread": float(np.median(a - b)), "overround": float(mid.sum()),
                       "cum_volume": float(g["cum_volume"].sum()),
-                      "regime": regime(str(g["rules"].iloc[0]))})
+                      "regime": regime(str(g["rules"].iloc[0])),
+                      "period": "{}H{}".format(g["day"].iloc[0].year,
+                                               1 + (g["day"].iloc[0].month > 6))})
         los.append([x for x, _ in iv])
         his.append([x for _, x in iv])
         mids.append(mid)
