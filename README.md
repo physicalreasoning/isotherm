@@ -32,6 +32,7 @@ backtests in [results/backtest_g2.md](results/backtest_g2.md); every headline nu
 | G2 backtest | does it survive costs | day-before taker: +$22k, Sharpe 2.05, survives +2¢ slippage; DSR 0.85, PBO 0.26 ([§8](FINDINGS.md)) |
 | Lockbox | one sealed out-of-sample test | pass, marginally: +$1,851 on 95 unseen days, NW t 1.77; monthly PnL halving ([§9-10](FINDINGS.md)) |
 | Sports | same pipeline on MLB | no edge: within ±0.001 nats of the market ([SPORTS](docs/SPORTS.md)) |
+| Daily lows | same pipeline, a market launched Dec 2025 | backtest cleared every bar (DSR 0.98, PBO 0.06), sealed test made $36 in five weeks; rain not modelable yet ([LOWS_RAIN](docs/LOWS_RAIN.md), [§14](FINDINGS.md)) |
 | Same-day | do finer obs and a 14:00 read help | probabilities yes (+0.017 nats recent at 14:00, best of any read); trading no, books too thin ([§12](FINDINGS.md)) |
 | G5 | does it hold live | running: paper trades at 16:00 local daily with a decay alarm, ledger on [`shadow-ledger`](../../tree/shadow-ledger) |
 | G3 | synthetic pretraining | not started |
