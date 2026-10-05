@@ -136,8 +136,8 @@ model has to beat the best, not the weakest.
 | Market mid, normalised | the crowd |
 | EMOS on GFS MOS, EMOS on NBM | the NWS forecast, honestly calibrated |
 | Log-pool of market and EMOS | a two-parameter model; the real bar |
-| LightGBM multiclass on residual bins | strong tabular learner on the same features |
-| Untrained network, same architecture | the `causal-jepa` control: has training learned anything |
+| LightGBM multiclass on residual bins | strong tabular learner on the same features *(not run: the learned pools and the network bracketed it; FINDINGS §8)* |
+| Untrained network, same architecture | the `causal-jepa` control: has training learned anything *(as run: the network starts equal to the market, so this became the market-label control; FINDINGS §8)* |
 
 ---
 

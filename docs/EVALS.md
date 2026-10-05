@@ -60,8 +60,10 @@ variance.
   came from fixing the market's own calibration, not from new information.
 - **EMOS (GFS, NBM)** and **climatology**. Is there signal, and how much is the NWS's?
 - **Log pools**. Two or three parameters. The real bar for anything with more parameters.
-- **Untrained network** of the final architecture (added with G2). The `causal-jepa` lesson: a
-  model that does not separate from its own initialisation has learned nothing.
+- **Market-label control** (added with G2): the same network trained on labels sampled from the
+  market's own distribution. Its best possible fit is the market, so it can only beat the market
+  if the pipeline leaks the outcome. (An untrained copy is not a useful control here: the network
+  is initialised to equal the market.)
 
 ## Slices
 
