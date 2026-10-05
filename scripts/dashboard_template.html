@@ -1,0 +1,396 @@
+<title>Isotherm results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600&display=swap">
+<style>
+/* Layout: an instrument panel. Status strip and headline readings first, then tabbed detail,
+   each chart a labelled reading with its source. */
+:root {
+  --bg: #f4f6f8;
+  --surface: #ffffff;
+  --ink: #15181c;
+  --muted: #5b626b;
+  --rule: #dfe3e8;
+  --model: #2a78d6;
+  --base: #98a0a8;
+  --neg: #e34948;
+  --pos: #2a78d6;
+  --mid: #eef0f2;
+  --c2: #eb6834; --c3: #1baf7a; --c4: #eda100; --c5: #e87ba4; --c6: #008300;
+  --good: #1f8a4c; --warn: #b26b00; --bad: #c53030;
+  --display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101317; --surface: #171b20; --ink: #e9ecef; --muted: #9aa2ab; --rule: #2a3038;
+    --model: #3987e5; --base: #7d858e; --neg: #e66767; --pos: #3987e5; --mid: #262b31;
+    --c2: #d95926; --c3: #199e70; --c4: #c98500; --c5: #d55181; --c6: #2e9a2e;
+    --good: #3fb86f; --warn: #e0a030; --bad: #f06868;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101317; --surface: #171b20; --ink: #e9ecef; --muted: #9aa2ab; --rule: #2a3038;
+  --model: #3987e5; --base: #7d858e; --neg: #e66767; --pos: #3987e5; --mid: #262b31;
+  --c2: #d95926; --c3: #199e70; --c4: #c98500; --c5: #d55181; --c6: #2e9a2e;
+  --good: #3fb86f; --warn: #e0a030; --bad: #f06868;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 14px; line-height: 1.5; margin: 0; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 20px; padding-block: 24px 48px; }
+header { display: grid; gap: 10px; position: relative; padding-block: 8px 18px; border-bottom: 1px solid var(--rule); }
+header canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: .55; }
+.brand { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; position: relative; }
+h1 { font-family: var(--display); font-weight: 600; font-size: 30px; letter-spacing: .01em; margin: 0; }
+.tag { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.lede { max-width: 72ch; color: var(--muted); margin: 0; position: relative; }
+.lede a { color: var(--model); }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; position: relative; }
+.pill { font-family: var(--mono); font-size: 11.5px; padding: 3px 9px 3px 7px; border-radius: 999px; border: 1px solid var(--rule); background: var(--surface); display: inline-flex; align-items: center; gap: 6px; }
+.pill i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.pill.good i { background: var(--good); } .pill.warn i { background: var(--warn); } .pill.bad i { background: var(--bad); }
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-block: 18px; }
+@media (max-width: 860px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 460px) { .kpis { grid-template-columns: minmax(0, 1fr); } }
+.kpi { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; min-width: 0; }
+.kpi .k { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.kpi .v { font-family: var(--mono); font-size: 24px; font-weight: 500; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.kpi .s { font-size: 12px; color: var(--muted); }
+nav.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--rule); overflow-x: auto; margin-top: 6px; }
+nav.tabs button { font: 500 13px var(--sans); color: var(--muted); background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 12px; cursor: pointer; white-space: nowrap; }
+nav.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--model); }
+nav.tabs button:focus-visible, select:focus-visible, .seg button:focus-visible { outline: 2px solid var(--model); outline-offset: 2px; }
+section.panel { padding-top: 16px; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+.controls label { font-size: 12px; color: var(--muted); }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--surface); }
+.seg button { font: 500 12.5px var(--sans); background: none; color: var(--muted); border: 0; padding: 6px 11px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--model); color: #fff; }
+select { font: 13px var(--sans); color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 8px; max-width: 100%; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px 8px; min-width: 0; }
+.card.wide { grid-column: 1 / -1; }
+.card h3 { font: 600 14px var(--sans); margin: 0; }
+.card p.note { font-size: 12px; color: var(--muted); margin: 2px 0 6px; max-width: 80ch; }
+.card .src { font-family: var(--mono); font-size: 10.5px; color: var(--muted); margin: 4px 0 2px; }
+.chart { width: 100%; height: 300px; }
+.chart.tall { height: 380px; }
+table.stats { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+table.stats td { padding: 5px 0; border-bottom: 1px solid var(--rule); }
+table.stats td:last-child { text-align: right; font-family: var(--mono); }
+.verdict { font-family: var(--mono); font-size: 12px; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-left: 6px; }
+.verdict.good { color: var(--good); border: 1px solid var(--good); }
+.verdict.warn { color: var(--warn); border: 1px solid var(--warn); }
+.verdict.bad { color: var(--bad); border: 1px solid var(--bad); }
+footer { margin-top: 28px; color: var(--muted); font-size: 12px; }
+footer a { color: var(--model); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <canvas id="iso" aria-hidden="true"></canvas>
+    <div class="brand"><h1>isotherm</h1><span class="tag">calibrated decision model · Kalshi temperature ladders · 7 cities</span></div>
+    <p class="lede">An open, Jev-style decision model: typed questions in, calibrated probabilities out, all read off one distribution over tomorrow's high. Every chart here is scored out of sample against the market's own price at the same timestamp. Code and raw results: <a href="https://github.com/physicalreasoning/isotherm">physicalreasoning/isotherm</a>.</p>
+    <div class="pills" id="pills"></div>
+  </header>
+
+  <div class="kpis" id="kpis"></div>
+
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" id="tab-prob" aria-controls="prob" aria-selected="true">Probabilities</button>
+    <button role="tab" id="tab-trade" aria-controls="trade" aria-selected="false">Trading</button>
+    <button role="tab" id="tab-sealed" aria-controls="sealed" aria-selected="false">Sealed tests</button>
+    <button role="tab" id="tab-ablate" aria-controls="ablate" aria-selected="false">Markets &amp; ablations</button>
+    <button role="tab" id="tab-live" aria-controls="live" aria-selected="false">Live</button>
+  </nav>
+
+  <section class="panel" id="prob" role="tabpanel" aria-labelledby="tab-prob">
+    <div class="controls"><label for="seg-read">Read time</label><div class="seg" id="seg-read" role="group" aria-label="Read time"></div></div>
+    <div class="grid">
+      <div class="card"><h3>Edge over the market, by half-year</h3><p class="note">Log score gain in nats per ladder. The simple pools went to zero in 2025; LadderNet stays positive but decays.</p><div class="chart" id="c-decay"></div><div class="src">results/benchmark.json, benchmark_g2.json</div></div>
+      <div class="card"><h3>Leaderboard on identical rows</h3><p class="note">Every model against the market with a 95% date-block CI. The control is trained on labels sampled from the market, so it can only win if the pipeline leaks.</p><div class="chart" id="c-board"></div><div class="src">results/benchmark_g2.json</div></div>
+      <div class="card"><h3>Calibration</h3><p class="note">Every bucket as a yes/no question: predicted probability against how often it happened.</p><div class="chart" id="c-calib"></div><div class="src">results/benchmark_g2.json · reliability</div></div>
+      <div class="card"><h3>Which forecast the market already prices</h3><p class="note">Last 12 months. Adding NBM, the forecast behind weather.gov, no longer helps. GFS MOS still does.</p><div class="chart" id="c-split"></div><div class="src">results/benchmark_g2.json · recent slice</div></div>
+      <div class="card wide"><h3>By city, last 12 months</h3><p class="note">LadderNet minus market. Blue is better than the market, red worse; a dot marks a CI that excludes zero.</p><div class="chart" id="c-city"></div><div class="src">results/benchmark_g2.json</div></div>
+    </div>
+  </section>
+
+  <section class="panel" id="trade" role="tabpanel" aria-labelledby="tab-trade" hidden>
+    <div class="controls"><label for="sel-cell">Strategy cell</label><select id="sel-cell"></select></div>
+    <div class="grid">
+      <div class="card"><h3>Paper PnL, nested walk-forward</h3><p class="note">$10k bankroll, Kalshi fees. Each quarter trades the config with the best Sharpe on earlier quarters only.</p><div class="chart" id="c-equity"></div><div class="src">results/backtest_g2.json</div></div>
+      <div class="card"><h3>Cell statistics</h3><p class="note">Deflated Sharpe corrects for the 28 configs tried; PBO is the chance the in-sample winner lands below the median out of sample.</p><table class="stats" id="t-cell"></table></div>
+      <div class="card"><h3>Overfitting map, every cell we ran</h3><p class="note">Believable needs DSR ≥ 0.95 and PBO ≤ 0.20. Only the daily lows 4pm cell got there, and its sealed test made $36.</p><div class="chart tall" id="c-over"></div><div class="src">results/backtest_*.json, lows_backtest.json, sports_backtest.json</div></div>
+      <div class="card"><h3>Where the money goes</h3><p class="note">Alpha against the mid versus what execution costs. Takers pay the spread; makers earn it and lose it again to adverse selection.</p><div class="chart tall" id="c-attr"></div><div class="src">results/backtest_g2.json</div></div>
+      <div class="card wide"><h3>Stress test for the selected cell</h3><p class="note">The configuration nested selection used most, under worse fills, higher fees, different size and participation.</p><div class="chart" id="c-robust"></div><div class="src">results/backtest_g2.json · robustness</div></div>
+    </div>
+  </section>
+
+  <section class="panel" id="sealed" role="tabpanel" aria-labelledby="tab-sealed" hidden>
+    <div class="grid">
+      <div class="card"><h3>Highs: backtest, then the sealed test <span class="verdict" id="v-highs"></span></h3><p class="note">Strategy and pass rule pushed before scoring; July to October 2026 scored once.</p><div class="chart" id="c-sh"></div><table class="stats" id="t-sh"></table></div>
+      <div class="card"><h3>Daily lows: backtest, then the sealed test <span class="verdict" id="v-lows"></span></h3><p class="note">The best backtest in the project. The placebos flipped from profit to loss in the sealed weeks: the young market had corrected.</p><div class="chart" id="c-sl"></div><table class="stats" id="t-sl"></table></div>
+      <div class="card wide"><h3>Sealed tests by month</h3><p class="note">Highs profits roughly halved each month. Lows were flat.</p><div class="chart" id="c-months"></div></div>
+    </div>
+  </section>
+
+  <section class="panel" id="ablate" role="tabpanel" aria-labelledby="tab-ablate" hidden>
+    <div class="grid">
+      <div class="card"><h3>Market selection survey</h3><p class="note">17 Kalshi series. Weather has history, room in the spread and a free forecast. Point size: log median volume per event.</p><div class="chart tall" id="c-survey"></div><div class="src">results/survey.json</div></div>
+      <div class="card"><h3>Synthetic pretraining (G3)</h3><p class="note">92k synthetic ladders from 55 stations Kalshi does not list. Helps when real data is scarce, slightly hurts with all of it.</p><div class="chart tall" id="c-g3"></div><div class="src">results/g3_learning_curve.json</div></div>
+      <div class="card"><h3>MLB: same pipeline, no edge</h3><p class="note">Elo and starting pitchers pooled with the market, by time before first pitch.</p><div class="chart" id="c-mlb"></div><div class="src">results/sports_benchmark.json</div></div>
+      <div class="card"><h3>Daily lows gate 0</h3><p class="note">Pooling the market with each forecast, February to August 2026.</p><div class="chart" id="c-lows"></div><div class="src">results/lows_benchmark.json</div></div>
+    </div>
+  </section>
+
+  <section class="panel" id="live" role="tabpanel" aria-labelledby="tab-live" hidden>
+    <div class="grid">
+      <div class="card"><h3>Live shadow record</h3><p class="note">The frozen strategy scores every city daily at 16:00 local and commits its paper trades before the outcome exists. Ledger on the <a href="https://github.com/physicalreasoning/isotherm/tree/shadow-ledger">shadow-ledger</a> branch.</p><table class="stats" id="t-live"></table></div>
+      <div class="card"><h3>Decay alarm</h3><p class="note">Rolling 30-day log score gain against the market. STOP when two consecutive windows sit fully below zero.</p><div class="chart" id="c-live"></div></div>
+    </div>
+  </section>
+
+  <footer>Generated by <span style="font-family:var(--mono)">scripts/dashboard.py</span> from the raw results; it computes nothing new. Repo: <a href="https://github.com/physicalreasoning/isotherm">physicalreasoning/isotherm</a>.</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.3/plotly.min.js"></script>
+<script>
+const D = __DATA__;
+const $ = (id) => document.getElementById(id);
+const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmt = { nats: (v) => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(4), usd: (v) => (v >= 0 ? "+$" : "−$") + Math.abs(Math.round(v)).toLocaleString("en-US") };
+const LBL = D.labels;
+let READ = "d1_16", CELL = "d1_16 · taker";
+
+function theme() {
+  return { ink: css("--ink"), muted: css("--muted"), rule: css("--rule"), model: css("--model"), base: css("--base"),
+           neg: css("--neg"), pos: css("--pos"), mid: css("--mid"), c2: css("--c2"), c3: css("--c3"), c4: css("--c4"),
+           c5: css("--c5"), c6: css("--c6"), surface: css("--surface") };
+}
+function layout(t, extra) {
+  return Object.assign({
+    paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)", margin: { l: 56, r: 14, t: 8, b: 40 },
+    font: { family: css("--sans"), size: 11.5, color: t.muted }, showlegend: false,
+    hoverlabel: { bgcolor: t.surface, bordercolor: t.rule, font: { color: t.ink, family: css("--mono"), size: 11.5 } },
+    xaxis: { gridcolor: t.rule, zerolinecolor: t.ink, linecolor: t.rule, tickfont: { color: t.muted } },
+    yaxis: { gridcolor: t.rule, zerolinecolor: t.ink, linecolor: t.rule, tickfont: { color: t.muted } },
+    legend: { orientation: "h", x: 0, y: 1.12, font: { color: t.ink, size: 11 } },
+  }, extra || {});
+}
+const CFG = { displayModeBar: false, responsive: true };
+function plot(id, traces, lay) { Plotly.react($(id), traces, lay, CFG); }
+
+/* ---------- header ---------- */
+function header() {
+  const s = D.sealed, sh = D.shadow;
+  const pills = [
+    ["good", "LadderNet beats the market at every read"],
+    ["warn", "Highs sealed test: pass, shrinking monthly"],
+    ["bad", "Lows sealed test: flat"],
+    ["bad", "MLB: no edge"],
+    ["warn", "G3 pretraining: fails the gate"],
+    [sh.decay && sh.decay.status === "STOP" ? "bad" : (sh.decay && sh.decay.status === "OK" ? "good" : "warn"),
+     "Live: " + (sh.decay ? sh.decay.status.replace("_", " ").toLowerCase() : "collecting, " + (sh.settled_ladders || 0) + " settled")],
+  ];
+  $("pills").innerHTML = pills.map(([k, t]) => `<span class="pill ${k}"><i></i>${t}</span>`).join("");
+  const best = D.reads.map((r) => [r, D.recent[r].LadderNet]).sort((a, b) => b[1].gain - a[1].gain)[0];
+  const k = [
+    ["Model vs market, last 12 months", fmt.nats(best[1].gain), `nats per ladder at ${LBL[best[0]]} · CI ${fmt.nats(best[1].ci[0])} to ${fmt.nats(best[1].ci[1])}`],
+    ["Highs sealed test", fmt.usd(s.highs.lb.pnl), `Newey-West t ${s.highs.lb.nw_t} · ${s.highs.lb.trades} trades · 95 days`],
+    ["Best backtest (highs, 4pm d-1)", `${D.cells["d1_16 · taker"].sharpe} Sharpe`, `DSR ${D.cells["d1_16 · taker"].dsr} · PBO ${D.cells["d1_16 · taker"].pbo} · bars 0.95 / 0.20`],
+    ["Lows sealed test", fmt.usd(s.lows.lb.pnl), `backtest ${fmt.usd(s.lows.bt.pnl)} in 7 months · t ${s.lows.lb.nw_t}`],
+  ];
+  $("kpis").innerHTML = k.map(([a, b, c]) => `<div class="kpi"><div class="k">${a}</div><div class="v">${b}</div><div class="s">${c}</div></div>`).join("");
+}
+
+/* ---------- probabilities ---------- */
+function readSeg() {
+  $("seg-read").innerHTML = D.reads.map((r) => `<button type="button" data-r="${r}" aria-pressed="${r === READ}">${LBL[r]}</button>`).join("");
+  $("seg-read").querySelectorAll("button").forEach((b) => b.onclick = () => { READ = b.dataset.r; readSeg(); prob(); });
+}
+function prob() {
+  const t = theme();
+  const dec = D.decay[READ], xs = Object.keys(dec.LadderNet);
+  const tr = [{ x: xs, y: xs.map((x) => dec.LadderNet[x]), name: "LadderNet", mode: "lines+markers", line: { color: t.model, width: 2.5 }, marker: { size: 7 }, hovertemplate: "%{x}<br>LadderNet %{y:+.4f} nats<extra></extra>" }];
+  if (Object.keys(dec.pool).length) tr.push({ x: xs, y: xs.map((x) => dec.pool[x] ?? null), name: "best simple pool", mode: "lines+markers", line: { color: t.base, width: 2, dash: "dash" }, marker: { size: 5 }, hovertemplate: "%{x}<br>pool %{y:+.4f} nats<extra></extra>" });
+  plot("c-decay", tr, layout(t, { showlegend: true, yaxis: Object.assign(layout(t).yaxis, { title: { text: "nats", font: { size: 11 } }, zeroline: true }) }));
+
+  const keep = ["LadderNet", "pool · market+GFS+obs · 365d", "pool · all", "pool · market+GFS", "pool · market+NBM", "market (tempered)", "LadderNet · market-sampled labels (control)"];
+  const rows = D.leaderboard[READ].filter((r) => keep.includes(r.model)).sort((a, b) => keep.indexOf(a.model) - keep.indexOf(b.model));
+  const nm = (m) => m.replace("LadderNet · market-sampled labels (control)", "control (market labels)");
+  plot("c-board", [{
+    x: rows.map((r) => r.gain), y: rows.map((r) => nm(r.model)), mode: "markers", type: "scatter",
+    error_x: { type: "data", symmetric: false, array: rows.map((r) => r.ci[1] - r.gain), arrayminus: rows.map((r) => r.gain - r.ci[0]), color: t.muted, thickness: 1.2, width: 3 },
+    marker: { size: 9, color: rows.map((r) => r.model === "LadderNet" ? t.model : (r.model.includes("control") ? t.ink : t.base)) },
+    customdata: rows.map((r) => [r.ci[0], r.ci[1], r.ece]),
+    hovertemplate: "%{y}<br>Δ %{x:+.4f} [%{customdata[0]:+.4f}, %{customdata[1]:+.4f}]<br>ECE %{customdata[2]:.4f}<extra></extra>",
+  }], layout(t, { margin: { l: 190, r: 14, t: 8, b: 40 }, yaxis: Object.assign(layout(t).yaxis, { autorange: "reversed" }), xaxis: Object.assign(layout(t).xaxis, { title: { text: "Δ log score vs market (nats)", font: { size: 11 } }, zeroline: true }) }));
+
+  const rel = D.reliability[READ];
+  plot("c-calib", [
+    { x: [0, 1], y: [0, 1], mode: "lines", line: { color: t.rule, width: 1.5 }, hoverinfo: "skip", showlegend: false },
+    { x: rel.market.mean_prob, y: rel.market.freq, name: "market", mode: "lines+markers", line: { color: t.base, width: 2 }, customdata: rel.market.n, hovertemplate: "market<br>predicted %{x:.2f} · observed %{y:.2f}<br>n %{customdata}<extra></extra>" },
+    { x: rel.LadderNet.mean_prob, y: rel.LadderNet.freq, name: "LadderNet", mode: "lines+markers", line: { color: t.model, width: 2.5 }, customdata: rel.LadderNet.n, hovertemplate: "LadderNet<br>predicted %{x:.2f} · observed %{y:.2f}<br>n %{customdata}<extra></extra>" },
+  ], layout(t, { showlegend: true, xaxis: Object.assign(layout(t).xaxis, { title: { text: "predicted probability", font: { size: 11 } }, range: [0, 1] }), yaxis: Object.assign(layout(t).yaxis, { title: { text: "observed frequency", font: { size: 11 } }, range: [0, 1] }) }));
+
+  const reads = D.reads, lab = reads.map((r) => LBL[r]);
+  const bar = (key, name, color) => ({ x: lab, y: reads.map((r) => D.recent[r][key].gain), name, type: "bar", marker: { color },
+    error_y: { type: "data", symmetric: false, array: reads.map((r) => D.recent[r][key].ci[1] - D.recent[r][key].gain), arrayminus: reads.map((r) => D.recent[r][key].gain - D.recent[r][key].ci[0]), color: t.ink, thickness: 1.2, width: 4 },
+    customdata: reads.map((r) => D.recent[r][key].ci), hovertemplate: name + "<br>%{x}: %{y:+.4f} [%{customdata[0]:+.4f}, %{customdata[1]:+.4f}]<extra></extra>" });
+  plot("c-split", [bar("pool · market+NBM", "market + NBM", t.base), bar("pool · market+GFS", "market + GFS MOS", t.model)], layout(t, { showlegend: true, barmode: "group", bargap: 0.35, yaxis: Object.assign(layout(t).yaxis, { title: { text: "Δ log score, nats", font: { size: 11 } }, zeroline: true }) }));
+
+  const cities = Object.keys(D.cities[reads[0]]).sort();
+  const z = cities.map((c) => reads.map((r) => D.cities[r][c].gain));
+  const lim = Math.max(...z.flat().map(Math.abs));
+  const sig = cities.map((c) => reads.map((r) => D.cities[r][c].ci[0] > 0 || D.cities[r][c].ci[1] < 0));
+  const text = z.map((row, i) => row.map((v, j) => fmt.nats(v).slice(0, 6) + (sig[i][j] ? " ●" : "")));
+  plot("c-city", [{ z, x: lab, y: cities, type: "heatmap", zmin: -lim, zmax: lim, colorscale: [[0, t.neg], [0.5, t.mid], [1, t.pos]], showscale: false, text, texttemplate: "%{text}", textfont: { family: css("--mono"), size: 11, color: t.ink },
+    customdata: cities.map((c) => reads.map((r) => D.cities[r][c].ci)), hovertemplate: "%{y} · %{x}<br>Δ %{z:+.4f} [%{customdata[0]:+.4f}, %{customdata[1]:+.4f}]<extra></extra>", xgap: 2, ygap: 2 }],
+    layout(t, { margin: { l: 52, r: 10, t: 8, b: 34 }, xaxis: { side: "bottom", tickfont: { color: t.muted } }, yaxis: { tickfont: { color: t.muted }, autorange: "reversed" } }));
+}
+
+/* ---------- trading ---------- */
+function cellLabel(k) { const [r, e] = k.split(" · "); return LBL[r] + " · " + e; }
+function trade() {
+  const t = theme(), c = D.cells[CELL];
+  const eq = c.equity || [];
+  plot("c-equity", [{ x: eq.map((p) => p[0]), y: eq.map((p) => p[1]), mode: "lines", line: { color: c.pnl >= 0 ? t.model : t.neg, width: 2 }, fill: "tozeroy", fillcolor: (c.pnl >= 0 ? t.model : t.neg) + "1f", hovertemplate: "%{x}<br>%{y:$,.0f}<extra></extra>" }],
+    layout(t, { yaxis: Object.assign(layout(t).yaxis, { tickprefix: "$", tickformat: ",.0f", zeroline: true }) }));
+  const rows = [["PnL, out of sample", fmt.usd(c.pnl)], ["Sharpe (95% CI)", `${c.sharpe} [${c.sharpe_ci[0]}, ${c.sharpe_ci[1]}]`], ["Newey-West t", c.nw_t], ["Deflated Sharpe", c.dsr], ["PBO (CSCV)", c.pbo], ["Max drawdown", "$" + c.max_dd.toLocaleString("en-US")], ["Trades", c.trades.toLocaleString("en-US")], ["Hit rate", (100 * c.hit).toFixed(1) + "%"], ["Noise, same turnover", fmt.usd(c.noise)]];
+  if (c.touch !== null && c.touch !== undefined) rows.push(["At-touch fills (upper bound)", fmt.usd(c.touch)]);
+  $("t-cell").innerHTML = rows.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("");
+
+  const groups = { "highs G1": t.base, "highs G2": t.model, "daily lows": t.c2, "MLB": t.c3 };
+  const over = Object.entries(groups).map(([g, col]) => {
+    const pts = D.overfitting.filter((p) => p.group === g);
+    return { x: pts.map((p) => p.pbo), y: pts.map((p) => p.dsr), name: g, mode: "markers", marker: { size: 10, color: col, line: { color: t.surface, width: 1.5 } }, customdata: pts.map((p) => [p.cell, p.pnl]), hovertemplate: g + " · %{customdata[0]}<br>DSR %{y:.3f} · PBO %{x:.2f}<br>PnL %{customdata[1]:$,.0f}<extra></extra>" };
+  });
+  plot("c-over", over, layout(t, { showlegend: true, shapes: [
+    { type: "rect", x0: 0, x1: 0.2, y0: 0.95, y1: 1.05, fillcolor: t.model, opacity: 0.12, line: { width: 0 } },
+    { type: "line", x0: 0.2, x1: 0.2, y0: -0.05, y1: 1.05, line: { color: t.muted, width: 1, dash: "dot" } },
+    { type: "line", x0: -0.02, x1: 0.7, y0: 0.95, y1: 0.95, line: { color: t.muted, width: 1, dash: "dot" } }],
+    annotations: [{ x: 0.01, y: 1.03, text: "believable", showarrow: false, xanchor: "left", font: { color: t.model, size: 11 } }],
+    xaxis: Object.assign(layout(t).xaxis, { title: { text: "PBO (lower is better)", font: { size: 11 } }, range: [-0.02, 0.7] }), yaxis: Object.assign(layout(t).yaxis, { title: { text: "deflated Sharpe", font: { size: 11 } }, range: [-0.05, 1.07] }) }));
+
+  const ks = Object.keys(D.cells).filter((k) => D.cells[k].attribution && Object.keys(D.cells[k].attribution).length);
+  const at = (key, name, col) => ({ y: ks.map(cellLabel), x: ks.map((k) => D.cells[k].attribution[key]), name, type: "bar", orientation: "h", marker: { color: col }, hovertemplate: name + "<br>%{y}: %{x:$,.0f}<extra></extra>" });
+  plot("c-attr", [at("alpha_vs_mid", "alpha vs mid", t.model), at("spread_paid", "spread (paid or earned)", t.neg), at("fees", "fees", t.c2),
+    { y: ks.map(cellLabel), x: ks.map((k) => D.cells[k].pnl), name: "net PnL", mode: "markers", marker: { symbol: "diamond", size: 10, color: t.ink }, hovertemplate: "net<br>%{y}: %{x:$,.0f}<extra></extra>" }],
+    layout(t, { showlegend: true, barmode: "group", margin: { l: 110, r: 14, t: 30, b: 40 }, yaxis: Object.assign(layout(t).yaxis, { autorange: "reversed" }), xaxis: Object.assign(layout(t).xaxis, { tickprefix: "$", tickformat: ",.0f", zeroline: true }) }));
+
+  const rb = c.robustness || [];
+  plot("c-robust", [{ y: rb.map((r) => r.s), x: rb.map((r) => r.pnl), type: "bar", orientation: "h", marker: { color: rb.map((r) => r.pnl >= 0 ? t.model : t.neg) }, text: rb.map((r) => fmt.usd(r.pnl)), textposition: "outside", textfont: { family: css("--mono"), color: t.ink, size: 11 }, cliponaxis: false, hovertemplate: "%{y}: %{x:$,.0f}<extra></extra>" }],
+    layout(t, { margin: { l: 190, r: 70, t: 8, b: 30 }, yaxis: Object.assign(layout(t).yaxis, { autorange: "reversed" }), xaxis: Object.assign(layout(t).xaxis, { tickprefix: "$", tickformat: ",.0f", zeroline: true }), annotations: [{ x: 1, y: 1.08, xref: "paper", yref: "paper", xanchor: "right", showarrow: false, text: "config: " + (c.robust_cfg || ""), font: { color: t.muted, size: 11, family: css("--mono") } }] }));
+}
+
+/* ---------- sealed tests ---------- */
+function sealedPair(which, id, tid, vid) {
+  const t = theme(), s = D.sealed[which], bt = s.bt.equity, lb = s.lb.equity, base = bt[bt.length - 1][1];
+  plot(id, [
+    { x: bt.map((p) => p[0]), y: bt.map((p) => p[1]), name: "backtest", mode: "lines", line: { color: t.model, width: 1.8 }, hovertemplate: "%{x}<br>backtest %{y:$,.0f}<extra></extra>" },
+    { x: lb.map((p) => p[0]), y: lb.map((p) => p[1] + base), name: "sealed test", mode: "lines", line: { color: t.ink, width: 3 }, hovertemplate: "%{x}<br>sealed %{y:$,.0f}<extra></extra>" },
+  ], layout(t, { showlegend: true, shapes: [{ type: "rect", xref: "x", yref: "paper", x0: lb[0][0], x1: lb[lb.length - 1][0], y0: 0, y1: 1, fillcolor: t.rule, opacity: 0.5, line: { width: 0 } }], yaxis: Object.assign(layout(t).yaxis, { tickprefix: "$", tickformat: ",.0f" }) }));
+  const v = s.lb.verdict, cls = v === "PASS" ? "good" : (s.lb.pnl > 100 ? "warn" : "bad");
+  $(vid).className = "verdict " + cls; $(vid).textContent = v.toLowerCase();
+  const sc = s.lb.score;
+  $(tid).innerHTML = [["Sealed PnL", fmt.usd(s.lb.pnl)], ["Newey-West t (pass > 1.645)", s.lb.nw_t], ["Sharpe (95% CI)", `${s.lb.sharpe} [${s.lb.sharpe_ci[0]}, ${s.lb.sharpe_ci[1]}]`], ["Trades · hit rate", `${s.lb.trades} · ${(100 * s.lb.hit).toFixed(0)}%`], ["Log score vs market", `${fmt.nats(sc.gain_vs_market)} [${fmt.nats(sc.ci[0])}, ${fmt.nats(sc.ci[1])}]`], ["Noise, same turnover", fmt.usd(s.lb.noise)], ["Backtest before it", `${fmt.usd(s.bt.pnl)} · DSR ${s.bt.dsr} · PBO ${s.bt.pbo}`]].map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("");
+}
+function sealed() {
+  sealedPair("highs", "c-sh", "t-sh", "v-highs");
+  sealedPair("lows", "c-sl", "t-sl", "v-lows");
+  const t = theme(), h = D.sealed.highs.lb.by_month || {}, l = D.sealed.lows.lb.by_month || {};
+  const months = [...new Set([...Object.keys(h), ...Object.keys(l)])].sort();
+  const name = (m) => new Date(m + "-15").toLocaleString("en-US", { month: "short" }) + (m.endsWith("10") ? " (3 days)" : "");
+  plot("c-months", [
+    { x: months.map(name), y: months.map((m) => h[m] ?? null), name: "highs", type: "bar", marker: { color: t.model }, hovertemplate: "highs %{x}: %{y:$,.0f}<extra></extra>" },
+    { x: months.map(name), y: months.map((m) => l[m] ?? null), name: "lows", type: "bar", marker: { color: t.c2 }, hovertemplate: "lows %{x}: %{y:$,.0f}<extra></extra>" },
+  ], layout(t, { showlegend: true, barmode: "group", yaxis: Object.assign(layout(t).yaxis, { tickprefix: "$", tickformat: ",.0f", zeroline: true }) }));
+}
+
+/* ---------- markets & ablations ---------- */
+function ablate() {
+  const t = theme();
+  const cats = { weather: t.model, sports: t.c2, commodities: t.c3, economics: t.c4, financials: t.c5, crypto: t.c6 };
+  plot("c-survey", Object.entries(cats).map(([cat, col]) => {
+    const p = D.survey.filter((s) => s.cat === cat && s.spread > 0);
+    return { x: p.map((s) => s.events), y: p.map((s) => s.spread), name: cat, mode: "markers+text", text: p.map((s) => s.series), textposition: "top right", textfont: { size: 9.5, color: t.ink, family: css("--mono") }, marker: { color: col, size: p.map((s) => 7 + 2.2 * Math.log10(Math.max(s.volume, 10))), line: { color: t.surface, width: 1.5 } }, customdata: p.map((s) => [s.series, s.volume]), hovertemplate: "%{customdata[0]}<br>%{x:,} events · %{y}¢ spread<br>median volume %{customdata[1]:,.0f}<extra></extra>" };
+  }), layout(t, { showlegend: true, xaxis: Object.assign(layout(t).xaxis, { type: "log", title: { text: "settled events (log)", font: { size: 11 } } }), yaxis: Object.assign(layout(t).yaxis, { title: { text: "median spread at mid-life (¢)", font: { size: 11 } } }) }));
+
+  const fr = Object.keys(D.g3), arm = (k, name, col) => ({ x: fr, y: fr.map((f) => D.g3[f][k].gain), name, mode: "lines+markers", line: { color: col, width: 2.5 }, marker: { size: 8 },
+    error_y: { type: "data", symmetric: false, array: fr.map((f) => D.g3[f][k].ci[1] - D.g3[f][k].gain), arrayminus: fr.map((f) => D.g3[f][k].gain - D.g3[f][k].ci[0]), color: col, thickness: 1.2, width: 4 },
+    hovertemplate: name + "<br>%{x} of real data: %{y:+.4f}<extra></extra>" });
+  plot("c-g3", [arm("none", "no pretraining", t.base), arm("pretrained", "pretrained", t.model)], layout(t, { showlegend: true, xaxis: Object.assign(layout(t).xaxis, { title: { text: "share of real training data", font: { size: 11 } }, type: "category" }), yaxis: Object.assign(layout(t).yaxis, { title: { text: "Δ log score vs market", font: { size: 11 } } }) }));
+
+  const gate = (obj, order, lab, keys, cols, id) => {
+    const xs = order.filter((r) => obj[r]).map(lab);
+    plot(id, keys.map((k, i) => ({ x: xs, y: order.filter((r) => obj[r]).map((r) => obj[r][k].gain), name: "market + " + k, type: "bar", marker: { color: cols[i] },
+      error_y: { type: "data", symmetric: false, array: order.filter((r) => obj[r]).map((r) => obj[r][k].ci[1] - obj[r][k].gain), arrayminus: order.filter((r) => obj[r]).map((r) => obj[r][k].gain - obj[r][k].ci[0]), color: t.ink, thickness: 1.2, width: 4 },
+      hovertemplate: "market + " + k + "<br>%{x}: %{y:+.4f}<extra></extra>" })), layout(t, { showlegend: true, barmode: "group", bargap: 0.35, yaxis: Object.assign(layout(t).yaxis, { title: { text: "Δ log score, nats", font: { size: 11 } }, zeroline: true }) }));
+  };
+  gate(D.mlb, ["t_24h", "t_3h", "t_15m"], (r) => ({ t_24h: "24h before", t_3h: "3h before", t_15m: "15 min before" })[r], ["Elo", "Elo + starters"], [t.base, t.model], "c-mlb");
+  gate(D.lows_gate, ["d1_16", "d1_22"], (r) => ({ d1_16: "4pm day before", d1_22: "10pm day before" })[r], ["NBM", "GFS MOS"], [t.base, t.model], "c-lows");
+}
+
+/* ---------- live ---------- */
+function live() {
+  const t = theme(), s = D.shadow, dec = s.decay;
+  const rows = [["Status", dec ? dec.status.replace("_", " ").toLowerCase() : "collecting data"], ["Settled ladders", s.settled_ladders || 0]];
+  if (s.log_score_gain_vs_market !== undefined) rows.push(["Log score vs market", fmt.nats(s.log_score_gain_vs_market)]);
+  if (s.pnl !== undefined) rows.push(["Paper PnL", fmt.usd(s.pnl)], ["Trades", s.trades]);
+  rows.push(["Schedule", "16:00 local daily, settled next morning"], ["Frozen model", "pool · market+GFS · Kelly 0.25"]);
+  $("t-live").innerHTML = rows.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("");
+  const w = (dec && dec.windows) || [];
+  if (!w.length) {
+    plot("c-live", [], layout(t, { xaxis: { visible: false }, yaxis: { visible: false }, annotations: [{ text: "No settled live days yet. The first ladders settle the morning after the first 16:00 run.<br>The rolling window fills in after 20 settled days.", showarrow: false, font: { color: t.muted, size: 12 }, x: 0.5, y: 0.5, xref: "paper", yref: "paper" }] }));
+    return;
+  }
+  const ws = w.slice().reverse();
+  plot("c-live", [{ x: ws.map((x) => x.to), y: ws.map((x) => x.gain), mode: "lines+markers", line: { color: t.model, width: 2.5 },
+    error_y: { type: "data", symmetric: false, array: ws.map((x) => x.ci ? x.ci[1] - x.gain : 0), arrayminus: ws.map((x) => x.ci ? x.gain - x.ci[0] : 0), color: t.muted },
+    hovertemplate: "window to %{x}<br>%{y:+.4f} nats<extra></extra>" }], layout(t, { yaxis: Object.assign(layout(t).yaxis, { zeroline: true }) }));
+}
+
+/* ---------- tabs, theme, boot ---------- */
+const RENDER = { prob, trade, sealed, ablate, live };
+let shown = new Set();
+function show(id) {
+  document.querySelectorAll('[role="tab"]').forEach((b) => b.setAttribute("aria-selected", b.getAttribute("aria-controls") === id));
+  document.querySelectorAll("section.panel").forEach((p) => { p.hidden = p.id !== id; });
+  RENDER[id](); shown.add(id);
+  try { localStorage.setItem("iso-tab", id); } catch (e) {}
+}
+document.querySelectorAll('[role="tab"]').forEach((b) => b.onclick = () => show(b.getAttribute("aria-controls")));
+$("sel-cell").innerHTML = Object.keys(D.cells).map((k) => `<option value="${k}" ${k === CELL ? "selected" : ""}>${cellLabel(k)} · ${fmt.usd(D.cells[k].pnl)}</option>`).join("");
+$("sel-cell").onchange = (e) => { CELL = e.target.value; trade(); };
+
+function iso() {
+  const c = $("iso"), r = c.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+  c.width = r.width * dpr; c.height = r.height * dpr;
+  const x = c.getContext("2d"); x.scale(dpr, dpr); x.clearRect(0, 0, r.width, r.height);
+  x.strokeStyle = css("--rule"); x.lineWidth = 1;
+  for (let k = 0; k < 6; k++) {
+    x.beginPath();
+    for (let i = 0; i <= 120; i++) {
+      const px = r.width * (0.45 + 0.55 * i / 120), py = r.height * (0.15 + 0.13 * k) + 10 * Math.sin(i / 14 + k * 0.9) + 6 * Math.sin(i / 5.5 + k);
+      i ? x.lineTo(px, py) : x.moveTo(px, py);
+    }
+    x.stroke();
+  }
+}
+function rerender() { iso(); shown.forEach((id) => { if (!$(id).hidden) RENDER[id](); }); }
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", rerender);
+new MutationObserver(rerender).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+addEventListener("resize", () => iso());
+
+header(); readSeg(); iso();
+let start = "prob";
+try { const h = location.hash.slice(1); start = RENDER[h] ? h : (localStorage.getItem("iso-tab") || "prob"); } catch (e) {}
+if (!RENDER[start]) start = "prob";
+if (typeof Plotly === "undefined") { document.querySelectorAll(".chart").forEach((el) => { el.textContent = "Charts could not load. The tables and summary above still hold every headline number."; }); }
+else show(start);
+</script>
