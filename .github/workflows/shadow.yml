@@ -1,0 +1,39 @@
+name: shadow
+# Live shadow scoring of the frozen strategy (FINDINGS §9). Paper trades only.
+# 20:05-01:05 UTC covers 16:00-18:00 local for ET, CT, MT and PT in summer and winter;
+# 14:05 UTC settles yesterday's ladders. The ledger lives on its own branch.
+on:
+  schedule:
+    - cron: "5 14,20-23,0,1 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: shadow
+jobs:
+  shadow:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.11"
+      - run: uv sync --locked
+      - name: Check out ledger branch
+        run: |
+          if git fetch -q origin shadow-ledger; then
+            git worktree add -q ledger FETCH_HEAD
+          else
+            git worktree add -q --detach ledger
+            git -C ledger checkout -q --orphan shadow-ledger
+            git -C ledger rm -rfq .
+          fi
+          cp shadow/frozen.json ledger/frozen.json
+      - run: uv run scripts/shadow.py score settle report --root ledger
+      - name: Commit ledger
+        run: |
+          cd ledger
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -qm "shadow $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -q origin HEAD:refs/heads/shadow-ledger
