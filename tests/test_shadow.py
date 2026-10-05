@@ -66,3 +66,17 @@ def test_report_applies_capacity_fees_and_no_side_payoffs(tmp_path):
     assert r["trades"] == 2 and r["hit_rate"] == 1.0
     # log score: market put 0.4 on the winner, model 0.5
     assert np.isclose(r["log_score_gain_vs_market"], np.log(0.5) - np.log(0.4))
+
+
+def test_decay_status_needs_data_then_stops_on_two_bad_windows():
+    rng = np.random.default_rng(0)
+    days = pd.date_range("2026-10-01", periods=90, freq="D").repeat(7)
+    assert shadow.decay_status(days[:70], rng.normal(0.01, 0.1, 70))["status"] == "INSUFFICIENT_DATA"
+    good = rng.normal(0.02, 0.05, len(days))
+    assert shadow.decay_status(days, good)["status"] == "OK"
+    bad = rng.normal(-0.05, 0.05, len(days))
+    out = shadow.decay_status(days, bad)
+    assert out["status"] == "STOP" and out["windows"][0]["ci"][1] < 0
+    # one bad window after a good one is not enough
+    mixed = np.where(days >= days.max() - pd.Timedelta(days=29), bad, good)
+    assert shadow.decay_status(days, mixed)["status"] == "OK"
