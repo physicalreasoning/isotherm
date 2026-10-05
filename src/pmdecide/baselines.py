@@ -60,8 +60,12 @@ def fit_pool(ls: LadderSet, names, x0=None) -> np.ndarray:
 
 
 class LogPool:
-    def __init__(self, names: Sequence[str], name: str | None = None, per_read: bool = True):
-        self.names, self.per_read = list(names), per_read
+    """`window_days` refits on the trailing window only: time-varying weights for a market
+    whose biases decay (FINDINGS §3, §5)."""
+
+    def __init__(self, names: Sequence[str], name: str | None = None, per_read: bool = True,
+                 window_days: int | None = None):
+        self.names, self.per_read, self.window = list(names), per_read, window_days
         self.name = name or "pool(" + "+".join(self.names) + ")"
         self.weights: Dict[str, np.ndarray] = {}
 
@@ -72,6 +76,11 @@ class LogPool:
         return {k: np.flatnonzero(r == k) for k in np.unique(r)}
 
     def fit(self, train):
+        self.weights = {}
+        if self.window:
+            d = train.meta["day"]
+            train = train.take(np.flatnonzero((d > d.max() - np.timedelta64(self.window, "D"))
+                                              .to_numpy()))
         for k, idx in self._groups(train).items():
             if len(idx) >= 30:
                 self.weights[k] = fit_pool(train.take(idx), self.names)
@@ -91,6 +100,18 @@ class LogPool:
 class TemperedMarket(LogPool):
     def __init__(self):
         super().__init__(["market"], name="market (tempered)")
+
+
+def g2_suite():
+    """G1 plus observation-aware and time-varying pools, and the learned model with its control."""
+    from .model import LadderNet
+    return default_suite() + [
+        LogPool(["market", "emos_gfs", "emos_nbm_obs"], "pool · market+GFS+obs"),
+        LogPool(["market", "emos_gfs", "emos_nbm_obs"], "pool · market+GFS+obs · 365d",
+                window_days=365),
+        LadderNet("LadderNet"),
+        LadderNet("LadderNet · market-sampled labels (control)", market_labels=True, seeds=3),
+    ]
 
 
 def default_suite():
