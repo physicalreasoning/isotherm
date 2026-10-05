@@ -438,3 +438,33 @@ At 16:00 the day before it lifts the gain over the market from +0.014 (MLP) to +
 ladder. Read against §18's caveat this is a second look at the same rows, and the 08:00 pass is at
 the edge of its interval. It is a reason to run a forward test on ladders after 2026-10-05, not to
 switch models now. Issue #24 tracks it.
+
+## 20 · More data for the same models: pre-registration (2026-10-05)
+
+§19 left open whether the transformer is limited by data. Four cheap ways to get more of it,
+all on the highs walk-forward rows of the seven scored cities, lockbox untouched
+(`scripts/data_scaling.py`, `src/isotherm/pooled.py`):
+
+1. **Pooled read times.** One network trained on all four reads at once, with the read as a
+   one-hot input: about four times the ladders per fold. Arms: pooled MLP, pooled transformer-L,
+   and its market-label control.
+2. **Learning curve.** The pooled MLP and transformer-L retrained on a random 25% and 50% of
+   training dates (all reads of each kept date).
+3. **Daily lows as extra training rows**, flagged as lows, before the lows lockbox. Lows start
+   on 2025-12-14, so they can only change the last fold (2026-04-01 to 2026-06-30).
+4. **New cities as extra training rows.** Kalshi lists twelve more US cities from January and
+   February 2026 (ATL BOS DAL DC LV MIN NOLA OKC PHX SATX SEA SFO). Same last-fold limit. Only
+   their rows before 2026-06-30 are used; this arm runs only if their panels pass the label
+   check.
+
+**Gates.** Paired on identical rows, log score, 95% date-block bootstrap, last 12 months before
+the lockbox unless stated.
+- *Adoption:* pooled transformer-L minus the per-read MLP must clear zero at 3 or more of 4 reads,
+  with its control within ±0.005 of the market (the §16 rule). Otherwise the MLP stays.
+- *Data-limited:* the transformer-L minus MLP gap, pooled over reads, grows from 50% to 100% of
+  training dates with a CI above zero. A flat or shrinking gap means size or information, not
+  data, is the limit.
+- *Lows, new cities:* each, minus pooled transformer-L, on the rows of the last fold only (the
+  only rows they can change), pooled over reads. Helps if the CI is above zero.
+
+Pooled-vs-per-read differences for each model are reported without a gate.
