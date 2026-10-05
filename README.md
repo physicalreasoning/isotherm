@@ -37,6 +37,19 @@ backtests in [results/backtest_g2.md](results/backtest_g2.md); every headline nu
 | G5 | does it hold live | running: paper trades at 16:00 local daily with a decay alarm, ledger on [`shadow-ledger`](../../tree/shadow-ledger) |
 | G3 | synthetic pretraining (92k ladders, 55 stations) | fails the gate: +0.017 nats with 10% of real data, slightly worse at 100% ([G3](docs/G3.md), [§15](FINDINGS.md)) |
 
+## Figures
+
+Rendered from the raw results by `scripts/plots.py`; `scripts/dashboard.py` builds an interactive
+version of the same views (`results/dashboard.html`).
+
+| | |
+|---|---|
+| ![Edge decay](results/plots/02_edge_decay.png) | ![Forecast split](results/plots/03_forecast_split.png) |
+| ![Leaderboard](results/plots/04_leaderboard.png) | ![Calibration](results/plots/05_calibration.png) |
+| ![Equity and sealed tests](results/plots/07_equity.png) | ![Overfitting map](results/plots/08_overfitting_map.png) |
+| ![Attribution](results/plots/09_attribution.png) | ![City heatmap](results/plots/06_city_heatmap.png) |
+| ![G3 learning curve](results/plots/10_g3_learning_curve.png) | ![Market survey](results/plots/01_market_survey.png) |
+
 ## Reproduce
 
 ```bash
@@ -50,6 +63,8 @@ uv run scripts/fetch_trades.py                 # every print, for the maker fill
 uv run scripts/backtest.py                     # taker + maker, nested selection, DSR, PBO
 uv run scripts/lockbox.py                      # the one-shot held-out test (already run once)
 uv run scripts/report.py                       # every headline metric -> results/SUMMARY.md
+uv run scripts/plots.py                        # figure set -> results/plots/
+uv run scripts/dashboard.py                    # interactive dashboard -> results/dashboard.html
 uv run scripts/shadow.py score settle report   # live shadow scoring (what CI runs hourly)
 uv run pytest
 ```
