@@ -10,6 +10,7 @@ Sources (all fixed causal functions of the past, so valid for any fold):
   elo       Elo, frozen before 2025
   elo_sp    Elo + starting pitchers, frozen before 2025
 """
+
 from __future__ import annotations
 
 import pathlib
@@ -49,13 +50,24 @@ def build(panel: pd.DataFrame | None = None, probs: pd.DataFrame | None = None) 
         b = np.nan_to_num(b, nan=0.0)
         a = np.where(np.isnan(a) | (a <= 0), 1.0, a)
         mid = (a + b) / 2
-        metas.append({"event": ev, "city": "MLB", "day": pd.Timestamp(g["day"].iloc[0]),
-                      "read": read, "read_ts": int(g["read_ts"].iloc[0]),
-                      "close_ts": int(g["first_pitch_ts"].iloc[0]),
-                      "tickers": tuple(g["ticker"]), "period": g["period"].iloc[0],
-                      "regime": "mlb", "n_buckets": 2, "game_pk": pk,
-                      "spread": float(np.median(a - b)), "overround": float(mid.sum()),
-                      "label_agrees_mlb": bool(int(g.loc["home", "y"]) == int(x["home_won"]))})
+        metas.append(
+            {
+                "event": ev,
+                "city": "MLB",
+                "day": pd.Timestamp(g["day"].iloc[0]),
+                "read": read,
+                "read_ts": int(g["read_ts"].iloc[0]),
+                "close_ts": int(g["first_pitch_ts"].iloc[0]),
+                "tickers": tuple(g["ticker"]),
+                "period": g["period"].iloc[0],
+                "regime": "mlb",
+                "n_buckets": 2,
+                "game_pk": pk,
+                "spread": float(np.median(a - b)),
+                "overround": float(mid.sum()),
+                "label_agrees_mlb": bool(int(g.loc["home", "y"]) == int(x["home_won"])),
+            }
+        )
         bids.append(b)
         asks.append(a)
         vols.append(g["vol_after"].to_numpy(float))
@@ -67,7 +79,12 @@ def build(panel: pd.DataFrame | None = None, probs: pd.DataFrame | None = None) 
     lo = np.tile([0.0, 1.0], (n, 1))
     mid = (np.array(bids) + np.array(asks)) / 2
     mask = np.ones((n, 2), bool)
-    return LadderSet(meta, lo, lo + 1, mask, np.array(ys),
-                     {"market": _norm(mid), "elo": _norm(np.array(pe)),
-                      "elo_sp": _norm(np.array(ps))},
-                     {"bid": np.array(bids), "ask": np.array(asks), "vol_after": np.array(vols)})
+    return LadderSet(
+        meta,
+        lo,
+        lo + 1,
+        mask,
+        np.array(ys),
+        {"market": _norm(mid), "elo": _norm(np.array(pe)), "elo_sp": _norm(np.array(ps))},
+        {"bid": np.array(bids), "ask": np.array(asks), "vol_after": np.array(vols)},
+    )

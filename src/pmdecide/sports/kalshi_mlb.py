@@ -14,6 +14,7 @@ disambiguates, the event is dropped and counted. Events whose game was postponed
 suspended or not played as scheduled are dropped too: their pre-game read times
 would refer to a start that did not happen.
 """
+
 from __future__ import annotations
 
 import re
@@ -28,8 +29,7 @@ _RULE_TIME = re.compile(r"at (\d{1,2}):(\d{2}) ?([AP]M) ?(E[DS]T)")
 
 # Read times relative to the scheduled first pitch. Orders and quotes are cancelled
 # at first pitch: the strategy only trades the pre-game market.
-READS = {"t_24h": pd.Timedelta(hours=24), "t_3h": pd.Timedelta(hours=3),
-         "t_15m": pd.Timedelta(minutes=15)}
+READS = {"t_24h": pd.Timedelta(hours=24), "t_3h": pd.Timedelta(hours=3), "t_15m": pd.Timedelta(minutes=15)}
 
 
 def parse_event(event_ticker: str) -> Tuple[Optional[pd.Timestamp], Optional[str]]:
@@ -52,8 +52,9 @@ def rules_time(rules: str) -> Optional[str]:
 
 def abbr_map(teams: pd.DataFrame) -> Dict[Tuple[int, str], int]:
     """(season, abbreviation) -> team_id."""
-    return {(int(s), a): int(t) for s, a, t in zip(teams["season"], teams["abbr"], teams["team_id"],
-                                                   strict=True)}
+    return {
+        (int(s), a): int(t) for s, a, t in zip(teams["season"], teams["abbr"], teams["team_id"], strict=True)
+    }
 
 
 def link(events: pd.DataFrame, sched: pd.DataFrame, teams: pd.DataFrame) -> pd.DataFrame:
@@ -68,8 +69,15 @@ def link(events: pd.DataFrame, sched: pd.DataFrame, teams: pd.DataFrame) -> pd.D
     out = []
     for r in events.itertuples(index=False):
         day, hhmm = parse_event(r.event)
-        rec = {"event": r.event, "day": day, "game_pk": None, "first_pitch": pd.NaT,
-               "home": None, "away": None, "link": "unparsed"}
+        rec = {
+            "event": r.event,
+            "day": day,
+            "game_pk": None,
+            "first_pitch": pd.NaT,
+            "home": None,
+            "away": None,
+            "link": "unparsed",
+        }
         if day is None or len(r.codes) != 2:
             out.append(rec)
             continue
@@ -90,9 +98,15 @@ def link(events: pd.DataFrame, sched: pd.DataFrame, teams: pd.DataFrame) -> pd.D
             continue
         x = c.iloc[0]
         inv = {v: k for (s, k), v in amap.items() if s == day.year}
-        rec.update(game_pk=int(x["game_pk"]), first_pitch=x["start"], home=inv.get(int(x["home_id"])),
-                   away=inv.get(int(x["away_id"])), state=x["state"], coded=x["coded"],
-                   home_won=x["home_win"])
+        rec.update(
+            game_pk=int(x["game_pk"]),
+            first_pitch=x["start"],
+            home=inv.get(int(x["home_id"])),
+            away=inv.get(int(x["away_id"])),
+            state=x["state"],
+            coded=x["coded"],
+            home_won=x["home_win"],
+        )
         if x["coded"] != "F":
             rec["link"] = "not_played_as_scheduled"
         elif want and x["start_et"].strftime("%H%M") != want:
@@ -106,6 +120,7 @@ def link(events: pd.DataFrame, sched: pd.DataFrame, teams: pd.DataFrame) -> pd.D
 def quote_at(cs, t):
     """(bid, ask) from the last candle that closed at or before t."""
     from .. import kalshi
+
     best = None
     for c in cs:
         if c["end_period_ts"] <= t:
@@ -119,6 +134,7 @@ def quote_at(cs, t):
 
 def volume_between(cs, t0, t1) -> float:
     from .. import kalshi
+
     return float(sum(kalshi.candle_volume(c) for c in cs if t0 < c["end_period_ts"] <= t1))
 
 

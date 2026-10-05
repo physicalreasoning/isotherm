@@ -11,6 +11,7 @@ Highs are integers, so the likelihood of an observation is the mass of
 in a Chicago spring and rare in a Miami summer. Both are deliberately tiny, so
 they are hard-to-beat references rather than models in their own right.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -33,7 +34,7 @@ def _season(doy, harmonics: int):
 
 @dataclass
 class GaussianModel:
-    kind: str                 # "emos" | "climatology"
+    kind: str  # "emos" | "climatology"
     beta: np.ndarray
     gamma: np.ndarray
 
@@ -51,8 +52,8 @@ class GaussianModel:
 
 def _fit(kind, xm, xs, high) -> GaussianModel:
     def nll(p):
-        b, g = p[:xm.shape[1]], p[xm.shape[1]:]
-        mu, s = xm @ b, np.exp(np.clip(xs @ g, -5, 5))      # sigma in [0.007, 148]°F
+        b, g = p[: xm.shape[1]], p[xm.shape[1] :]
+        mu, s = xm @ b, np.exp(np.clip(xs @ g, -5, 5))  # sigma in [0.007, 148]°F
         pr = norm.cdf((high + 0.5 - mu) / s) - norm.cdf((high - 0.5 - mu) / s)
         return -np.log(np.clip(pr, 1e-12, None)).sum()
 
@@ -64,7 +65,7 @@ def _fit(kind, xm, xs, high) -> GaussianModel:
     g0 = np.zeros(xs.shape[1])
     g0[0] = np.log(max(np.std(high) if kind != "emos" else 3.0, 1.0))
     r = minimize(nll, np.concatenate([b0, g0]), method="L-BFGS-B")
-    return GaussianModel(kind, r.x[:xm.shape[1]], r.x[xm.shape[1]:])
+    return GaussianModel(kind, r.x[: xm.shape[1]], r.x[xm.shape[1] :])
 
 
 def fit_emos(fcst, high, doy) -> GaussianModel:
@@ -87,8 +88,9 @@ def interval_probs(mu, sigma, lo, hi):
     return norm.cdf((hi - mu) / sigma) - norm.cdf((lo - mu) / sigma)
 
 
-def daytime_max_table(mos: pd.DataFrame, value_col: str = "n_x",
-                      lag: pd.Timedelta = MOS_AVAILABILITY_LAG) -> pd.DataFrame:
+def daytime_max_table(
+    mos: pd.DataFrame, value_col: str = "n_x", lag: pd.Timedelta = MOS_AVAILABILITY_LAG
+) -> pd.DataFrame:
     """MOS rows that carry the daytime max for local day `target`, with public time."""
     m = mos[mos[value_col].notna() & (mos["ftime"].dt.hour == 0)].copy()
     m["target"] = (m["ftime"] - pd.Timedelta(days=1)).dt.tz_localize(None).dt.normalize()
@@ -105,8 +107,7 @@ def forecast_at(table: pd.DataFrame, queries: pd.DataFrame) -> pd.DataFrame:
     """
     q = queries.sort_values("read_time").reset_index()
     q["target"] = q["target"].astype(table["target"].dtype)
-    out = pd.merge_asof(q, table, left_on="read_time", right_on="public", by="target",
-                        direction="backward")
-    lead = (out["target"].dt.tz_localize("UTC") + pd.Timedelta(days=1) - out["runtime"])
+    out = pd.merge_asof(q, table, left_on="read_time", right_on="public", by="target", direction="backward")
+    lead = out["target"].dt.tz_localize("UTC") + pd.Timedelta(days=1) - out["runtime"]
     out["lead_h"] = lead.dt.total_seconds() / 3600
     return out.set_index("index").sort_index()[["fcst", "runtime", "lead_h"]]

@@ -9,6 +9,7 @@
 The neural model implements the same two methods, so the benchmark treats it
 exactly like these.
 """
+
 from __future__ import annotations
 
 from typing import Dict, Protocol, Sequence
@@ -54,8 +55,12 @@ def _logs(ls: LadderSet, names):
 def fit_pool(ls: LadderSet, names, x0=None) -> np.ndarray:
     logs = _logs(ls, names)
     x0 = np.asarray(x0 if x0 is not None else [1.0] + [0.0] * (len(names) - 1))
-    r = minimize(lambda w: log_score(pool(w, logs, ls.mask), ls.y).mean(), x0,
-                 method="L-BFGS-B", bounds=[(-1.0, 5.0)] * len(names))
+    r = minimize(
+        lambda w: log_score(pool(w, logs, ls.mask), ls.y).mean(),
+        x0,
+        method="L-BFGS-B",
+        bounds=[(-1.0, 5.0)] * len(names),
+    )
     return r.x
 
 
@@ -63,8 +68,13 @@ class LogPool:
     """`window_days` refits on the trailing window only: time-varying weights for a market
     whose biases decay (FINDINGS §3, §5)."""
 
-    def __init__(self, names: Sequence[str], name: str | None = None, per_read: bool = True,
-                 window_days: int | None = None):
+    def __init__(
+        self,
+        names: Sequence[str],
+        name: str | None = None,
+        per_read: bool = True,
+        window_days: int | None = None,
+    ):
         self.names, self.per_read, self.window = list(names), per_read, window_days
         self.name = name or "pool(" + "+".join(self.names) + ")"
         self.weights: Dict[str, np.ndarray] = {}
@@ -79,8 +89,7 @@ class LogPool:
         self.weights = {}
         if self.window:
             d = train.meta["day"]
-            train = train.take(np.flatnonzero((d > d.max() - np.timedelta64(self.window, "D"))
-                                              .to_numpy()))
+            train = train.take(np.flatnonzero((d > d.max() - np.timedelta64(self.window, "D")).to_numpy()))
         for k, idx in self._groups(train).items():
             if len(idx) >= 30:
                 self.weights[k] = fit_pool(train.take(idx), self.names)
@@ -105,10 +114,10 @@ class TemperedMarket(LogPool):
 def g2_suite():
     """G1 plus observation-aware and time-varying pools, and the learned model with its control."""
     from .model import LadderNet
+
     return default_suite() + [
         LogPool(["market", "emos_gfs", "emos_nbm_obs"], "pool · market+GFS+obs"),
-        LogPool(["market", "emos_gfs", "emos_nbm_obs"], "pool · market+GFS+obs · 365d",
-                window_days=365),
+        LogPool(["market", "emos_gfs", "emos_nbm_obs"], "pool · market+GFS+obs · 365d", window_days=365),
         LadderNet("LadderNet"),
         LadderNet("LadderNet · market-sampled labels (control)", market_labels=True, seeds=3),
     ]

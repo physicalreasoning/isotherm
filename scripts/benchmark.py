@@ -15,6 +15,7 @@ with a free forecast beat the market, CI excluding zero?
     uv run scripts/benchmark.py                 # pre-lockbox walk-forward
     uv run scripts/benchmark.py --lockbox       # ONCE, at the end, frozen config
 """
+
 from __future__ import annotations
 
 import argparse
@@ -40,12 +41,17 @@ def score_block(name, p, ls, ref=None, boot=1000):
     ls_ = metrics.log_score(p, ls.y)
     pr, out = metrics.binary_pairs(p, ls.y, ls.mask)
     days = ls.meta["day"].to_numpy()
-    r = {"model": name, "n": int(len(ls)), "dates": int(pd.Series(days).nunique()),
-         "log_score": float(ls_.mean()), "log_score_ci": metrics.date_bootstrap_mean(days, ls_, boot),
-         "rps": float(metrics.rps(p, ls.y, ls.mask).mean()),
-         "brier": float(metrics.brier(p, ls.y).mean()),
-         "ece_debiased": metrics.ece_debiased(pr, out),
-         "top1_acc": float((p.argmax(1) == ls.y).mean())}
+    r = {
+        "model": name,
+        "n": int(len(ls)),
+        "dates": int(pd.Series(days).nunique()),
+        "log_score": float(ls_.mean()),
+        "log_score_ci": metrics.date_bootstrap_mean(days, ls_, boot),
+        "rps": float(metrics.rps(p, ls.y, ls.mask).mean()),
+        "brier": float(metrics.brier(p, ls.y).mean()),
+        "ece_debiased": metrics.ece_debiased(pr, out),
+        "top1_acc": float((p.argmax(1) == ls.y).mean()),
+    }
     if ref is not None:
         d = ref - ls_
         r["gain_vs_market"] = float(d.mean())
@@ -61,26 +67,34 @@ def run(ls, suite, lockbox, boot):
         ref = metrics.log_score(P["market"], ev.y)
         rows, losses = [], {}
         for m in suite:
-            r, losses[m.name] = score_block(m.name, P[m.name], ev,
-                                            None if m.name == "market" else ref, boot)
+            r, losses[m.name] = score_block(m.name, P[m.name], ev, None if m.name == "market" else ref, boot)
             rows.append(r)
-        out[read] = {"folds": o.folds, "rows": len(ev),
-                     "from": str(ev.meta["day"].min().date()), "to": str(ev.meta["day"].max().date()),
-                     "leaderboard": sorted(rows, key=lambda r: r["log_score"])}
+        out[read] = {
+            "folds": o.folds,
+            "rows": len(ev),
+            "from": str(ev.meta["day"].min().date()),
+            "to": str(ev.meta["day"].max().date()),
+            "leaderboard": sorted(rows, key=lambda r: r["log_score"]),
+        }
         best = min(rows, key=lambda r: r["log_score"])["model"]
         pc = {}
         for c in sorted(ev.meta["city"].unique()):
             s = (ev.meta["city"] == c).to_numpy()
             d = (ref - losses[best])[s]
-            pc[c] = {"n": int(s.sum()), "gain": float(d.mean()),
-                     "ci": metrics.date_bootstrap_mean(ev.meta["day"].to_numpy()[s], d, boot)}
+            pc[c] = {
+                "n": int(s.sum()),
+                "gain": float(d.mean()),
+                "ci": metrics.date_bootstrap_mean(ev.meta["day"].to_numpy()[s], d, boot),
+            }
         for g in ("regime", "period"):
             for v in sorted(ev.meta[g].unique()):
                 s = (ev.meta[g] == v).to_numpy()
                 d = (ref - losses[best])[s]
-                pc["{}={}".format(g, v)] = {"n": int(s.sum()), "gain": float(d.mean()), "ci":
-                                            metrics.date_bootstrap_mean(ev.meta["day"].to_numpy()[s],
-                                                                        d, boot)}
+                pc["{}={}".format(g, v)] = {
+                    "n": int(s.sum()),
+                    "gain": float(d.mean()),
+                    "ci": metrics.date_bootstrap_mean(ev.meta["day"].to_numpy()[s], d, boot),
+                }
         per_city[read] = {"model": best, "slices": pc}
         # Amended gate (FINDINGS §3): the gain must also hold on the last 12 months before the
         # lockbox, overall and city by city, because the pooled period cannot see decay.
@@ -88,18 +102,24 @@ def run(ls, suite, lockbox, boot):
         rec = {}
         for name in list(GATE0) + [best]:
             d = ref - losses[name]
-            row = {"n": int(recent.sum()), "gain": float(d[recent].mean()),
-                   "ci": metrics.date_bootstrap_mean(ev.meta["day"].to_numpy()[recent], d[recent],
-                                                     boot), "by_city": {}}
+            row = {
+                "n": int(recent.sum()),
+                "gain": float(d[recent].mean()),
+                "ci": metrics.date_bootstrap_mean(ev.meta["day"].to_numpy()[recent], d[recent], boot),
+                "by_city": {},
+            }
             for c in sorted(ev.meta["city"].unique()):
                 s_ = recent & (ev.meta["city"] == c).to_numpy()
-                row["by_city"][c] = {"n": int(s_.sum()), "gain": float(d[s_].mean()), "ci":
-                                     metrics.date_bootstrap_mean(ev.meta["day"].to_numpy()[s_],
-                                                                 d[s_], boot)}
+                row["by_city"][c] = {
+                    "n": int(s_.sum()),
+                    "gain": float(d[s_].mean()),
+                    "ci": metrics.date_bootstrap_mean(ev.meta["day"].to_numpy()[s_], d[s_], boot),
+                }
             rec[name] = row
         out[read]["recent"] = rec
-        reliab[read] = {k: metrics.reliability(*metrics.binary_pairs(P[k], ev.y, ev.mask))
-                        for k in ("market", best)}
+        reliab[read] = {
+            k: metrics.reliability(*metrics.binary_pairs(P[k], ev.y, ev.mask)) for k in ("market", best)
+        }
     return out, per_city, reliab
 
 
@@ -110,62 +130,115 @@ def gate0(results):
             if row["model"] in GATE0:
                 lo, hi = row["gain_vs_market_ci"]
                 verdict.setdefault(read, {})[GATE0[row["model"]]] = {
-                    "gain": row["gain_vs_market"], "ci": [lo, hi], "pass": lo > 0,
-                    "dm_p": row["dm_vs_market"]["p"]}
+                    "gain": row["gain_vs_market"],
+                    "ci": [lo, hi],
+                    "pass": lo > 0,
+                    "dm_p": row["dm_vs_market"]["p"],
+                }
         for name, fc in GATE0.items():
             x = r["recent"][name]
             cities = [c for c, v in x["by_city"].items() if v["ci"][0] > 0]
-            amended.setdefault(read, {})[fc] = {"gain": x["gain"], "ci": x["ci"],
-                                                "pass": x["ci"][0] > 0, "cities_passing": cities}
+            amended.setdefault(read, {})[fc] = {
+                "gain": x["gain"],
+                "ci": x["ci"],
+                "pass": x["ci"][0] > 0,
+                "cities_passing": cities,
+            }
     passed = any(v["pass"] for r in verdict.values() for v in r.values())
-    passed_recent = any(v["pass"] or v["cities_passing"] for r in amended.values()
-                        for v in r.values())
-    return {"by_read": verdict, "pass": passed, "recent_from": str(RECENT_FROM.date()),
-            "amended_by_read": amended, "amended_pass": passed_recent}
+    passed_recent = any(v["pass"] or v["cities_passing"] for r in amended.values() for v in r.values())
+    return {
+        "by_read": verdict,
+        "pass": passed,
+        "recent_from": str(RECENT_FROM.date()),
+        "amended_by_read": amended,
+        "amended_pass": passed_recent,
+    }
 
 
 def markdown(res):
-    L = ["# Benchmark", "",
-         "Walk-forward by quarter, 2-day embargo, identical rows for every model, lockbox "
-         "{}.".format("**scored**" if res["config"]["lockbox"] else "excluded"),
-         "Log score in nats per ladder (lower is better). Δ = market − model: positive means the "
-         "model beats the market. CIs resample whole dates.", ""]
+    L = [
+        "# Benchmark",
+        "",
+        "Walk-forward by quarter, 2-day embargo, identical rows for every model, lockbox {}.".format(
+            "**scored**" if res["config"]["lockbox"] else "excluded"
+        ),
+        "Log score in nats per ladder (lower is better). Δ = market − model: positive means the "
+        "model beats the market. CIs resample whole dates.",
+        "",
+    ]
     g = res["gate0"]
     L += ["## Gate 0: {}".format("**PASS**" if g["pass"] else "**not passed**"), ""]
     L += ["| Read | Forecast | Δ log score vs market | 95% CI | DM p |", "|---|---|---:|---|---:|"]
     for read, v in g["by_read"].items():
         for fc, x in v.items():
-            L.append("| {} | {} | {:+.4f} | [{:+.4f}, {:+.4f}] | {:.3g} |".format(
-                read, fc, x["gain"], *x["ci"], x["dm_p"]))
-    L += ["", "## Gate 0, amended: last 12 months ({} to lockbox): {}".format(
-        g["recent_from"], "**PASS**" if g["amended_pass"] else "**FAIL**"), "",
-        "Passes if the pooled gain, or any single city's, has a CI excluding zero.", "",
-        "| Read | Forecast | Δ (all cities) | 95% CI | Cities with CI > 0 |", "|---|---|---:|---|---|"]
+            L.append(
+                "| {} | {} | {:+.4f} | [{:+.4f}, {:+.4f}] | {:.3g} |".format(
+                    read, fc, x["gain"], *x["ci"], x["dm_p"]
+                )
+            )
+    L += [
+        "",
+        "## Gate 0, amended: last 12 months ({} to lockbox): {}".format(
+            g["recent_from"], "**PASS**" if g["amended_pass"] else "**FAIL**"
+        ),
+        "",
+        "Passes if the pooled gain, or any single city's, has a CI excluding zero.",
+        "",
+        "| Read | Forecast | Δ (all cities) | 95% CI | Cities with CI > 0 |",
+        "|---|---|---:|---|---|",
+    ]
     for read, v in g["amended_by_read"].items():
         for fc, x in v.items():
-            L.append("| {} | {} | {:+.4f} | [{:+.4f}, {:+.4f}] | {} |".format(
-                read, fc, x["gain"], *x["ci"], ", ".join(x["cities_passing"]) or "none"))
-    L += ["", "Per city, last 12 months, best model per read:", "",
-          "| Read | City | n | Δ | 95% CI |", "|---|---|---:|---:|---|"]
+            L.append(
+                "| {} | {} | {:+.4f} | [{:+.4f}, {:+.4f}] | {} |".format(
+                    read, fc, x["gain"], *x["ci"], ", ".join(x["cities_passing"]) or "none"
+                )
+            )
+    L += [
+        "",
+        "Per city, last 12 months, best model per read:",
+        "",
+        "| Read | City | n | Δ | 95% CI |",
+        "|---|---|---:|---:|---|",
+    ]
     for read, r in res["results"].items():
         best = res["slices"][read]["model"]
         for c, v in r["recent"][best]["by_city"].items():
-            L.append("| {} | {} | {} | {:+.4f} | [{:+.4f}, {:+.4f}] |".format(
-                read, c, v["n"], v["gain"], *v["ci"]))
+            L.append(
+                "| {} | {} | {} | {:+.4f} | [{:+.4f}, {:+.4f}] |".format(read, c, v["n"], v["gain"], *v["ci"])
+            )
     for read, r in res["results"].items():
-        L += ["", "## {}  ·  {} ladders, {} to {}".format(read, r["rows"], r["from"], r["to"]), "",
-              "| Model | Log score | 95% CI | RPS | Brier | ECE (debiased) | Top-1 | Δ vs market | Δ CI |",
-              "|---|---:|---|---:|---:|---:|---:|---:|---|"]
+        L += [
+            "",
+            "## {}  ·  {} ladders, {} to {}".format(read, r["rows"], r["from"], r["to"]),
+            "",
+            "| Model | Log score | 95% CI | RPS | Brier | ECE (debiased) | Top-1 | Δ vs market | Δ CI |",
+            "|---|---:|---|---:|---:|---:|---:|---:|---|",
+        ]
         for x in r["leaderboard"]:
             d = x.get("gain_vs_market")
             fmt = "| {} | {:.4f} | [{:.4f}, {:.4f}] | {:.4f} | {:.4f} | {:.4f} | {:.3f} | {} | {} |"
-            L.append(fmt.format(
-                x["model"], x["log_score"], *x["log_score_ci"], x["rps"], x["brier"],
-                x["ece_debiased"], x["top1_acc"], "" if d is None else "{:+.4f}".format(d),
-                "" if d is None else "[{:+.4f}, {:+.4f}]".format(*x["gain_vs_market_ci"])))
+            L.append(
+                fmt.format(
+                    x["model"],
+                    x["log_score"],
+                    *x["log_score_ci"],
+                    x["rps"],
+                    x["brier"],
+                    x["ece_debiased"],
+                    x["top1_acc"],
+                    "" if d is None else "{:+.4f}".format(d),
+                    "" if d is None else "[{:+.4f}, {:+.4f}]".format(*x["gain_vs_market_ci"]),
+                )
+            )
         s = res["slices"][read]
-        L += ["", "Best model ({}) vs market, by slice:".format(s["model"]), "",
-              "| Slice | n | Δ | 95% CI |", "|---|---:|---:|---|"]
+        L += [
+            "",
+            "Best model ({}) vs market, by slice:".format(s["model"]),
+            "",
+            "| Slice | n | Δ | 95% CI |",
+            "|---|---:|---:|---|",
+        ]
         for k, v in s["slices"].items():
             L.append("| {} | {} | {:+.4f} | [{:+.4f}, {:+.4f}] |".format(k, v["n"], v["gain"], *v["ci"]))
     return "\n".join(L) + "\n"
@@ -186,13 +259,22 @@ def main():
     a.out = a.out or ("results/benchmark" if a.suite == "g1" else "results/benchmark_g2")
     results, slices, reliab = run(ls, suite, a.lockbox, a.boot)
     try:
-        sha = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"],
-                                      stderr=subprocess.DEVNULL).decode().strip()
+        sha = (
+            subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], stderr=subprocess.DEVNULL)
+            .decode()
+            .strip()
+        )
     except Exception:
         sha = None
-    res = {"config": vars(a), "git": sha, "cities": sorted(ls.meta["city"].unique()),
-           "results": results, "slices": slices, "reliability": reliab,
-           "seconds": round(time.time() - t0, 1)}
+    res = {
+        "config": vars(a),
+        "git": sha,
+        "cities": sorted(ls.meta["city"].unique()),
+        "results": results,
+        "slices": slices,
+        "reliability": reliab,
+        "seconds": round(time.time() - t0, 1),
+    }
     res["gate0"] = gate0(results)
     p = pathlib.Path(a.out + ("_lockbox" if a.lockbox else ""))
     p.parent.mkdir(exist_ok=True)

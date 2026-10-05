@@ -11,6 +11,7 @@
 The ledger lives in CSVs under `shadow/` and is committed by CI on its own branch, so
 every prediction carries a commit timestamp from before the outcome existed.
 """
+
 from __future__ import annotations
 
 import json
@@ -40,14 +41,17 @@ def event_ticker(series: str, day: pd.Timestamp) -> str:
 def due(city, now_utc: pd.Timestamp, window=(16, 18)):
     """(target day, read due?) for this city at `now_utc`: due in [16:00, 18:00) local."""
     local = now_utc.tz_convert(city.tz)
-    return (local.normalize() + pd.Timedelta(days=1)).tz_localize(None), \
-        window[0] <= local.hour < window[1]
+    return (local.normalize() + pd.Timedelta(days=1)).tz_localize(None), window[0] <= local.hour < window[1]
 
 
 def _ladder(rows):
     rows = [r for r in rows if r.get("strike_type")]
-    iv = [bucket_interval(r["strike_type"], kalshi.to_float(r.get("floor_strike")),
-                          kalshi.to_float(r.get("cap_strike"))) for r in rows]
+    iv = [
+        bucket_interval(
+            r["strike_type"], kalshi.to_float(r.get("floor_strike")), kalshi.to_float(r.get("cap_strike"))
+        )
+        for r in rows
+    ]
     order = np.argsort([a for a, _ in iv])
     return [rows[i] for i in order], [iv[i] for i in order]
 
@@ -56,18 +60,30 @@ def score_city(key: str, now_utc: pd.Timestamp, frozen: dict, force: bool = Fals
     city = CITIES[key]
     day, is_due = due(city, now_utc, frozen["strategy"]["window_local_hours"])
     ev = event_ticker(city.series, day)
-    base = {"scored_at": now_utc.isoformat(), "city": key, "event": ev, "day": str(day.date()),
-            "model_hash": frozen["hash"]}
+    base = {
+        "scored_at": now_utc.isoformat(),
+        "city": key,
+        "event": ev,
+        "day": str(day.date()),
+        "model_hash": frozen["hash"],
+    }
     if not (is_due or force):
         return {**base, "status": "not_due"}
     rows, iv = _ladder(kalshi.get("markets", event_ticker=ev, limit=100).get("markets", []))
     if not rows or not is_partition(iv):
         return {**base, "status": "no_ladder"}
-    mos = iem.mos(city.station, "GFS", str((day - pd.Timedelta(days=3)).date()),
-                  str((day + pd.Timedelta(days=1)).date()))
+    mos = iem.mos(
+        city.station,
+        "GFS",
+        str((day - pd.Timedelta(days=3)).date()),
+        str((day + pd.Timedelta(days=1)).date()),
+    )
     tab = daytime_max_table(mos, "n_x", AVAILABILITY_LAG["GFS"]) if len(mos) else None
-    fc = (forecast_at(tab, pd.DataFrame({"target": [day], "read_time": [now_utc]}))
-          if tab is not None and len(tab) else None)
+    fc = (
+        forecast_at(tab, pd.DataFrame({"target": [day], "read_time": [now_utc]}))
+        if tab is not None and len(tab)
+        else None
+    )
     if fc is None or not np.isfinite(fc["fcst"].iloc[0]):
         return {**base, "status": "no_forecast"}
     f = frozen["emos_gfs"][key]
@@ -94,17 +110,38 @@ def score_city(key: str, now_utc: pd.Timestamp, frozen: dict, force: bool = Fals
     k = len(rows)
     preds, trades = [], []
     for j, r in enumerate(rows):
-        preds.append({**base, "ticker": r["ticker"], "bucket": j, "lo": iv[j][0], "hi": iv[j][1],
-                      "bid": bid[j], "ask": ask[j], "p_market": pm[j], "p_emos": pf[j],
-                      "p_model": p[j], "gfs_fcst": float(fc["fcst"].iloc[0]),
-                      "gfs_runtime": str(fc["runtime"].iloc[0]),
-                      "volume_at_read": kalshi.volume(r)})
+        preds.append(
+            {
+                **base,
+                "ticker": r["ticker"],
+                "bucket": j,
+                "lo": iv[j][0],
+                "hi": iv[j][1],
+                "bid": bid[j],
+                "ask": ask[j],
+                "p_market": pm[j],
+                "p_emos": pf[j],
+                "p_model": p[j],
+                "gfs_fcst": float(fc["fcst"].iloc[0]),
+                "gfs_runtime": str(fc["runtime"].iloc[0]),
+                "volume_at_read": kalshi.volume(r),
+            }
+        )
     for i in np.flatnonzero(n > 0):
         b = i % k
-        trades.append({**base, "ticker": rows[b]["ticker"], "bucket": int(b),
-                       "side": "yes" if i < k else "no", "price": float(price[i]),
-                       "contracts_intended": float(n[i]), "ev_per_contract": float(evs[i]),
-                       "p_model": float(payoff[i] @ p), "volume_at_read": kalshi.volume(rows[b])})
+        trades.append(
+            {
+                **base,
+                "ticker": rows[b]["ticker"],
+                "bucket": int(b),
+                "side": "yes" if i < k else "no",
+                "price": float(price[i]),
+                "contracts_intended": float(n[i]),
+                "ev_per_contract": float(evs[i]),
+                "p_model": float(payoff[i] @ p),
+                "volume_at_read": kalshi.volume(rows[b]),
+            }
+        )
     return {**base, "status": "scored", "predictions": preds, "trades": trades}
 
 
@@ -134,7 +171,7 @@ def score_all(root: pathlib.Path, now_utc=None, force=False, cities=None) -> Lis
             continue
         try:
             r = score_city(key, now_utc, frozen, force)
-        except Exception as e:                   # one city failing must not stop the others
+        except Exception as e:  # one city failing must not stop the others
             r = {"scored_at": now_utc.isoformat(), "city": key, "status": "error: " + str(e)[:120]}
         if r["status"] == "scored":
             _append(pred_p, r.pop("predictions"), ["event", "ticker"])
@@ -158,9 +195,15 @@ def settle(root: pathlib.Path) -> int:
         if not ms or not all(m.get("result") in ("yes", "no") for m in ms):
             continue
         for m in ms:
-            rows.append({"event": ev, "ticker": m["ticker"], "y": kalshi.result_yes(m),
-                         "final_volume": kalshi.volume(m), "settled_seen_at": time.strftime(
-                             "%Y-%m-%dT%H:%M:%SZ", time.gmtime())})
+            rows.append(
+                {
+                    "event": ev,
+                    "ticker": m["ticker"],
+                    "y": kalshi.result_yes(m),
+                    "final_volume": kalshi.volume(m),
+                    "settled_seen_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                }
+            )
     return _append(out_p, rows, ["ticker"])
 
 
@@ -172,10 +215,8 @@ def report(root: pathlib.Path, participation: float = 0.05) -> dict:
     res = {"settled_ladders": int(preds["event"].nunique())}
     if res["settled_ladders"]:
         g = preds.groupby("event")
-        ll_m = -np.log(g.apply(lambda d: d.loc[d.y == 1, "p_market"].sum(), include_groups=False)
-                       .clip(1e-12))
-        ll_s = -np.log(g.apply(lambda d: d.loc[d.y == 1, "p_model"].sum(), include_groups=False)
-                       .clip(1e-12))
+        ll_m = -np.log(g.apply(lambda d: d.loc[d.y == 1, "p_market"].sum(), include_groups=False).clip(1e-12))
+        ll_s = -np.log(g.apply(lambda d: d.loc[d.y == 1, "p_model"].sum(), include_groups=False).clip(1e-12))
         days = g["day"].first()
         gain = (ll_m - ll_s).to_numpy()
         res["log_score_gain_vs_market"] = float(gain.mean())
@@ -190,9 +231,13 @@ def report(root: pathlib.Path, participation: float = 0.05) -> dict:
             fee = kalshi_fee(t["price"].to_numpy(), t["contracts"].to_numpy())
             t["pnl"] = t["contracts"] * (win - t["price"]) - fee
             t = t[t["contracts"] > 0]
-            res.update({"trades": int(len(t)), "pnl": float(t["pnl"].sum()),
-                        "hit_rate": float((t["pnl"] > 0).mean()) if len(t) else None,
-                        "by_month": {k: float(v) for k, v in
-                                     t.groupby(t["day"].str[:7])["pnl"].sum().items()},
-                        "by_city": {k: float(v) for k, v in t.groupby("city")["pnl"].sum().items()}})
+            res.update(
+                {
+                    "trades": int(len(t)),
+                    "pnl": float(t["pnl"].sum()),
+                    "hit_rate": float((t["pnl"] > 0).mean()) if len(t) else None,
+                    "by_month": {k: float(v) for k, v in t.groupby(t["day"].str[:7])["pnl"].sum().items()},
+                    "by_city": {k: float(v) for k, v in t.groupby("city")["pnl"].sum().items()},
+                }
+            )
     return res

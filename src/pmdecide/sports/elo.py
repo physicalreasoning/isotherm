@@ -17,6 +17,7 @@ Combined model
   logit P(home) = a + b * elo_logit + c * (fip_away - fip_home), fit once on
   pre-market seasons and applied unchanged to the Kalshi period.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -102,8 +103,9 @@ def ratings_before(games: pd.DataFrame, prm: EloParams, day: pd.Timestamp) -> Di
 
 def tune_elo(games: pd.DataFrame, fit_seasons: Iterable[int], grid=None) -> Tuple[EloParams, float]:
     """Grid-search K, HFA, revert by log loss on `fit_seasons` (warm-up seasons run first)."""
-    grid = grid or [EloParams(k, h, rv) for k in (3, 4, 5, 6, 8) for h in (16, 24, 32)
-                    for rv in (0.25, 0.33, 0.5)]
+    grid = grid or [
+        EloParams(k, h, rv) for k in (3, 4, 5, 6, 8) for h in (16, 24, 32) for rv in (0.25, 0.33, 0.5)
+    ]
     fit = games["season"].isin(list(fit_seasons)).to_numpy()
     best, best_ll = None, np.inf
     for prm in grid:
@@ -118,14 +120,19 @@ def tune_elo(games: pd.DataFrame, fit_seasons: Iterable[int], grid=None) -> Tupl
 
 # --------------------------------------------------------------------------- pitchers
 
+
 def _fip(hr, bb, hbp, k, outs):
     ip = outs / 3.0
-    return np.where(ip > 0, (13 * hr + 3 * (bb + hbp) - 2 * k) / np.maximum(ip, 1e-9) + FIP_CONST,
-                    np.nan)
+    return np.where(ip > 0, (13 * hr + 3 * (bb + hbp) - 2 * k) / np.maximum(ip, 1e-9) + FIP_CONST, np.nan)
 
 
-def pitcher_quality(logs: pd.DataFrame, queries: pd.DataFrame, league_fip: float = 4.2,
-                    prior_ip: float = 40.0, last_season_weight: float = 0.5) -> np.ndarray:
+def pitcher_quality(
+    logs: pd.DataFrame,
+    queries: pd.DataFrame,
+    league_fip: float = 4.2,
+    prior_ip: float = 40.0,
+    last_season_weight: float = 0.5,
+) -> np.ndarray:
     """Regressed FIP for each (pitcher, season, day) query, from appearances before `day`.
 
     logs: pitcher game logs (pitcher, season, date, outs, k, bb, hbp, hr).
@@ -141,8 +148,9 @@ def pitcher_quality(logs: pd.DataFrame, queries: pd.DataFrame, league_fip: float
         dates = g["date"].to_numpy("datetime64[ns]")
         c = np.vstack([np.zeros(5), np.cumsum(g[tot_cols].to_numpy(float), 0)])
         cum[key] = (dates, c)
-    for i, (pid, s, day) in enumerate(zip(queries["pitcher"], queries["season"], queries["day"],
-                                          strict=True)):
+    for i, (pid, s, day) in enumerate(
+        zip(queries["pitcher"], queries["season"], queries["day"], strict=True)
+    ):
         if pd.isna(pid):
             continue
         pid, s = int(pid), int(s)
@@ -167,6 +175,7 @@ def pitcher_quality(logs: pd.DataFrame, queries: pd.DataFrame, league_fip: float
 
 def fit_logistic(X: np.ndarray, y: np.ndarray) -> np.ndarray:
     from sklearn.linear_model import LogisticRegression
+
     m = LogisticRegression(C=1e4, max_iter=2000).fit(X, y)
     return np.concatenate([m.intercept_, m.coef_[0]])
 

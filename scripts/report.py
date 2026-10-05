@@ -6,6 +6,7 @@ summary can never disagree with the raw results it cites.
 
     uv run scripts/report.py
 """
+
 from __future__ import annotations
 
 import json
@@ -23,17 +24,34 @@ def bench(b):
     out = {}
     for read, x in b["results"].items():
         lb = {r["model"]: r for r in x["leaderboard"]}
-        out[read] = {"ladders": x["rows"], "from": x["from"], "to": x["to"],
-                     "models": {m: {k: r.get(k) for k in ("log_score", "log_score_ci", "rps", "brier",
-                                                          "ece_debiased", "top1_acc", "gain_vs_market",
-                                                          "gain_vs_market_ci")}
-                                for m, r in lb.items()},
-                     "best": b["slices"][read]["model"],
-                     "by_period": {k.split("=")[1]: round(v["gain"], 4)
-                                   for k, v in b["slices"][read]["slices"].items()
-                                   if k.startswith("period=")},
-                     "last_12m": {m: {"gain": v["gain"], "ci": v["ci"]}
-                                  for m, v in x.get("recent", {}).items()}}
+        out[read] = {
+            "ladders": x["rows"],
+            "from": x["from"],
+            "to": x["to"],
+            "models": {
+                m: {
+                    k: r.get(k)
+                    for k in (
+                        "log_score",
+                        "log_score_ci",
+                        "rps",
+                        "brier",
+                        "ece_debiased",
+                        "top1_acc",
+                        "gain_vs_market",
+                        "gain_vs_market_ci",
+                    )
+                }
+                for m, r in lb.items()
+            },
+            "best": b["slices"][read]["model"],
+            "by_period": {
+                k.split("=")[1]: round(v["gain"], 4)
+                for k, v in b["slices"][read]["slices"].items()
+                if k.startswith("period=")
+            },
+            "last_12m": {m: {"gain": v["gain"], "ci": v["ci"]} for m, v in x.get("recent", {}).items()},
+        }
     return out
 
 
@@ -41,83 +59,147 @@ def backtest(bt):
     out = {}
     for key, r in bt["results"].items():
         s = r["selected"]
-        out[key] = {"pnl": s["pnl"], "sharpe_ann": s["sharpe_ann"], "sharpe_ci": s["sharpe_ann_ci"],
-                    "nw_t": s["nw_t"], "max_drawdown": s["max_drawdown"], "trades": s["trades"],
-                    "hit_rate": s.get("hit_rate"), "return_on_outlay": s.get("return_on_outlay"),
-                    "dsr": r["deflated_sharpe"]["dsr"], "pbo": r["pbo"]["pbo"],
-                    "attribution": s.get("attribution"),
-                    "noise_pnl": r["placebos"]["noise_matched_turnover"]["pnl"],
-                    "by_period": {k: v["pnl"] for k, v in r.get("by_period", {}).items()}}
+        out[key] = {
+            "pnl": s["pnl"],
+            "sharpe_ann": s["sharpe_ann"],
+            "sharpe_ci": s["sharpe_ann_ci"],
+            "nw_t": s["nw_t"],
+            "max_drawdown": s["max_drawdown"],
+            "trades": s["trades"],
+            "hit_rate": s.get("hit_rate"),
+            "return_on_outlay": s.get("return_on_outlay"),
+            "dsr": r["deflated_sharpe"]["dsr"],
+            "pbo": r["pbo"]["pbo"],
+            "attribution": s.get("attribution"),
+            "noise_pnl": r["placebos"]["noise_matched_turnover"]["pnl"],
+            "by_period": {k: v["pnl"] for k, v in r.get("by_period", {}).items()},
+        }
     return out
 
 
 def main():
     m = {}
-    if (s := load("survey.json")):
-        m["survey"] = {r["series"]: {"category": r["category"], "events": r["listed_settled_events"],
-                                     "median_volume": r["median_event_volume"],
-                                     "spread_mid_life": r.get("lead0.5", {}).get("median_spread")}
-                       for r in s["results"]}
-    if (lc := load("label_check.json")):
-        m["labels"] = {k: {"ladders": v["ladder_events"], "arithmetic": v["arithmetic_agreement_ladders"],
-                           "one_yes": v["one_yes_share"]} for k, v in lc.items()}
+    if s := load("survey.json"):
+        m["survey"] = {
+            r["series"]: {
+                "category": r["category"],
+                "events": r["listed_settled_events"],
+                "median_volume": r["median_event_volume"],
+                "spread_mid_life": r.get("lead0.5", {}).get("median_spread"),
+            }
+            for r in s["results"]
+        }
+    if lc := load("label_check.json"):
+        m["labels"] = {
+            k: {
+                "ladders": v["ladder_events"],
+                "arithmetic": v["arithmetic_agreement_ladders"],
+                "one_yes": v["one_yes_share"],
+            }
+            for k, v in lc.items()
+        }
     for name, key in (("benchmark.json", "benchmark_g1"), ("benchmark_g2.json", "benchmark_g2")):
-        if (b := load(name)):
+        if b := load(name):
             m[key] = bench(b)
             m[key + "_gate0"] = {"pass": b["gate0"]["pass"], "amended_pass": b["gate0"]["amended_pass"]}
-    for name, key in (("backtest_taker.json", "backtest_g1_taker"),
-                      ("backtest_maker.json", "backtest_g1_maker"),
-                      ("backtest_g2.json", "backtest_g2")):
-        if (bt := load(name)):
+    for name, key in (
+        ("backtest_taker.json", "backtest_g1_taker"),
+        ("backtest_maker.json", "backtest_g1_maker"),
+        ("backtest_g2.json", "backtest_g2"),
+    ):
+        if bt := load(name):
             m[key] = backtest(bt)
-    if (lb := load("lockbox.json")):
+    if lb := load("lockbox.json"):
         s = lb["summary"]
-        m["lockbox"] = {"verdict": lb["verdict"], "strategy": lb["frozen"], "from": lb["from"],
-                        "to": lb["to"], "pnl": s["pnl"], "sharpe_ann": s["sharpe_ann"],
-                        "sharpe_ci": s["sharpe_ann_ci"], "nw_t": s["nw_t"], "trades": s["trades"],
-                        "hit_rate": s.get("hit_rate"), "slip_1c_pnl": lb["slip_1c_pnl"],
-                        "by_month": lb.get("by_month"), "by_city": lb.get("by_city"),
-                        "noise_pnl": lb["noise_matched_turnover"]["pnl"],
-                        "scores": lb["scores"]}
-    if (sb := load("sports_benchmark.json")):
+        m["lockbox"] = {
+            "verdict": lb["verdict"],
+            "strategy": lb["frozen"],
+            "from": lb["from"],
+            "to": lb["to"],
+            "pnl": s["pnl"],
+            "sharpe_ann": s["sharpe_ann"],
+            "sharpe_ci": s["sharpe_ann_ci"],
+            "nw_t": s["nw_t"],
+            "trades": s["trades"],
+            "hit_rate": s.get("hit_rate"),
+            "slip_1c_pnl": lb["slip_1c_pnl"],
+            "by_month": lb.get("by_month"),
+            "by_city": lb.get("by_city"),
+            "noise_pnl": lb["noise_matched_turnover"]["pnl"],
+            "scores": lb["scores"],
+        }
+    if sb := load("sports_benchmark.json"):
         m["sports_gate0"] = sb["gate0"]
-    if (sbt := load("sports_backtest.json")):
+    if sbt := load("sports_backtest.json"):
         m["sports_backtest"] = backtest(sbt)
     (R / "metrics.json").write_text(json.dumps(m, indent=2, sort_keys=True, default=str) + "\n")
 
     L = ["# Summary", "", "Generated by `scripts/report.py` from the raw results in this folder.", ""]
     if "benchmark_g2" in m:
-        L += ["## Probabilities vs the market (log score, nats, lower is better)", "",
-              "| Read | Market | LadderNet | Δ vs market [95% CI] | Δ last 12 months "
-              "| ECE market → LadderNet |",
-              "|---|---:|---:|---|---|---|"]
+        L += [
+            "## Probabilities vs the market (log score, nats, lower is better)",
+            "",
+            "| Read | Market | LadderNet | Δ vs market [95% CI] | Δ last 12 months "
+            "| ECE market → LadderNet |",
+            "|---|---:|---:|---|---|---|",
+        ]
         for read, x in m["benchmark_g2"].items():
             mk, ln = x["models"]["market"], x["models"]["LadderNet"]
             rec = x["last_12m"].get("LadderNet", {})
-            L.append("| {} | {:.4f} | {:.4f} | {:+.4f} [{:+.4f}, {:+.4f}] | {} | {:.4f} → {:.4f} |".format(
-                read, mk["log_score"], ln["log_score"], ln["gain_vs_market"], *ln["gain_vs_market_ci"],
-                "{:+.4f} [{:+.4f}, {:+.4f}]".format(rec["gain"], *rec["ci"]) if rec else "",
-                mk["ece_debiased"], ln["ece_debiased"]))
+            L.append(
+                "| {} | {:.4f} | {:.4f} | {:+.4f} [{:+.4f}, {:+.4f}] | {} | {:.4f} → {:.4f} |".format(
+                    read,
+                    mk["log_score"],
+                    ln["log_score"],
+                    ln["gain_vs_market"],
+                    *ln["gain_vs_market_ci"],
+                    "{:+.4f} [{:+.4f}, {:+.4f}]".format(rec["gain"], *rec["ci"]) if rec else "",
+                    mk["ece_debiased"],
+                    ln["ece_debiased"],
+                )
+            )
     if "backtest_g2" in m:
-        L += ["", "## Backtests (nested walk-forward, out of sample)", "",
-              "| Cell | PnL | Sharpe [95% CI] | DSR | PBO | Noise, same turnover |",
-              "|---|---:|---|---:|---:|---:|"]
+        L += [
+            "",
+            "## Backtests (nested walk-forward, out of sample)",
+            "",
+            "| Cell | PnL | Sharpe [95% CI] | DSR | PBO | Noise, same turnover |",
+            "|---|---:|---|---:|---:|---:|",
+        ]
         for key, x in m["backtest_g2"].items():
-            L.append("| {} | ${:,.0f} | {:.2f} [{:.2f}, {:.2f}] | {:.3f} | {:.2f} | ${:,.0f} |".format(
-                key, x["pnl"], x["sharpe_ann"], *x["sharpe_ci"], x["dsr"], x["pbo"], x["noise_pnl"]))
+            L.append(
+                "| {} | ${:,.0f} | {:.2f} [{:.2f}, {:.2f}] | {:.3f} | {:.2f} | ${:,.0f} |".format(
+                    key, x["pnl"], x["sharpe_ann"], *x["sharpe_ci"], x["dsr"], x["pbo"], x["noise_pnl"]
+                )
+            )
     if "lockbox" in m:
         x = m["lockbox"]
-        L += ["", "## Lockbox ({} to {}), scored once".format(x["from"], x["to"]), "",
-              "**{}**: ${:,.0f}, Sharpe {:.2f} [{:.2f}, {:.2f}], Newey-West t {:.2f}, {} trades, "
-              "hit rate {:.1%}, +1¢ slippage ${:,.0f}, noise ${:,.0f}. By month: {}.".format(
-                  x["verdict"], x["pnl"], x["sharpe_ann"], *x["sharpe_ci"], x["nw_t"], x["trades"],
-                  x["hit_rate"], x["slip_1c_pnl"], x["noise_pnl"],
-                  ", ".join("{} ${:,.0f}".format(k, v) for k, v in (x["by_month"] or {}).items()))]
+        L += [
+            "",
+            "## Lockbox ({} to {}), scored once".format(x["from"], x["to"]),
+            "",
+            "**{}**: ${:,.0f}, Sharpe {:.2f} [{:.2f}, {:.2f}], Newey-West t {:.2f}, {} trades, "
+            "hit rate {:.1%}, +1¢ slippage ${:,.0f}, noise ${:,.0f}. By month: {}.".format(
+                x["verdict"],
+                x["pnl"],
+                x["sharpe_ann"],
+                *x["sharpe_ci"],
+                x["nw_t"],
+                x["trades"],
+                x["hit_rate"],
+                x["slip_1c_pnl"],
+                x["noise_pnl"],
+                ", ".join("{} ${:,.0f}".format(k, v) for k, v in (x["by_month"] or {}).items()),
+            ),
+        ]
     if "sports_backtest" in m:
         L += ["", "## Sports (MLB)", "", "| Cell | PnL | Sharpe | DSR | PBO |", "|---|---:|---:|---:|---:|"]
         for key, x in m["sports_backtest"].items():
-            L.append("| {} | ${:,.0f} | {:.2f} | {:.3f} | {:.2f} |".format(
-                key, x["pnl"], x["sharpe_ann"], x["dsr"], x["pbo"]))
+            L.append(
+                "| {} | ${:,.0f} | {:.2f} | {:.3f} | {:.2f} |".format(
+                    key, x["pnl"], x["sharpe_ann"], x["dsr"], x["pbo"]
+                )
+            )
     (R / "SUMMARY.md").write_text("\n".join(L) + "\n")
     print("wrote results/metrics.json ({} sections) and results/SUMMARY.md".format(len(m)))
 

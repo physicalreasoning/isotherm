@@ -7,6 +7,7 @@ stronger forecast but only archived with its spread (`txn`, `xnd`) from 2021.
 
     uv run scripts/fetch_forecasts.py
 """
+
 from __future__ import annotations
 
 import argparse
@@ -20,8 +21,7 @@ from pmdecide import iem  # noqa: E402
 from pmdecide.weather import CITIES  # noqa: E402
 
 OUT = pathlib.Path("data/forecasts")
-KEEP = {"GFS": ["runtime", "ftime", "n_x", "tmp"],
-        "NBS": ["runtime", "ftime", "txn", "xnd", "tmp", "tsd"]}
+KEEP = {"GFS": ["runtime", "ftime", "n_x", "tmp"], "NBS": ["runtime", "ftime", "txn", "xnd", "tmp", "tsd"]}
 
 
 def fetch_model(station, model, start_year, end_year):

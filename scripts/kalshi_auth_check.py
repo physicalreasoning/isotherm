@@ -7,6 +7,7 @@
 Only GETs. `/portfolio/balance` needs a valid signature and returns your
 balance, which is printed as ok/failed, never the amount.
 """
+
 import pathlib
 import sys
 import time
@@ -31,6 +32,9 @@ while time.time() - t0 < 20:
         n += 1
     except urllib.error.HTTPError as e:
         limited += e.code == 429
-print("sustained: {:.1f} req/s over 20s, {} rate-limited (anonymous was ~3.5 req/s)".format(
-    n / (time.time() - t0), limited))
+print(
+    "sustained: {:.1f} req/s over 20s, {} rate-limited (anonymous was ~3.5 req/s)".format(
+        n / (time.time() - t0), limited
+    )
+)
 print("suggested: export KALSHI_MIN_INTERVAL={:.3f}".format(max(0.02, 1.25 * (time.time() - t0) / max(n, 1))))

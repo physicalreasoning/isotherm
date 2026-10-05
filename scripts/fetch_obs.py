@@ -6,6 +6,7 @@ and nothing upstream of this uses it.
 
     uv run scripts/fetch_obs.py --start 2023
 """
+
 from __future__ import annotations
 
 import argparse
@@ -32,8 +33,10 @@ def main():
         c = CITIES[k]
         df = pd.concat([iem.asos(c.asos, y) for y in range(a.start, a.end + 1)], ignore_index=True)
         df.to_parquet(OUT / "{}.parquet".format(c.station), index=False)
-        print("{} {}: {} obs {}..{}".format(k, c.asos, len(df), df["valid"].min(), df["valid"].max()),
-              flush=True)
+        print(
+            "{} {}: {} obs {}..{}".format(k, c.asos, len(df), df["valid"].min(), df["valid"].max()),
+            flush=True,
+        )
 
 
 if __name__ == "__main__":

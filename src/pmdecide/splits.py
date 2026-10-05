@@ -5,6 +5,7 @@ Every fold trains on rows strictly before `fold_start - embargo` and tests on
 from every fold and from all model selection; `benchmark.py --lockbox` scores
 it once, with the configuration frozen in docs/PLAN.md.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -24,9 +25,14 @@ class Fold:
     test: np.ndarray
 
 
-def walk_forward(days: pd.Series, start: str = "2023-07-01", freq: str = "QS",
-                 min_train_days: int = 120, lockbox: bool = False,
-                 lockbox_start: pd.Timestamp | None = None) -> Iterator[Fold]:
+def walk_forward(
+    days: pd.Series,
+    start: str = "2023-07-01",
+    freq: str = "QS",
+    min_train_days: int = 120,
+    lockbox: bool = False,
+    lockbox_start: pd.Timestamp | None = None,
+) -> Iterator[Fold]:
     """`lockbox_start` overrides the weather lockbox for domains with other calendars."""
     lb = pd.Timestamp(lockbox_start) if lockbox_start is not None else LOCKBOX_START
     days = pd.to_datetime(pd.Series(days)).reset_index(drop=True)

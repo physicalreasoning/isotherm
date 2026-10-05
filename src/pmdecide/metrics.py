@@ -8,6 +8,7 @@ The unit of independence is the *date*, not the row: cities share weather
 systems and the three read times of one city-day share an outcome. Every
 interval in this module resamples dates.
 """
+
 from __future__ import annotations
 
 from typing import Dict, Sequence
@@ -101,6 +102,7 @@ def diebold_mariano(dates: Sequence, loss_a: np.ndarray, loss_b: np.ndarray) -> 
     the variance uses a Newey-West correction at lag 1 for day-to-day persistence.
     """
     from scipy.stats import norm
+
     d = np.asarray(loss_a) - np.asarray(loss_b)
     ud, inv = np.unique(np.asarray(dates), return_inverse=True)
     dd = np.bincount(inv, weights=d) / np.bincount(inv)
