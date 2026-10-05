@@ -197,6 +197,19 @@ def build():
         if lb
         else {}
     )
+    tg = load("transformer_gate.json")
+    d["transformer"] = (
+        {
+            r: {
+                "diff": round(v["transformer_minus_isotherm_recent"], 4),
+                "ci": [round(c, 4) for c in v["ci"]],
+                "control": round(v["control_vs_market_all"], 4),
+            }
+            for r, v in tg["results"].items()
+        }
+        if tg
+        else {}
+    )
     d["shadow"] = shadow()
     return d
 

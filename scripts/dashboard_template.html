@@ -150,6 +150,7 @@ footer a { color: var(--model); }
       <div class="card"><h3>Market selection survey</h3><p class="note">17 Kalshi series. Weather has history, room in the spread and a free forecast. Point size: log median volume per event.</p><div class="chart tall" id="c-survey"></div><div class="src">results/survey.json</div></div>
       <div class="card"><h3>Synthetic pretraining (G3)</h3><p class="note">92k synthetic ladders from 55 stations Kalshi does not list. Helps when real data is scarce, slightly hurts with all of it.</p><div class="chart tall" id="c-g3"></div><div class="src">results/g3_learning_curve.json</div></div>
       <div class="card"><h3>MLB: same pipeline, no edge</h3><p class="note">Elo and starting pitchers pooled with the market, by time before first pitch.</p><div class="chart" id="c-mlb"></div><div class="src">results/sports_benchmark.json</div></div>
+      <div class="card"><h3>Transformer over buckets</h3><p class="note">Attention across a ladder's buckets in place of the per-bucket MLP, pre-registered. Transformer minus isotherm on the last 12 months: it needed 3 of 4 read times above zero and cleared 1, so the MLP stays.</p><div class="chart" id="c-tf"></div><div class="src">results/transformer_gate.json</div></div>
       <div class="card"><h3>Daily lows gate 0</h3><p class="note">Pooling the market with each forecast, February to August 2026.</p><div class="chart" id="c-lows"></div><div class="src">results/lows_benchmark.json</div></div>
     </div>
   </section>
@@ -200,6 +201,7 @@ function header() {
     ["bad", "Lows sealed test: flat"],
     ["bad", "MLB: no edge"],
     ["warn", "G3 pretraining: fails the gate"],
+    ["warn", "Transformer: no better than the MLP"],
     [sh.decay && sh.decay.status === "STOP" ? "bad" : (sh.decay && sh.decay.status === "OK" ? "good" : "warn"),
      "Live: " + (sh.decay ? sh.decay.status.replace("_", " ").toLowerCase() : "collecting, " + (sh.settled_ladders || 0) + " settled")],
   ];
@@ -338,6 +340,13 @@ function ablate() {
       error_y: { type: "data", symmetric: false, array: order.filter((r) => obj[r]).map((r) => obj[r][k].ci[1] - obj[r][k].gain), arrayminus: order.filter((r) => obj[r]).map((r) => obj[r][k].gain - obj[r][k].ci[0]), color: t.ink, thickness: 1.2, width: 4 },
       hovertemplate: "market + " + k + "<br>%{x}: %{y:+.4f}<extra></extra>" })), layout(t, { showlegend: true, barmode: "group", bargap: 0.35, yaxis: Object.assign(layout(t).yaxis, { title: { text: "Δ log score, nats", font: { size: 11 } }, zeroline: true }) }));
   };
+  const tf = D.transformer || {}, tr = D.reads.filter((r) => tf[r]);
+  plot("c-tf", [{ x: tr.map((r) => LBL[r]), y: tr.map((r) => tf[r].diff), type: "bar",
+    marker: { color: tr.map((r) => (tf[r].ci[0] > 0 ? t.model : t.base)) },
+    error_y: { type: "data", symmetric: false, array: tr.map((r) => tf[r].ci[1] - tf[r].diff), arrayminus: tr.map((r) => tf[r].diff - tf[r].ci[0]), color: t.ink, thickness: 1.2, width: 4 },
+    customdata: tr.map((r) => [tf[r].ci[0], tf[r].ci[1], tf[r].control]),
+    hovertemplate: "%{x}<br>transformer − isotherm %{y:+.4f} [%{customdata[0]:+.4f}, %{customdata[1]:+.4f}]<br>control vs market %{customdata[2]:+.4f}<extra></extra>" }],
+    layout(t, { bargap: 0.45, yaxis: Object.assign(layout(t).yaxis, { title: { text: "Δ log score vs isotherm", font: { size: 11 } }, zeroline: true }) }));
   gate(D.mlb, ["t_24h", "t_3h", "t_15m"], (r) => ({ t_24h: "24h before", t_3h: "3h before", t_15m: "15 min before" })[r], ["Elo", "Elo + starters"], [t.base, t.model], "c-mlb");
   gate(D.lows_gate, ["d1_16", "d1_22"], (r) => ({ d1_16: "4pm day before", d1_22: "10pm day before" })[r], ["NBM", "GFS MOS"], [t.base, t.model], "c-lows");
 }
