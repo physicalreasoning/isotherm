@@ -200,12 +200,39 @@ def build():
     return d
 
 
+HEAD = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description"
+  content="Out-of-sample results for isotherm, a calibrated decision model on Kalshi temperature markets.">
+<meta property="og:title" content="Isotherm results">
+<meta property="og:description"
+  content="Probabilities, backtests, sealed tests, ablations and the live shadow record.">
+<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+"""
+
+
 def main():
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--standalone", help="also write a complete HTML document here (for GitHub Pages)")
+    a = ap.parse_args()
     data = build()
     tpl = (pathlib.Path(__file__).parent / "dashboard_template.html").read_text()
     out = tpl.replace("__DATA__", json.dumps(data, separators=(",", ":")))
     (R / "dashboard.html").write_text(out)
     print("wrote results/dashboard.html ({:.0f} KB)".format(len(out) / 1024))
+    if a.standalone:
+        # The template opens with <title> and <style>, which belong in <head>; the rest is body.
+        cut = out.index('<div class="wrap">')
+        doc = HEAD + out[:cut] + "</head>\n<body>\n" + out[cut:] + "\n</body>\n</html>\n"
+        p = pathlib.Path(a.standalone)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(doc)
+        print("wrote {} ({:.0f} KB)".format(p, len(doc) / 1024))
 
 
 if __name__ == "__main__":
