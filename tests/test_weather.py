@@ -143,3 +143,28 @@ def test_kalshi_signature_supports_ed25519_keys():
     key = ed25519.Ed25519PrivateKey.generate()
     sig = sign(key, "GET", BASE + "/portfolio/balance?x=1", "1700000000000")
     key.public_key().verify(b64decode(sig), b"1700000000000GET/trade-api/v2/portfolio/balance")
+
+
+def test_unix_seconds_is_resolution_independent():
+    from pmdecide.dataset import unix_s
+    for unit in ("ns", "us", "s"):
+        t = pd.Series(pd.to_datetime(["2026-08-03 00:00"]).as_unit(unit)).dt.tz_localize("UTC")
+        assert unix_s(t)[0] == 1785715200
+
+
+def test_no_observations_before_the_climate_day():
+    import pathlib
+
+    from pmdecide.dataset import LadderSet, _attach_obs
+    from pmdecide.weather import CITIES
+    if not pathlib.Path("data/obs/KNYC.parquet").exists():
+        pytest.skip("obs not fetched")
+    day = pd.Timestamp("2025-07-02")
+    reads = {"d1_16": pd.Timestamp("2025-07-01 16:00", tz="America/New_York"),
+             "d0_12": pd.Timestamp("2025-07-02 12:00", tz="America/New_York")}
+    meta = pd.DataFrame({"day": [day, day], "read": list(reads),
+                         "read_ts": [int(t.timestamp()) for t in reads.values()]})
+    ls = LadderSet(meta, np.zeros((2, 2)), np.ones((2, 2)), np.ones((2, 2), bool), np.zeros(2, int))
+    _attach_obs(ls, CITIES["NY"])
+    assert np.isnan(ls.meta["obs_max"].iloc[0])                    # day before: nothing yet
+    assert 60 < ls.meta["obs_max"].iloc[1] <= 89                    # by noon; CLI high was 84

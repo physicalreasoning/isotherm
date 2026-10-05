@@ -114,3 +114,20 @@ def test_schema_rejects_malformed_questions():
         Bucket(lo=5, hi=4)
     with pytest.raises(ValidationError):
         Choice(options=[Bucket(lo=1)])                                    # one option
+
+
+def test_market_label_control_learns_nothing_beyond_the_market():
+    # Synthetic ladders where the market IS the truth: a net trained on market-sampled labels
+    # must not beat the market on real outcomes.
+    from pmdecide.model import LadderNet
+    ls = synthetic(n=900, k=6)
+    ls.meta["city"] = "NY"
+    ls.meta["day"] = pd.date_range("2024-01-01", periods=900, freq="D")
+    for s in ("emos_gfs", "emos_nbm", "emos_nbm_obs", "climatology"):
+        ls.probs[s] = ls.probs["noise"]
+    ls.quotes = {"bid": ls.probs["market"] * 0.9, "ask": ls.probs["market"] * 1.1,
+                 "vol_after": np.ones_like(ls.lo)}
+    tr, te = ls.take(np.arange(700)), ls.take(np.arange(700, 900))
+    m = LadderNet(market_labels=True, seeds=1, epochs=60).fit(tr)
+    gain = metrics.log_score(te.probs["market"], te.y).mean() - metrics.log_score(m.predict(te), te.y).mean()
+    assert gain < 0.02
