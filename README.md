@@ -6,18 +6,20 @@
 
 <p align="center">
   <a href="https://github.com/physicalreasoning/isotherm/actions/workflows/tests.yml"><img alt="tests" src="https://github.com/physicalreasoning/isotherm/actions/workflows/tests.yml/badge.svg"></a>
-  <a href="https://physicalreasoning.github.io/isotherm/"><img alt="dashboard" src="https://img.shields.io/badge/dashboard-live-2a78d6.svg"></a>
+  <a href="https://physicalreasoning.ai/isotherm/"><img alt="dashboard" src="https://img.shields.io/badge/dashboard-live-2a78d6.svg"></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-Apache%202.0-blue.svg"></a>
   <img alt="python" src="https://img.shields.io/badge/python-3.11%2B-blue.svg">
 </p>
 
 <p align="center">
-  <a href="https://physicalreasoning.github.io/isotherm/"><b>Dashboard</b></a> ·
+  <a href="https://physicalreasoning.ai/isotherm/"><b>Dashboard</b></a> ·
   <a href="https://physicalreasoning.ai/blog/the-weather-market-learned-to-read-the-forecast/">Blog post</a> ·
   <a href="FINDINGS.md">Findings</a> ·
   <a href="docs/MODEL_CARD.md">Model card</a> ·
   <a href="docs/EVALS.md">Evaluation protocol</a>
 </p>
+
+<p align="center"><sub>Cite via <b>Cite this repository</b> in the sidebar (<a href="CITATION.cff">CITATION.cff</a>). The dashboard is mirrored at <a href="https://physicalreasoning.github.io/isotherm/">physicalreasoning.github.io/isotherm</a>.</sub></p>
 
 ---
 
@@ -132,17 +134,6 @@ scheduled job scores the next day's ladders and commits its paper trades to the
 [`shadow-ledger`](../../tree/shadow-ledger) branch before the outcome exists, with a rolling
 decay alarm. The model is served with `uv run uvicorn isotherm.serve:app`; see the
 [model card](docs/MODEL_CARD.md) for intended use and limits. Nothing here is investment advice.
-
-## Citation
-
-```bibtex
-@software{isotherm2026,
-  title  = {isotherm: Calibrated decision models for prediction markets},
-  author = {{Physical Reasoning}},
-  year   = {2026},
-  url    = {https://github.com/physicalreasoning/isotherm}
-}
-```
 
 ## References
 
