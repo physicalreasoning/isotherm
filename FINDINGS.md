@@ -212,3 +212,29 @@ Secondary, reported regardless: PnL at +1¢ slippage; LadderNet Δ log score vs 
 CI by date; engine checks (oracle never loses, in-spread market never trades) and matched-turnover
 noise. About 95 days and ~640 ladders: the interval will be wide, and a pass on this sample is
 evidence, not proof.
+
+## 10 · Lockbox result: passes as registered, marginally, and shrinking month by month (2026-10-04)
+
+`scripts/lockbox.py`, run once against the criteria in §9 (commit b455496). Raw: `results/lockbox.json`.
+
+| | |
+|---|---|
+| Verdict | **PASS** by the registered rule: Newey-West t **1.77** > 1.645 |
+| PnL | **+$1,851** over 95 days, 664 ladders, 1,925 trades, hit rate 80.4% |
+| Sharpe | 3.87, stationary-bootstrap 95% CI **[−0.19, 8.95]** (two-sided interval includes zero) |
+| +1¢ slippage | +$462 |
+| EV vs realised per contract | +2.2¢ vs +1.3¢ |
+| Engine checks | oracle 0 losing trades; in-spread market 0 trades; matched-turnover noise −$2,703 |
+| Scoring, Δ log score vs market | market+GFS pool **+0.014 [+0.001, +0.027]**; LadderNet +0.013 [−0.004, +0.027]; control −0.001 |
+
+By city: six of seven positive (NY +$666, MIA +$374, CHI +$339, PHIL +$219, LAX +$210, AUS +$67),
+DEN −$22. **By month: July +$1,029, August +$517, September +$246** (October, 3 days: +$60). By
+settlement regime: +$1,580 under NWS CLI, +$272 under The Weather Company (similar number of days).
+
+**Reading.** The strategy found and frozen on 2023-2026 data made money on three months it had never
+seen, beat noise with the same turnover by $4,554, survived a tick of slippage, and the pool's
+probabilities beat the market's on held-out outcomes with a CI excluding zero. That is the pass.
+It is a narrow one on 95 days, and the monthly PnL halves each month and falls after the switch to
+The Weather Company. Three months cannot tell renewed decay, the regime change and noise apart.
+The honest next step is G5: shadow-score it live on new days, with the decay as the thing to watch,
+before any capital is involved.
