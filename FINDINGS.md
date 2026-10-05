@@ -356,3 +356,46 @@ isotherm. It is worth keeping for new contracts with little history, where it do
 10% data. Caveat: the pretrained control is +0.005, not zero, so up to that much of any pretrained
 gain may come from the synthetic stage rather than real outcomes; it can only flatter the
 pretrained arms, so it does not change the verdict.
+
+## 16 · Transformer over ladder buckets: pre-registration (written and pushed before any result)
+
+**Question.** Does attention across a ladder's buckets beat the per-bucket MLP in isotherm?
+
+**Model, fixed now.** Identical inputs, features, training loop, recency weighting, early
+stopping and five seeds as isotherm; only the network changes. Each bucket is a token
+(its features and source log-probabilities, projected to d = 64), plus one context token
+(city, season, lead, forecast spread and disagreement). Two pre-norm transformer encoder layers,
+4 heads, feed-forward 128, dropout 0.1, padding masked. The output per bucket is the same
+learned log pool as isotherm plus a zero-initialised linear head, so the untrained model equals
+the market. Learning rate 1e-3, otherwise isotherm's settings. No tuning after this commit.
+
+**Gate.** Paired on identical walk-forward rows, transformer minus isotherm, log score gain on the
+last 12 months before the lockbox (2025-07-01 to 2026-06-30), 95% date-block bootstrap.
+- *Pass:* the difference is above zero with the CI excluding zero at 3 or more of the 4 read
+  times, and the transformer's market-label control stays within ±0.005 of the market.
+- *Otherwise* the MLP stays and this is recorded as a negative result.
+The lockbox is not used.
+
+## 17 · Bucket transformer: fails its gate (2026-10-05)
+
+`scripts/transformer_gate.py` against §16 (pre-registered in commit fd6d027). Raw:
+`results/transformer_gate.json`, `results/benchmark_transformer.md`.
+
+Transformer minus isotherm, log score gain on the last 12 months before the lockbox, paired on
+identical rows, 95% date-block CI:
+
+| Read | Difference | CI |
+|---|---|---|
+| 08:00 | +0.0016 | [−0.0012, +0.0044] |
+| 12:00 | +0.0004 | [−0.0022, +0.0031] |
+| 14:00 | −0.0003 | [−0.0026, +0.0020] |
+| 16:00 day before | **+0.0040** | **[+0.0010, +0.0069]** |
+
+One read of four clears zero against the three required, so **the gate fails and the per-bucket
+MLP stays**. The transformer's market-label control sits within −0.0004 to +0.0008 of the market,
+so the comparison is clean. Attention across a ladder's buckets lands within a few thousandths of
+the MLP: with about 6,000 ladders per read time and the edge limited by information rather than
+capacity, the extra machinery has little to work with.
+
+The one clear difference falls at the read the trading strategy uses. Acting on it now would be
+selection after seeing the result; it can only become a new pre-registered test of its own.

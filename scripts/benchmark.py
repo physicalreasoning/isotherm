@@ -29,7 +29,7 @@ import pandas as pd
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 from isotherm import dataset, metrics  # noqa: E402
-from isotherm.baselines import default_suite, g2_suite  # noqa: E402
+from isotherm.baselines import default_suite, g2_suite, transformer_suite  # noqa: E402
 from isotherm.evaluation import oos_predictions  # noqa: E402
 from isotherm.splits import LOCKBOX_START  # noqa: E402
 
@@ -100,7 +100,8 @@ def run(ls, suite, lockbox, boot):
         # lockbox, overall and city by city, because the pooled period cannot see decay.
         recent = (ev.meta["day"] >= RECENT_FROM).to_numpy()
         rec = {}
-        for name in list(GATE0) + [best]:
+        # Gate 0 blends only exist in the G1/G2 suites; other suites report the best model alone.
+        for name in [g for g in GATE0 if g in losses] + [best]:
             d = ref - losses[name]
             row = {
                 "n": int(recent.sum()),
@@ -136,6 +137,8 @@ def gate0(results):
                     "dm_p": row["dm_vs_market"]["p"],
                 }
         for name, fc in GATE0.items():
+            if name not in r["recent"]:
+                continue
             x = r["recent"][name]
             cities = [c for c, v in x["by_city"].items() if v["ci"][0] > 0]
             amended.setdefault(read, {})[fc] = {
@@ -249,14 +252,21 @@ def main():
     ap.add_argument("--cities", nargs="*")
     ap.add_argument("--lockbox", action="store_true")
     ap.add_argument("--boot", type=int, default=1000)
-    ap.add_argument("--suite", default="g1", choices=["g1", "g2"])
+    ap.add_argument("--suite", default="g1", choices=["g1", "g2", "transformer"])
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     t0 = time.time()
     ls = dataset.load(a.cities)
     print("loaded {} ladders, cities {}".format(len(ls), sorted(ls.meta["city"].unique())), flush=True)
-    suite = g2_suite() if a.suite == "g2" else default_suite()
-    a.out = a.out or ("results/benchmark" if a.suite == "g1" else "results/benchmark_g2")
+    suite = {"g1": default_suite, "g2": g2_suite, "transformer": transformer_suite}[a.suite]()
+    a.out = (
+        a.out
+        or {
+            "g1": "results/benchmark",
+            "g2": "results/benchmark_g2",
+            "transformer": "results/benchmark_transformer",
+        }[a.suite]
+    )
     results, slices, reliab = run(ls, suite, a.lockbox, a.boot)
     try:
         sha = (

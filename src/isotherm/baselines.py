@@ -123,6 +123,22 @@ def g2_suite():
     ]
 
 
+def transformer_suite():
+    """FINDINGS §16: the bucket transformer against isotherm on identical rows, with both controls."""
+    from .model import IsothermNet, IsothermTransformer
+
+    return [
+        Source("market"),
+        TemperedMarket(),
+        IsothermNet("isotherm"),
+        IsothermNet("isotherm · market-sampled labels (control)", market_labels=True, seeds=3),
+        IsothermTransformer(),
+        IsothermTransformer(
+            "isotherm · transformer · market-sampled labels (control)", market_labels=True, seeds=3
+        ),
+    ]
+
+
 def default_suite():
     """The G1 bar, in increasing order of strength."""
     return [

@@ -135,3 +135,25 @@ def test_market_label_control_learns_nothing_beyond_the_market():
     m = IsothermNet(market_labels=True, seeds=1, epochs=60).fit(tr)
     gain = metrics.log_score(te.probs["market"], te.y).mean() - metrics.log_score(m.predict(te), te.y).mean()
     assert gain < 0.02
+
+
+def test_untrained_bucket_transformer_equals_the_market():
+    import torch
+
+    from isotherm.model import IsothermTransformer
+
+    ls = synthetic(n=50, k=6)
+    ls.meta["city"] = "NY"
+    for s in ("emos_gfs", "emos_nbm", "emos_nbm_obs", "climatology"):
+        ls.probs[s] = ls.probs["noise"]
+    ls.quotes = {
+        "bid": ls.probs["market"] * 0.9,
+        "ask": ls.probs["market"] * 1.1,
+        "vol_after": np.ones_like(ls.lo),
+    }
+    m = IsothermTransformer(seeds=1)
+    x, c, lp, mk = m._prep(ls)
+    net = m._init_net(x.shape[-1], c.shape[-1], lp.shape[-1], 0).eval()
+    with torch.no_grad():
+        p = net(x, c, lp, mk).exp().numpy()
+    assert np.allclose(p, ls.probs["market"], atol=1e-5)
