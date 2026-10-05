@@ -1,8 +1,17 @@
 """Kalshi public market-data client.
 
-Adapted from physicalreasoning/pm-jepa `data/kalshi.py`. Everything here uses the
-UNAUTHENTICATED host, which serves market rows, candlesticks, trades and
-settlement for free. We never place orders, so no key is needed.
+Adapted from physicalreasoning/pm-jepa `data/kalshi.py`. Every endpoint used here
+serves market rows, candlesticks, trades and settlement without a key. We only
+ever issue GETs for market data; nothing here can place an order.
+
+Optional API key, only to lift the anonymous rate limit:
+
+    export KALSHI_API_KEY_ID=...                       # the Key ID shown on kalshi.com
+    export KALSHI_PRIVATE_KEY_PATH=~/.kalshi/key.pem   # chmod 600, never in the repo
+    export KALSHI_MIN_INTERVAL=0.06                    # optional, seconds between calls
+
+Requests are then signed (RSA-PSS over timestamp + method + path, Kalshi's
+scheme). The cache is keyed on URL alone, so signed and anonymous runs share it.
 
 What changed since pm-jepa (verified against the live API on 2026-10-04):
 
@@ -30,10 +39,13 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from base64 import b64encode
 from typing import Dict, Iterator, List, Optional, Tuple
 
 BASE = "https://api.elections.kalshi.com/trade-api/v2"
-MIN_INTERVAL = 0.12          # seconds between requests; we are anonymous, stay polite
+MIN_INTERVAL = float(os.environ.get("KALSHI_MIN_INTERVAL", 0.12))   # anonymous: stay polite
+KEY_ID = os.environ.get("KALSHI_API_KEY_ID")
+KEY_PATH = os.environ.get("KALSHI_PRIVATE_KEY_PATH")
 MAX_RETRIES = 6
 
 CACHE = pathlib.Path(os.environ.get("PMDECIDE_CACHE",
@@ -42,6 +54,34 @@ CACHE = pathlib.Path(os.environ.get("PMDECIDE_CACHE",
 _lock = threading.Lock()
 _last_call = [0.0]
 _cutoff_ts: List[Optional[int]] = [None]
+_key: list = []
+
+
+def _private_key():
+    if not _key:
+        from cryptography.hazmat.primitives import serialization
+        data = pathlib.Path(KEY_PATH).expanduser().read_bytes()
+        _key.append(serialization.load_pem_private_key(data, password=None))
+    return _key[0]
+
+
+def sign(private_key, method: str, url: str, ts_ms: str) -> str:
+    """Kalshi request signature: RSA-PSS(SHA256) over timestamp + METHOD + path (no query)."""
+    from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.asymmetric import padding
+    msg = (ts_ms + method + urllib.parse.urlparse(url).path).encode()
+    sig = private_key.sign(msg, padding.PSS(mgf=padding.MGF1(hashes.SHA256()),
+                                            salt_length=padding.PSS.DIGEST_LENGTH),
+                           hashes.SHA256())
+    return b64encode(sig).decode()
+
+
+def auth_headers(method: str, url: str) -> Dict[str, str]:
+    if not (KEY_ID and KEY_PATH):
+        return {}
+    ts_ms = str(int(time.time() * 1000))
+    return {"KALSHI-ACCESS-KEY": KEY_ID, "KALSHI-ACCESS-TIMESTAMP": ts_ms,
+            "KALSHI-ACCESS-SIGNATURE": sign(_private_key(), method, url, ts_ms)}
 
 
 def _throttle() -> None:
@@ -65,7 +105,7 @@ def get(path: str, _cache: bool = False, **params) -> Dict:
             hashlib.sha256(url.encode()).hexdigest()[:24] + ".json.gz")
         if f.exists():
             try:
-                return json.loads(gzip.decompress(f.read_bytes()), strict=True)
+                return json.loads(gzip.decompress(f.read_bytes()), strict=False)
             except (OSError, ValueError):
                 f.unlink(missing_ok=True)
         out = _fetch(url)
@@ -82,9 +122,10 @@ def _fetch(url: str) -> Dict:
     for attempt in range(MAX_RETRIES):
         _throttle()
         try:
-            with urllib.request.urlopen(url, timeout=45) as r:
-                # strict=True: Kalshi rule text contains raw control characters
-                return json.loads(r.read().decode(), strict=True)
+            req = urllib.request.Request(url, headers=auth_headers("GET", url))
+            with urllib.request.urlopen(req, timeout=45) as r:
+                # strict=False: Kalshi rule text contains raw control characters
+                return json.loads(r.read().decode(), strict=False)
         except urllib.error.HTTPError as e:
             if e.code in (429, 500, 502, 503, 504) and attempt < MAX_RETRIES - 1:
                 time.sleep(delay)
