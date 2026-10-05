@@ -1,24 +1,25 @@
 {
   "NY": {
-    "markets": 9644,
-    "events": 1873,
+    "markets": 9676,
+    "events": 1881,
     "unparsed_markets": 0,
-    "arithmetic_agreement": 1.0,
+    "arithmetic_agreement_ladders": 1.0,
+    "kalshi_record_contradictions": [],
     "arithmetic_by_strike_source": {
       "api": 1.0,
       "rules_text": 1.0
     },
-    "no_settle_value": 5050,
+    "no_settle_value": 5066,
     "one_yes_share": 1.0,
-    "ladder_events": 1615,
-    "non_ladder_events": 258,
+    "ladder_events": 1620,
+    "non_ladder_events": 261,
     "non_ladder_years": {
-      "2021": 144,
-      "2022": 114
+      "2021": 145,
+      "2022": 116
     },
     "cli_nws_cli": {
-      "days": 1546,
-      "agree": 0.999353169469599,
+      "days": 1553,
+      "agree": 0.9993560849967804,
       "first": "2022-03-04",
       "last": "2026-08-13",
       "diffs": {
@@ -26,11 +27,234 @@
       }
     },
     "cli_other": {
-      "days": 206,
+      "days": 207,
       "agree": 1.0,
       "first": "2021-08-06",
       "last": "2022-03-03",
       "diffs": {}
+    },
+    "cli_twc": {
+      "days": 51,
+      "agree": 1.0,
+      "first": "2026-08-14",
+      "last": "2026-10-03",
+      "diffs": {}
+    }
+  },
+  "CHI": {
+    "markets": 9673,
+    "events": 1869,
+    "unparsed_markets": 0,
+    "arithmetic_agreement_ladders": 1.0,
+    "kalshi_record_contradictions": [
+      {
+        "ticker": "HIGHCHI-22APR02-T45",
+        "settle": 47.0,
+        "y": 0,
+        "scored": false
+      },
+      {
+        "ticker": "HIGHCHI-21OCT01-T84",
+        "settle": 84.0,
+        "y": 1,
+        "scored": false
+      }
+    ],
+    "arithmetic_by_strike_source": {
+      "api": 1.0,
+      "rules_text": 0.9970014992503748
+    },
+    "no_settle_value": 5048,
+    "one_yes_share": 1.0,
+    "ladder_events": 1621,
+    "non_ladder_events": 248,
+    "non_ladder_years": {
+      "2021": 132,
+      "2022": 116
+    },
+    "cli_nws_cli": {
+      "days": 1506,
+      "agree": 0.99867197875166,
+      "first": "2022-04-27",
+      "last": "2026-08-13",
+      "diffs": {
+        "1.0": 1,
+        "-1.0": 1
+      }
+    },
+    "cli_other": {
+      "days": 248,
+      "agree": 0.9919354838709677,
+      "first": "2021-08-19",
+      "last": "2022-04-26",
+      "diffs": {
+        "-2.0": 1,
+        "2.0": 1
+      }
+    },
+    "cli_twc": {
+      "days": 51,
+      "agree": 1.0,
+      "first": "2026-08-14",
+      "last": "2026-10-03",
+      "diffs": {}
+    }
+  },
+  "MIA": {
+    "markets": 7442,
+    "events": 1241,
+    "unparsed_markets": 0,
+    "arithmetic_agreement_ladders": 1.0,
+    "kalshi_record_contradictions": [],
+    "arithmetic_by_strike_source": {
+      "api": 1.0,
+      "rules_text": 1.0
+    },
+    "no_settle_value": 3661,
+    "one_yes_share": 1.0,
+    "ladder_events": 1240,
+    "non_ladder_events": 1,
+    "non_ladder_years": {
+      "2026": 1
+    },
+    "cli_nws_cli": {
+      "days": 1109,
+      "agree": 0.9981965734896303,
+      "first": "2023-05-11",
+      "last": "2026-08-13",
+      "diffs": {
+        "3.0": 1,
+        "1.0": 1
+      }
+    },
+    "cli_twc": {
+      "days": 51,
+      "agree": 0.9803921568627451,
+      "first": "2026-08-14",
+      "last": "2026-10-03",
+      "diffs": {
+        "5.0": 1
+      }
+    }
+  },
+  "AUS": {
+    "markets": 7425,
+    "events": 1238,
+    "unparsed_markets": 0,
+    "arithmetic_agreement_ladders": 1.0,
+    "kalshi_record_contradictions": [],
+    "arithmetic_by_strike_source": {
+      "api": 1.0,
+      "rules_text": 1.0
+    },
+    "no_settle_value": 3610,
+    "one_yes_share": 1.0,
+    "ladder_events": 1238,
+    "non_ladder_events": 0,
+    "non_ladder_years": {},
+    "cli_nws_cli": {
+      "days": 1119,
+      "agree": 1.0,
+      "first": "2023-05-11",
+      "last": "2026-08-13",
+      "diffs": {}
+    },
+    "cli_twc": {
+      "days": 51,
+      "agree": 1.0,
+      "first": "2026-08-14",
+      "last": "2026-10-03",
+      "diffs": {}
+    }
+  },
+  "LAX": {
+    "markets": 3822,
+    "events": 637,
+    "unparsed_markets": 0,
+    "arithmetic_agreement_ladders": 1.0,
+    "kalshi_record_contradictions": [],
+    "arithmetic_by_strike_source": {
+      "api": 1.0,
+      "rules_text": 1.0
+    },
+    "no_settle_value": 572,
+    "one_yes_share": 1.0,
+    "ladder_events": 637,
+    "non_ladder_events": 0,
+    "non_ladder_years": {},
+    "cli_nws_cli": {
+      "days": 522,
+      "agree": 0.9961685823754789,
+      "first": "2025-01-05",
+      "last": "2026-08-13",
+      "diffs": {
+        "-1.0": 1,
+        "1.0": 1
+      }
+    },
+    "cli_twc": {
+      "days": 51,
+      "agree": 1.0,
+      "first": "2026-08-14",
+      "last": "2026-10-03",
+      "diffs": {}
+    }
+  },
+  "DEN": {
+    "markets": 4098,
+    "events": 683,
+    "unparsed_markets": 0,
+    "arithmetic_agreement_ladders": 1.0,
+    "kalshi_record_contradictions": [],
+    "arithmetic_by_strike_source": {
+      "api": 1.0,
+      "rules_text": 1.0
+    },
+    "no_settle_value": 802,
+    "one_yes_share": 1.0,
+    "ladder_events": 683,
+    "non_ladder_events": 0,
+    "non_ladder_years": {},
+    "cli_nws_cli": {
+      "days": 570,
+      "agree": 0.9982456140350877,
+      "first": "2024-11-20",
+      "last": "2026-08-13",
+      "diffs": {
+        "-1.0": 1
+      }
+    },
+    "cli_twc": {
+      "days": 51,
+      "agree": 1.0,
+      "first": "2026-08-14",
+      "last": "2026-10-03",
+      "diffs": {}
+    }
+  },
+  "PHIL": {
+    "markets": 4098,
+    "events": 683,
+    "unparsed_markets": 0,
+    "arithmetic_agreement_ladders": 1.0,
+    "kalshi_record_contradictions": [],
+    "arithmetic_by_strike_source": {
+      "api": 1.0,
+      "rules_text": 1.0
+    },
+    "no_settle_value": 808,
+    "one_yes_share": 1.0,
+    "ladder_events": 683,
+    "non_ladder_events": 0,
+    "non_ladder_years": {},
+    "cli_nws_cli": {
+      "days": 569,
+      "agree": 0.9982425307557118,
+      "first": "2024-11-20",
+      "last": "2026-08-13",
+      "diffs": {
+        "-1.0": 1
+      }
     },
     "cli_twc": {
       "days": 51,
