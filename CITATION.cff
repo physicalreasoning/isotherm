@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use isotherm, please cite it as below."
+title: "isotherm: Calibrated decision models for prediction markets"
+type: software
+authors:
+  - name: "Physical Reasoning"
+repository-code: "https://github.com/physicalreasoning/isotherm"
+url: "https://physicalreasoning.ai/isotherm/"
+license: Apache-2.0
+date-released: "2026-10-05"
+keywords:
+  - prediction markets
+  - probabilistic forecasting
+  - calibration
+  - proper scoring rules
+  - backtesting

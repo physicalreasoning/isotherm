@@ -87,11 +87,17 @@ table.stats td:last-child { text-align: right; font-family: var(--mono); }
 .verdict.warn { color: var(--warn); border: 1px solid var(--warn); }
 .verdict.bad { color: var(--bad); border: 1px solid var(--bad); }
 footer { margin-top: 28px; color: var(--muted); font-size: 12px; }
+nav.site { display: flex; justify-content: space-between; align-items: baseline; padding-block: 2px 14px; }
+nav.site a { font-family: var(--mono); color: var(--ink); text-decoration: none; }
+nav.site a.wordmark { font-weight: 600; font-size: 15px; }
+nav.site a.back { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+nav.site a:hover { color: var(--model); }
 footer a { color: var(--model); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 
 <div class="wrap">
+  __NAV__
   <header>
     <canvas id="iso" aria-hidden="true"></canvas>
     <div class="brand"><h1>isotherm</h1><span class="tag">calibrated decision model · Kalshi temperature ladders · 7 cities</span></div>
@@ -391,6 +397,11 @@ header(); readSeg(); iso();
 let start = "prob";
 try { const h = location.hash.slice(1); start = RENDER[h] ? h : (localStorage.getItem("iso-tab") || "prob"); } catch (e) {}
 if (!RENDER[start]) start = "prob";
+// The ledger moves daily; read it fresh so every copy of this page stays current.
+fetch("https://raw.githubusercontent.com/physicalreasoning/isotherm/shadow-ledger/metrics.json", { cache: "no-store" })
+  .then((r) => (r.ok ? r.json() : null))
+  .then((m) => { if (m && typeof m.settled_ladders === "number") { D.shadow = m; header(); if (!$("live").hidden) live(); } })
+  .catch(() => {});
 if (typeof Plotly === "undefined") { document.querySelectorAll(".chart").forEach((el) => { el.textContent = "Charts could not load. The tables and summary above still hold every headline number."; }); }
 else show(start);
 </script>

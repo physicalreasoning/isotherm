@@ -220,14 +220,20 @@ def main():
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--standalone", help="also write a complete HTML document here (for GitHub Pages)")
+    ap.add_argument("--nav", action="store_true", help="add the physicalreasoning.ai site header")
     a = ap.parse_args()
     data = build()
     tpl = (pathlib.Path(__file__).parent / "dashboard_template.html").read_text()
     out = tpl.replace("__DATA__", json.dumps(data, separators=(",", ":")))
-    (R / "dashboard.html").write_text(out)
+    (R / "dashboard.html").write_text(out.replace("__NAV__", ""))
     print("wrote results/dashboard.html ({:.0f} KB)".format(len(out) / 1024))
     if a.standalone:
         # The template opens with <title> and <style>, which belong in <head>; the rest is body.
+        nav = (
+            '<nav class="site"><a class="wordmark" href="/">[Pr]</a>'
+            '<a class="back" href="/blog/">&larr; Blog</a></nav>'
+        )
+        out = out.replace("__NAV__", nav if a.nav else "")
         cut = out.index('<div class="wrap">')
         doc = HEAD + out[:cut] + "</head>\n<body>\n" + out[cut:] + "\n</body>\n</html>\n"
         p = pathlib.Path(a.standalone)
