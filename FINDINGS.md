@@ -294,3 +294,21 @@ barely moves: late-day books are thin (322 taker trades in three years at 14:00)
 orders in the afternoon are still picked off. The day-before taker strategy remains the only
 candidate, essentially unchanged. The cancel-on-new-run policy was selected in one quarter of one
 read; it is not the fix for adverse selection here.
+
+## 13 · Daily lows: lockbox pre-registration (written and pushed before any lockbox number)
+
+Context: `docs/LOWS_RAIN.md`. Lows gate 0 fails as registered and passes only per city (Austin,
+Los Angeles); the 16:00 taker backtest clears both overfitting bars (DSR 0.980, PBO 0.06) on 212
+days of a market launched 2025-12-14, and matched-turnover noise is slightly profitable too.
+
+**Strategy, frozen.** Read 16:00 local the day before; taker; `pool · market+GFS · θ 0.01`
+(log pool of market and EMOS on the GFS MOS overnight min, threshold sizing at 1¢ EV, $100 per
+instrument). It is both the full-period best and the nested pick for each of the last three
+months. Pool weights and EMOS fit on every lows ladder before 2026-08-30 (2-day embargo).
+
+**Data.** Every settled lows ladder from 2026-09-01 on, all seven cities, never used for any fit
+or choice. About five weeks: underpowered by construction.
+
+**Criteria.** Pass: mean daily PnL > 0 with Newey-West t > 1.645. Consistent but underpowered:
+PnL > 0, t ≤ 1.645. Fail: PnL ≤ 0. Reported regardless: log score vs market, matched-turnover
+noise, engine checks.
