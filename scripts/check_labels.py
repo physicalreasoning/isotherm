@@ -51,17 +51,24 @@ def main():
         ok = pd.Series([bucket_contains(s, f, c, v) == bool(y) for s, f, c, v, y in
                         zip(a.strike_type, a["floor"], a["cap"], a.settle, a.y, strict=True)],
                        index=a.index)
-        arith = float(ok.mean())
         by_src = {k: float(ok[a["strike_source"] == k].mean()) for k in a["strike_source"].unique()}
         part = m.groupby("event").apply(lambda g: is_partition(
             [bucket_interval(s, f, c) for s, f, c in zip(g.strike_type, g["floor"], g["cap"],
                                                          strict=True)]), include_groups=False)
         per_event = m.groupby("event")["y"].sum()
+        # Only scored ladders can fail the build. Kalshi's own records occasionally contradict
+        # themselves (expiration_value vs result, likely a post-settlement NWS revision); `result`
+        # is what paid out, so it is the label, and the contradictions are listed, not hidden.
+        in_ladder = a["event"].isin(part[part].index)
+        arith = float(ok[in_ladder].mean())
+        contradictions = a.loc[~ok, ["ticker", "settle", "y"]].assign(
+            scored=in_ladder[~ok]).to_dict("records")
         # A ladder must settle exactly one bucket. Non-ladders are excluded upstream, so
         # they are counted here, not failed.
         one_yes = float((per_event[part] == 1).mean())
         r = {"markets": len(m), "events": int(per_event.size), "unparsed_markets": unparsed,
-             "arithmetic_agreement": arith, "arithmetic_by_strike_source": by_src,
+             "arithmetic_agreement_ladders": arith,
+             "kalshi_record_contradictions": contradictions, "arithmetic_by_strike_source": by_src,
              "no_settle_value": int(m["settle"].isna().sum()), "one_yes_share": one_yes,
              "ladder_events": int(part.sum()), "non_ladder_events": int((~part).sum()),
              "non_ladder_years": {str(k): int(v) for k, v in
@@ -85,11 +92,11 @@ def main():
         report[key] = r
         bad = arith < 1.0 or one_yes < 1.0
         failed |= bad
-        print("{:>5} markets={:6d} arithmetic={:.4f} {} ladders={} non-ladders={} {} "
-              "one_yes={:.4f} unparsed={} {}".format(
-                  key, len(m), arith, {k: round(v, 4) for k, v in by_src.items()},
-                  r["ladder_events"], r["non_ladder_events"], r["non_ladder_years"], one_yes,
-                  unparsed, "FAIL" if bad else "ok"))
+        print("{:>5} markets={:6d} arithmetic(ladders)={:.4f} ladders={} non-ladders={} "
+              "one_yes={:.4f} unparsed={} kalshi-contradictions={} {}".format(
+                  key, len(m), arith, r["ladder_events"], r["non_ladder_events"], one_yes,
+                  unparsed, [(c["ticker"], c["scored"]) for c in contradictions] or 0,
+                  "FAIL" if bad else "ok"))
         for g in ("cli_nws_cli", "cli_twc"):
             if g in r:
                 x = r[g]
