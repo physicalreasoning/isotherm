@@ -33,7 +33,7 @@ EMBARGO = pd.Timedelta(days=2)
 MIN_FIT_DAYS = 365
 EPS = 1e-3            # probability floor; a tenth of Kalshi's 1¢ tick
 DATA = pathlib.Path("data")
-VERSION = 6           # bump when anything below changes what a row contains
+VERSION = 8           # bump when anything below changes what a row contains
 
 
 @dataclass
@@ -44,6 +44,10 @@ class LadderSet:
     mask: np.ndarray
     y: np.ndarray
     probs: Dict[str, np.ndarray] = field(default_factory=dict)
+    # Executable quotes per bucket at the read time, for the backtest only; never a model input
+    # beyond what `probs["market"]` already carries. bid 0 = no bid, ask 1 = no ask.
+    # vol_after = contracts traded in the bucket after the read: a capacity cap, not a signal.
+    quotes: Dict[str, np.ndarray] = field(default_factory=dict)
 
     def __len__(self):
         return len(self.meta)
@@ -51,7 +55,8 @@ class LadderSet:
     def take(self, idx) -> "LadderSet":
         idx = np.asarray(idx)
         return LadderSet(self.meta.iloc[idx].reset_index(drop=True), self.lo[idx], self.hi[idx],
-                         self.mask[idx], self.y[idx], {k: v[idx] for k, v in self.probs.items()})
+                         self.mask[idx], self.y[idx], {k: v[idx] for k, v in self.probs.items()},
+                         {k: v[idx] for k, v in self.quotes.items()})
 
     def complete(self, names) -> "LadderSet":
         """Rows where every named source has a forecast: the identical-rows rule."""
@@ -68,12 +73,16 @@ class LadderSet:
         def padk(a, fill):
             return np.pad(a, ((0, 0), (0, k - a.shape[1])), constant_values=fill)
         names = set.intersection(*(set(p.probs) for p in parts))
+        qnames = set.intersection(*(set(p.quotes) for p in parts))
+        fill = {"bid": 0.0, "ask": 1.0, "vol_after": 0.0}
         return LadderSet(pd.concat([p.meta for p in parts], ignore_index=True),
                          np.concatenate([padk(p.lo, np.nan) for p in parts]),
                          np.concatenate([padk(p.hi, np.nan) for p in parts]),
                          np.concatenate([padk(p.mask, False) for p in parts]),
                          np.concatenate([p.y for p in parts]),
-                         {n: np.concatenate([padk(p.probs[n], 0.0) for p in parts]) for n in names})
+                         {n: np.concatenate([padk(p.probs[n], 0.0) for p in parts]) for n in names},
+                         {n: np.concatenate([padk(p.quotes[n], fill.get(n, 0.0)) for p in parts])
+                          for n in qnames})
 
 
 def regime(rules: str) -> str:
@@ -102,7 +111,7 @@ def _ladders(panel: pd.DataFrame, city: City) -> LadderSet:
     if "candles_ok" in panel:
         bad = panel.loc[~panel["candles_ok"], "event"].unique()
         panel = panel[~panel["event"].isin(bad)]
-    metas, los, his, mids, ys = [], [], [], [], []
+    metas, los, his, mids, ys, bids, asks, vols = [], [], [], [], [], [], [], []
     for (ev, read), g in panel.groupby(["event", "read"], sort=False):
         iv = [bucket_interval(s, f, c) for s, f, c in
               zip(g.strike_type, g["floor"], g["cap"], strict=True)]
@@ -119,6 +128,8 @@ def _ladders(panel: pd.DataFrame, city: City) -> LadderSet:
         a = np.where(np.isnan(a) | (a <= 0), 1.0, a)
         mid = (a + b) / 2
         metas.append({"event": ev, "city": city.key, "day": g["day"].iloc[0], "read": read,
+                      "read_ts": int(g["read_ts"].iloc[0]), "close_ts": int(g["close_ts"].max()),
+                      "tickers": tuple(g["ticker"]),
                       "n_buckets": len(g), "settle": float(g["settle"].iloc[0]),
                       "spread": float(np.median(a - b)), "overround": float(mid.sum()),
                       "cum_volume": float(g["cum_volume"].sum()),
@@ -128,6 +139,10 @@ def _ladders(panel: pd.DataFrame, city: City) -> LadderSet:
         los.append([x for x, _ in iv])
         his.append([x for _, x in iv])
         mids.append(mid)
+        bids.append(b)
+        asks.append(a)
+        vols.append(np.clip(g["market_volume"].to_numpy(float) - g["cum_volume"].to_numpy(float),
+                            0, None))
         ys.append(int(np.argmax(y)))
     if not metas:
         return LadderSet(pd.DataFrame(), np.zeros((0, 1)), np.zeros((0, 1)),
@@ -140,7 +155,8 @@ def _ladders(panel: pd.DataFrame, city: City) -> LadderSet:
     mask = np.array([[True] * len(r) + [False] * (k - len(r)) for r in los])
     meta = pd.DataFrame(metas)
     meta["day"] = pd.to_datetime(meta["day"])
-    return LadderSet(meta, lo, hi, mask, np.array(ys), {"market": _normalise(mid, mask)})
+    quotes = {"bid": pad(bids, 0.0), "ask": pad(asks, 1.0), "vol_after": pad(vols, 0.0)}
+    return LadderSet(meta, lo, hi, mask, np.array(ys), {"market": _normalise(mid, mask)}, quotes)
 
 
 def _monthly_fits(hist: pd.DataFrame, months, fitter):
