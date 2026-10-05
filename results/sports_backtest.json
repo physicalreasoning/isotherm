@@ -1,0 +1,2317 @@
+{
+  "config": {
+    "execution": [
+      "taker",
+      "maker"
+    ],
+    "boot": 1000,
+    "out": "results/sports_backtest"
+  },
+  "results": {
+    "t_15m \u00b7 taker": {
+      "execution": "taker",
+      "configs": 28,
+      "picks": [
+        {
+          "fold": "2025-07-01..2025-07-31",
+          "config": "pool \u00b7 all \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2025-08-01..2025-08-31",
+          "config": "pool \u00b7 all \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2025-09-01..2025-09-30",
+          "config": "Elo + starters \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2025-10-01..2025-10-31",
+          "config": "Elo + starters \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2026-03-01..2026-03-31",
+          "config": "Elo + starters \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2026-04-01..2026-04-30",
+          "config": "Elo + starters \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2026-05-01..2026-05-31",
+          "config": "Elo + starters \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2026-06-01..2026-06-30",
+          "config": "Elo + starters \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2026-07-01..2026-07-31",
+          "config": "Elo + starters \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2026-08-01..2026-08-31",
+          "config": "pool \u00b7 market+Elo+SP \u00b7 \u03b8 0.02"
+        }
+      ],
+      "selected": {
+        "days": 263,
+        "pnl": 383.6399999999999,
+        "mean_daily": 1.4587072243346002,
+        "sharpe_ann": 0.15051424684615575,
+        "sharpe_ann_ci": [
+          -2.0829044695891703,
+          2.106124382961275
+        ],
+        "nw_t": 0.12485512225580019,
+        "max_drawdown": 2879.0899999999992,
+        "trades": 759,
+        "active_days": 182,
+        "contracts": 92563.0,
+        "outlay": 39922.35999999999,
+        "hit_rate": 0.4176548089591568,
+        "return_on_outlay": 0.009609652335182592,
+        "ev_per_contract": 0.05573532463051389,
+        "realised_per_contract": 0.004144636625865627,
+        "attribution": {
+          "alpha_vs_mid": 2385.2300000000005,
+          "spread_paid": -472.2900000000003,
+          "fees": -1529.3000000000002
+        }
+      },
+      "deflated_sharpe": {
+        "sr_daily": 0.007878275748992655,
+        "sr0_daily": 0.07881949276166841,
+        "dsr": 0.12481863964686107,
+        "skew": 0.6584236916803795,
+        "kurtosis": 5.780447978544973,
+        "n_trials": 28,
+        "t": 263
+      },
+      "pbo": {
+        "pbo": 0.43506493506493504,
+        "splits": 924,
+        "blocks": 12,
+        "median_logit": 0.34830669426821553,
+        "oos_sr_best_minus_median": 0.009700714967138185
+      },
+      "edge_realisation": {
+        "by_bin": [
+          {
+            "ev": 0.007138926658578367,
+            "realised": -0.03375000000000001,
+            "trades": 152.0
+          },
+          {
+            "ev": 0.019139502827435213,
+            "realised": -0.07829353523587654,
+            "trades": 152.0
+          },
+          {
+            "ev": 0.04435000671151631,
+            "realised": 0.024904794348621213,
+            "trades": 151.0
+          },
+          {
+            "ev": 0.05185216940821841,
+            "realised": 0.06128460905349793,
+            "trades": 152.0
+          },
+          {
+            "ev": 0.07169341866545455,
+            "realised": -0.06284513768295709,
+            "trades": 152.0
+          }
+        ],
+        "slope": -1.6124366236951393
+      },
+      "all_configs": [
+        {
+          "config": "Elo + starters \u00b7 \u03b8 0.04",
+          "pnl": 3562.7199999999993,
+          "sharpe_ann": 1.1908268025973636,
+          "trades": 665
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 \u03b8 0.02",
+          "pnl": 1090.97,
+          "sharpe_ann": 1.0685336564199492,
+          "trades": 37
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.02",
+          "pnl": 329.65999999999997,
+          "sharpe_ann": 0.3580365430985372,
+          "trades": 34
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.08",
+          "pnl": 0.0,
+          "sharpe_ann": 0.0,
+          "trades": 0
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 \u03b8 0.04",
+          "pnl": 0.0,
+          "sharpe_ann": 0.0,
+          "trades": 0
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 \u03b8 0.08",
+          "pnl": 0.0,
+          "sharpe_ann": 0.0,
+          "trades": 0
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.04",
+          "pnl": 0.0,
+          "sharpe_ann": 0.0,
+          "trades": 0
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.08",
+          "pnl": 0.0,
+          "sharpe_ann": 0.0,
+          "trades": 0
+        },
+        {
+          "config": "Elo + starters \u00b7 \u03b8 0.08",
+          "pnl": -22.990000000000038,
+          "sharpe_ann": -0.026100125931761493,
+          "trades": 48
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.10",
+          "pnl": -9.110000000000008,
+          "sharpe_ann": -0.2856770984430514,
+          "trades": 727
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.50",
+          "pnl": -52.52000000000007,
+          "sharpe_ann": -0.2904456482093403,
+          "trades": 1152
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.25",
+          "pnl": -34.30000000000004,
+          "sharpe_ann": -0.3922603437844642,
+          "trades": 1054
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.10",
+          "pnl": -9.48000000000002,
+          "sharpe_ann": -0.46043496246247856,
+          "trades": 422
+        },
+        {
+          "config": "Elo + starters \u00b7 kelly 0.10",
+          "pnl": -72.12999999999997,
+          "sharpe_ann": -0.5126604057407238,
+          "trades": 2597
+        },
+        {
+          "config": "Elo + starters \u00b7 kelly 0.25",
+          "pnl": -197.92000000000007,
+          "sharpe_ann": -0.5416031797139222,
+          "trades": 3001
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.02",
+          "pnl": -857.99,
+          "sharpe_ann": -0.5806881582542484,
+          "trades": 146
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.01",
+          "pnl": -1598.0499999999997,
+          "sharpe_ann": -0.615423366544032,
+          "trades": 525
+        },
+        {
+          "config": "Elo + starters \u00b7 kelly 0.50",
+          "pnl": -464.14000000000055,
+          "sharpe_ann": -0.6357879132679044,
+          "trades": 3104
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 kelly 0.50",
+          "pnl": -94.36000000000001,
+          "sharpe_ann": -0.7214893467338294,
+          "trades": 823
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 kelly 0.25",
+          "pnl": -47.36000000000003,
+          "sharpe_ann": -0.7465261461219561,
+          "trades": 734
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 kelly 0.10",
+          "pnl": -17.930000000000017,
+          "sharpe_ann": -0.7988113875954158,
+          "trades": 478
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.50",
+          "pnl": -95.68000000000004,
+          "sharpe_ann": -0.8279857619130232,
+          "trades": 717
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.25",
+          "pnl": -54.91000000000002,
+          "sharpe_ann": -0.9835433119449093,
+          "trades": 604
+        },
+        {
+          "config": "Elo + starters \u00b7 \u03b8 0.02",
+          "pnl": -5425.769999999999,
+          "sharpe_ann": -1.1678929324023979,
+          "trades": 1695
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.04",
+          "pnl": -130.42,
+          "sharpe_ann": -1.1780631135978121,
+          "trades": 2
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 \u03b8 0.01",
+          "pnl": -3597.87,
+          "sharpe_ann": -1.6311073850915163,
+          "trades": 295
+        },
+        {
+          "config": "Elo + starters \u00b7 \u03b8 0.01",
+          "pnl": -10630.269999999999,
+          "sharpe_ann": -1.933699909952475,
+          "trades": 2526
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.01",
+          "pnl": -3819.79,
+          "sharpe_ann": -1.9804342199521938,
+          "trades": 243
+        }
+      ],
+      "by_period": {
+        "2025H2": {
+          "pnl": 569.3200000000004,
+          "trades": 438,
+          "per_contract": 0.029122717274540917
+        },
+        "2026H1": {
+          "pnl": -78.53999999999996,
+          "trades": 234,
+          "per_contract": -0.001468449097877909
+        },
+        "2026H2": {
+          "pnl": -107.1399999999999,
+          "trades": 87,
+          "per_contract": -0.005486200010241174
+        }
+      },
+      "by_city": {
+        "MLB": {
+          "pnl": 383.64,
+          "trades": 759,
+          "per_contract": 0.004144636625865627
+        }
+      },
+      "robustness_config": "Elo + starters \u00b7 \u03b8 0.04",
+      "robustness": [
+        {
+          "scenario": "base",
+          "pnl": 3562.7199999999993,
+          "sharpe_ann": 1.1908268025973636,
+          "trades": 665
+        },
+        {
+          "scenario": "slip +1\u00a2",
+          "pnl": 12.9399999999996,
+          "sharpe_ann": 0.005896803761930868,
+          "trades": 377
+        },
+        {
+          "scenario": "slip +2\u00a2",
+          "pnl": -2485.9800000000005,
+          "sharpe_ann": -1.5393561422453068,
+          "trades": 179
+        },
+        {
+          "scenario": "fees \u00d71.5",
+          "pnl": 306.4399999999998,
+          "sharpe_ann": 0.1310799487297008,
+          "trades": 414
+        },
+        {
+          "scenario": "participation 1%",
+          "pnl": 1423.7800000000002,
+          "sharpe_ann": 0.5755128388003939,
+          "trades": 655
+        },
+        {
+          "scenario": "participation 20%",
+          "pnl": 3655.619999999999,
+          "sharpe_ann": 1.1096189734860142,
+          "trades": 668
+        },
+        {
+          "scenario": "size \u00d710",
+          "pnl": 3503.2100000000073,
+          "sharpe_ann": 0.1611176836375683,
+          "trades": 665
+        }
+      ],
+      "placebos": {
+        "oracle (must never lose)": {
+          "trades": 6283,
+          "pnl": 496185.53,
+          "losing_trades": 0
+        },
+        "in-spread market (must not trade)": {
+          "trades": 0,
+          "pnl": 0.0,
+          "losing_trades": 0
+        },
+        "normalised mid": {
+          "trades": 0,
+          "pnl": 0.0,
+          "losing_trades": 0
+        },
+        "noise_matched_turnover": {
+          "trades": 452,
+          "pnl": 444.3299999999998,
+          "losing_trades": 214,
+          "sigma": 0.1
+        },
+        "arbitrage_ladders": {
+          "trades": 11,
+          "pnl": 0.0,
+          "losing_trades": 0
+        }
+      }
+    },
+    "t_15m \u00b7 maker": {
+      "execution": "maker",
+      "configs": 32,
+      "picks": [
+        {
+          "fold": "2025-07-01..2025-07-31",
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.02 \u00b7 4h"
+        },
+        {
+          "fold": "2025-08-01..2025-08-31",
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.02 \u00b7 4h"
+        },
+        {
+          "fold": "2025-09-01..2025-09-30",
+          "config": "Elo + starters \u00b7 maker \u03b8 0.00 \u00b7 1h"
+        },
+        {
+          "fold": "2025-10-01..2025-10-31",
+          "config": "Elo + starters \u00b7 maker \u03b8 0.02 \u00b7 1h"
+        },
+        {
+          "fold": "2026-03-01..2026-03-31",
+          "config": "Elo + starters \u00b7 maker \u03b8 0.02 \u00b7 1h"
+        },
+        {
+          "fold": "2026-04-01..2026-04-30",
+          "config": "Elo + starters \u00b7 maker \u03b8 0.02 \u00b7 1h"
+        },
+        {
+          "fold": "2026-05-01..2026-05-31",
+          "config": "Elo + starters \u00b7 maker \u03b8 0.02 \u00b7 1h"
+        },
+        {
+          "fold": "2026-06-01..2026-06-30",
+          "config": "Elo + starters \u00b7 maker \u03b8 0.02 \u00b7 1h"
+        },
+        {
+          "fold": "2026-07-01..2026-07-31",
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.02 \u00b7 1h"
+        },
+        {
+          "fold": "2026-08-01..2026-08-31",
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.02 \u00b7 1h"
+        }
+      ],
+      "selected": {
+        "days": 263,
+        "pnl": -1289.5899999999997,
+        "mean_daily": -4.90338403041825,
+        "sharpe_ann": -0.6086117130676365,
+        "sharpe_ann_ci": [
+          -2.941814464089691,
+          1.7768207841213095
+        ],
+        "nw_t": -0.5554295726895759,
+        "max_drawdown": 2353.51,
+        "trades": 432,
+        "active_days": 175,
+        "contracts": 85825.0,
+        "outlay": 36717.59,
+        "hit_rate": 0.42592592592592593,
+        "return_on_outlay": -0.03512185848798901,
+        "ev_per_contract": 0.036970645718236564,
+        "realised_per_contract": -0.015025808330905915,
+        "attribution": {
+          "alpha_vs_mid": -1297.619999999999,
+          "spread_paid": 367.3999999999994,
+          "fees": -359.37
+        }
+      },
+      "deflated_sharpe": {
+        "sr_daily": -0.03185619301882119,
+        "sr0_daily": 0.09121579191187933,
+        "dsr": 0.023836561259037894,
+        "skew": 0.3504660050073841,
+        "kurtosis": 4.2020252310480615,
+        "n_trials": 32,
+        "t": 263
+      },
+      "pbo": {
+        "pbo": 0.34415584415584416,
+        "splits": 924,
+        "blocks": 12,
+        "median_logit": 0.6257058997644127,
+        "oos_sr_best_minus_median": 0.015097897389927038
+      },
+      "edge_realisation": {
+        "by_bin": [
+          {
+            "ev": 0.016272380668720055,
+            "realised": -0.13629383828543595,
+            "trades": 87.0
+          },
+          {
+            "ev": 0.025120175245606786,
+            "realised": -0.04196652719665272,
+            "trades": 86.0
+          },
+          {
+            "ev": 0.03233065514420978,
+            "realised": 0.0297055775678147,
+            "trades": 86.0
+          },
+          {
+            "ev": 0.042107041787155866,
+            "realised": 0.03232220126483966,
+            "trades": 86.0
+          },
+          {
+            "ev": 0.06841085447292816,
+            "realised": 0.03703080082135522,
+            "trades": 87.0
+          }
+        ],
+        "slope": 2.300079471421043
+      },
+      "all_configs": [
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": 2556.2000000000003,
+          "sharpe_ann": 1.6646278588295713,
+          "trades": 148
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": 2556.2000000000003,
+          "sharpe_ann": 1.6646278588295713,
+          "trades": 148
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": 1728.5800000000004,
+          "sharpe_ann": 1.2150069649163127,
+          "trades": 116
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": 1728.5800000000004,
+          "sharpe_ann": 1.2150069649163127,
+          "trades": 116
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": 2559.8,
+          "sharpe_ann": 1.0813468797336578,
+          "trades": 547
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": 2559.8,
+          "sharpe_ann": 1.0813468797336578,
+          "trades": 547
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": 1585.8700000000003,
+          "sharpe_ann": 0.5930001135736759,
+          "trades": 690
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": 1585.8700000000003,
+          "sharpe_ann": 0.5930001135736759,
+          "trades": 690
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": 1268.0199999999995,
+          "sharpe_ann": 0.5435000021946734,
+          "trades": 377
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": 1268.0199999999995,
+          "sharpe_ann": 0.5435000021946734,
+          "trades": 377
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": 1573.7400000000002,
+          "sharpe_ann": 0.5242805088273733,
+          "trades": 835
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": 1573.7400000000002,
+          "sharpe_ann": 0.5242805088273733,
+          "trades": 835
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": 609.3200000000002,
+          "sharpe_ann": 0.3231320888603232,
+          "trades": 256
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": 609.3200000000002,
+          "sharpe_ann": 0.3231320888603232,
+          "trades": 256
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": 791.5700000000002,
+          "sharpe_ann": 0.27865346250505024,
+          "trades": 870
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": 791.5700000000002,
+          "sharpe_ann": 0.27865346250505024,
+          "trades": 870
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": 534.1799999999998,
+          "sharpe_ann": 0.2245795646620789,
+          "trades": 423
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": 534.1799999999998,
+          "sharpe_ann": 0.2245795646620789,
+          "trades": 423
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": -0.7899999999999068,
+          "sharpe_ann": -0.00032403870121771775,
+          "trades": 517
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -0.7899999999999068,
+          "sharpe_ann": -0.00032403870121771775,
+          "trades": 517
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -126.91999999999871,
+          "sharpe_ann": -0.04179797746475224,
+          "trades": 854
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -126.91999999999871,
+          "sharpe_ann": -0.04179797746475224,
+          "trades": 854
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -826.6999999999989,
+          "sharpe_ann": -0.29141830246439737,
+          "trades": 871
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -826.6999999999989,
+          "sharpe_ann": -0.29141830246439737,
+          "trades": 871
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": -61.43999999999997,
+          "sharpe_ann": -0.36512943152836463,
+          "trades": 3
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": -61.43999999999997,
+          "sharpe_ann": -0.36512943152836463,
+          "trades": 3
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": -863.2000000000005,
+          "sharpe_ann": -0.5450863471634019,
+          "trades": 264
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": -863.2000000000005,
+          "sharpe_ann": -0.5450863471634019,
+          "trades": 264
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": -127.6,
+          "sharpe_ann": -1.1780631135978121,
+          "trades": 2
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": -127.6,
+          "sharpe_ann": -1.1780631135978121,
+          "trades": 2
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": -819.8999999999999,
+          "sharpe_ann": -1.602098452887742,
+          "trades": 27
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": -819.8999999999999,
+          "sharpe_ann": -1.602098452887742,
+          "trades": 27
+        }
+      ],
+      "by_period": {
+        "2025H2": {
+          "pnl": -1260.3100000000004,
+          "trades": 253,
+          "per_contract": -0.024774139015568495
+        },
+        "2026H1": {
+          "pnl": 758.8,
+          "trades": 151,
+          "per_contract": 0.027422210979003287
+        },
+        "2026H2": {
+          "pnl": -788.0799999999999,
+          "trades": 28,
+          "per_contract": -0.10822301565503982
+        }
+      },
+      "by_city": {
+        "MLB": {
+          "pnl": -1289.5900000000001,
+          "trades": 432,
+          "per_contract": -0.015025808330905915
+        }
+      },
+      "robustness_config": "Elo + starters \u00b7 maker \u03b8 0.02 \u00b7 1h",
+      "robustness": [
+        {
+          "scenario": "base: trade-through fills",
+          "pnl": 2559.8,
+          "sharpe_ann": 1.0813468797336578,
+          "trades": 547,
+          "fill_ratio": 0.8344266760623036
+        },
+        {
+          "scenario": "touch fills, 50% queue share",
+          "pnl": 8151.570000000004,
+          "sharpe_ann": 1.205353272307592,
+          "trades": 3382,
+          "fill_ratio": 0.8411485977909448
+        },
+        {
+          "scenario": "maker fee 0.0175",
+          "pnl": 2559.8,
+          "sharpe_ann": 1.0813468797336578,
+          "trades": 547,
+          "fill_ratio": 0.8344266760623036
+        },
+        {
+          "scenario": "no price improvement",
+          "pnl": 1056.4600000000005,
+          "sharpe_ann": 0.4718057609126736,
+          "trades": 461,
+          "fill_ratio": 0.8432751838581611
+        },
+        {
+          "scenario": "horizon 1h",
+          "pnl": 2559.8,
+          "sharpe_ann": 1.0813468797336578,
+          "trades": 547,
+          "fill_ratio": 0.8344266760623036
+        },
+        {
+          "scenario": "horizon to close",
+          "pnl": 2559.8,
+          "sharpe_ann": 1.0813468797336578,
+          "trades": 547,
+          "fill_ratio": 0.8344266760623036
+        },
+        {
+          "scenario": "size \u00d710",
+          "pnl": 1043.079999999998,
+          "sharpe_ann": 0.05673893051888602,
+          "trades": 547,
+          "fill_ratio": 0.5965588747489912
+        }
+      ],
+      "placebos": {
+        "oracle (must never lose)": {
+          "trades": 864,
+          "pnl": 75094.56000000001,
+          "losing_trades": 0
+        },
+        "uninformed market maker": {
+          "trades": 1119,
+          "pnl": -2229.6299999999997,
+          "losing_trades": 578
+        },
+        "noise_matched_turnover": {
+          "trades": 474,
+          "pnl": 1894.2200000000007,
+          "losing_trades": 231,
+          "sigma": 0.1
+        }
+      }
+    },
+    "t_24h \u00b7 taker": {
+      "execution": "taker",
+      "configs": 28,
+      "picks": [
+        {
+          "fold": "2026-05-01..2026-05-31",
+          "config": "pool \u00b7 all \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2026-06-01..2026-06-30",
+          "config": "pool \u00b7 all \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2026-07-01..2026-07-31",
+          "config": "Elo + starters \u00b7 \u03b8 0.02"
+        },
+        {
+          "fold": "2026-08-01..2026-08-31",
+          "config": "Elo + starters \u00b7 \u03b8 0.02"
+        }
+      ],
+      "selected": {
+        "days": 119,
+        "pnl": -987.2600000000001,
+        "mean_daily": -8.296302521008403,
+        "sharpe_ann": -0.7341206209633332,
+        "sharpe_ann_ci": [
+          -5.286880487731825,
+          2.658856685436909
+        ],
+        "nw_t": -0.3785152966975348,
+        "max_drawdown": 2570.23,
+        "trades": 621,
+        "active_days": 112,
+        "contracts": 56464.0,
+        "outlay": 27595.26,
+        "hit_rate": 0.4524959742351047,
+        "return_on_outlay": -0.035776434068749516,
+        "ev_per_contract": 0.038032424965867846,
+        "realised_per_contract": -0.017484769056389925,
+        "attribution": {
+          "alpha_vs_mid": 273.0150000000002,
+          "spread_paid": -306.4250000000006,
+          "fees": -953.8499999999999
+        }
+      },
+      "deflated_sharpe": {
+        "sr_daily": -0.038425629507899135,
+        "sr0_daily": 0.1452855793319248,
+        "dsr": 0.023799336626872333,
+        "skew": 0.30218855092971003,
+        "kurtosis": 9.844925115416782,
+        "n_trials": 28,
+        "t": 119
+      },
+      "pbo": {
+        "pbo": 0.4087301587301587,
+        "splits": 252,
+        "blocks": 10,
+        "median_logit": 0.34830669426821553,
+        "oos_sr_best_minus_median": 0.018698294909911276
+      },
+      "edge_realisation": {
+        "by_bin": [
+          {
+            "ev": 0.005838688247845173,
+            "realised": -0.026339622641509436,
+            "trades": 125.0
+          },
+          {
+            "ev": 0.015191747749845623,
+            "realised": 0.0024721878862793605,
+            "trades": 125.0
+          },
+          {
+            "ev": 0.023943135834013814,
+            "realised": -0.11181446021789368,
+            "trades": 124.0
+          },
+          {
+            "ev": 0.0333102741029843,
+            "realised": -0.02298248325605359,
+            "trades": 123.0
+          },
+          {
+            "ev": 0.05396948665286265,
+            "realised": 0.05554307655387568,
+            "trades": 124.0
+          }
+        ],
+        "slope": 4.0925881906510355
+      },
+      "all_configs": [
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.08",
+          "pnl": 268.93000000000006,
+          "sharpe_ann": 1.5017770074961239,
+          "trades": 6
+        },
+        {
+          "config": "Elo + starters \u00b7 \u03b8 0.04",
+          "pnl": 1125.1299999999999,
+          "sharpe_ann": 1.0007726973862967,
+          "trades": 204
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.04",
+          "pnl": 383.35000000000025,
+          "sharpe_ann": 0.7966571543267268,
+          "trades": 43
+        },
+        {
+          "config": "Elo + starters \u00b7 kelly 0.10",
+          "pnl": 15.449999999999967,
+          "sharpe_ann": 0.2968633566194299,
+          "trades": 987
+        },
+        {
+          "config": "Elo + starters \u00b7 \u03b8 0.02",
+          "pnl": 507.78999999999985,
+          "sharpe_ann": 0.2623800456467807,
+          "trades": 615
+        },
+        {
+          "config": "Elo + starters \u00b7 \u03b8 0.08",
+          "pnl": 84.10000000000005,
+          "sharpe_ann": 0.2607326872931824,
+          "trades": 13
+        },
+        {
+          "config": "Elo + starters \u00b7 kelly 0.50",
+          "pnl": 30.1999999999999,
+          "sharpe_ann": 0.1099751969252877,
+          "trades": 1187
+        },
+        {
+          "config": "Elo + starters \u00b7 kelly 0.25",
+          "pnl": 12.999999999999945,
+          "sharpe_ann": 0.09606273568742665,
+          "trades": 1137
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.08",
+          "pnl": -1.4899999999999949,
+          "sharpe_ann": -0.018545373845442078,
+          "trades": 3
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 \u03b8 0.08",
+          "pnl": -1.4899999999999949,
+          "sharpe_ann": -0.018545373845442078,
+          "trades": 3
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 \u03b8 0.04",
+          "pnl": -278.42,
+          "sharpe_ann": -0.7554288105977399,
+          "trades": 23
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.01",
+          "pnl": -1655.1099999999988,
+          "sharpe_ann": -0.9521203916601043,
+          "trades": 412
+        },
+        {
+          "config": "Elo + starters \u00b7 \u03b8 0.01",
+          "pnl": -2266.229999999999,
+          "sharpe_ann": -0.9575671920458804,
+          "trades": 979
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.50",
+          "pnl": -233.65999999999997,
+          "sharpe_ann": -1.5094125087124992,
+          "trades": 700
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.02",
+          "pnl": -1490.35,
+          "sharpe_ann": -1.5637880675462144,
+          "trades": 140
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.25",
+          "pnl": -119.58,
+          "sharpe_ann": -1.5796725896044292,
+          "trades": 648
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.10",
+          "pnl": -46.29000000000001,
+          "sharpe_ann": -1.5920117702296366,
+          "trades": 516
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 kelly 0.50",
+          "pnl": -270.44000000000005,
+          "sharpe_ann": -1.965645682883918,
+          "trades": 620
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 \u03b8 0.02",
+          "pnl": -2380.2499999999995,
+          "sharpe_ann": -2.012301938491644,
+          "trades": 156
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 kelly 0.25",
+          "pnl": -136.7,
+          "sharpe_ann": -2.0156284378001357,
+          "trades": 557
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 \u03b8 0.01",
+          "pnl": -3429.29,
+          "sharpe_ann": -2.1216588300669326,
+          "trades": 339
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.01",
+          "pnl": -3514.8999999999987,
+          "sharpe_ann": -2.1324602123000034,
+          "trades": 335
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 kelly 0.10",
+          "pnl": -58.72000000000001,
+          "sharpe_ann": -2.276850172357211,
+          "trades": 416
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.02",
+          "pnl": -3032.64,
+          "sharpe_ann": -2.405061643456809,
+          "trades": 203
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.10",
+          "pnl": -75.83000000000001,
+          "sharpe_ann": -2.7958075241773286,
+          "trades": 448
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.50",
+          "pnl": -430.53000000000003,
+          "sharpe_ann": -2.964439314729136,
+          "trades": 621
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.25",
+          "pnl": -211.76,
+          "sharpe_ann": -2.9662057133832325,
+          "trades": 593
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.04",
+          "pnl": -1154.12,
+          "sharpe_ann": -3.4754256427473407,
+          "trades": 30
+        }
+      ],
+      "by_period": {
+        "2026H1": {
+          "pnl": -82.63999999999999,
+          "trades": 357,
+          "per_contract": -0.027033038927052663
+        },
+        "2026H2": {
+          "pnl": -904.62,
+          "trades": 264,
+          "per_contract": -0.01693822907109555
+        }
+      },
+      "by_city": {
+        "MLB": {
+          "pnl": -987.2600000000007,
+          "trades": 621,
+          "per_contract": -0.017484769056389925
+        }
+      },
+      "robustness_config": "Elo + starters \u00b7 \u03b8 0.02",
+      "robustness": [
+        {
+          "scenario": "base",
+          "pnl": 507.78999999999985,
+          "sharpe_ann": 0.2623800456467807,
+          "trades": 615
+        },
+        {
+          "scenario": "slip +1\u00a2",
+          "pnl": 2008.5399999999995,
+          "sharpe_ann": 1.4261347329502858,
+          "trades": 372
+        },
+        {
+          "scenario": "slip +2\u00a2",
+          "pnl": 355.30999999999887,
+          "sharpe_ann": 0.33152885001204474,
+          "trades": 203
+        },
+        {
+          "scenario": "fees \u00d71.5",
+          "pnl": 2424.8400000000006,
+          "sharpe_ann": 1.6128987615560098,
+          "trades": 406
+        },
+        {
+          "scenario": "participation 1%",
+          "pnl": 507.78999999999985,
+          "sharpe_ann": 0.2623800456467807,
+          "trades": 615
+        },
+        {
+          "scenario": "participation 20%",
+          "pnl": 507.78999999999985,
+          "sharpe_ann": 0.2623800456467807,
+          "trades": 615
+        },
+        {
+          "scenario": "size \u00d710",
+          "pnl": 5136.039999999997,
+          "sharpe_ann": 0.26487562030126455,
+          "trades": 615
+        }
+      ],
+      "placebos": {
+        "oracle (must never lose)": {
+          "trades": 2837,
+          "pnl": 258043.35000000003,
+          "losing_trades": 0
+        },
+        "in-spread market (must not trade)": {
+          "trades": 0,
+          "pnl": 0.0,
+          "losing_trades": 0
+        },
+        "normalised mid": {
+          "trades": 93,
+          "pnl": -1028.16,
+          "losing_trades": 57
+        },
+        "noise_matched_turnover": {
+          "trades": 672,
+          "pnl": -1445.48,
+          "losing_trades": 343,
+          "sigma": 0.1
+        },
+        "arbitrage_ladders": {
+          "trades": 38,
+          "pnl": 0.0,
+          "losing_trades": 0
+        }
+      }
+    },
+    "t_24h \u00b7 maker": {
+      "execution": "maker",
+      "configs": 32,
+      "picks": [
+        {
+          "fold": "2026-05-01..2026-05-31",
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.02 \u00b7 4h"
+        },
+        {
+          "fold": "2026-06-01..2026-06-30",
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.02 \u00b7 4h"
+        },
+        {
+          "fold": "2026-07-01..2026-07-31",
+          "config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        },
+        {
+          "fold": "2026-08-01..2026-08-31",
+          "config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        }
+      ],
+      "selected": {
+        "days": 119,
+        "pnl": 361.5699999999997,
+        "mean_daily": 3.0384033613445354,
+        "sharpe_ann": 0.33968379121915765,
+        "sharpe_ann_ci": [
+          -3.3587481107134223,
+          3.923707154105747
+        ],
+        "nw_t": 0.17820048522166979,
+        "max_drawdown": 1245.1299999999997,
+        "trades": 282,
+        "active_days": 91,
+        "contracts": 45286.0,
+        "outlay": 19106.43,
+        "hit_rate": 0.46099290780141844,
+        "return_on_outlay": 0.018923995743841182,
+        "ev_per_contract": 0.04405796054695729,
+        "realised_per_contract": 0.0079841452104403,
+        "attribution": {
+          "alpha_vs_mid": 361.22500000000014,
+          "spread_paid": 189.9249999999999,
+          "fees": -189.58
+        }
+      },
+      "deflated_sharpe": {
+        "sr_daily": 0.01777986224402467,
+        "sr0_daily": 0.12337260976528654,
+        "dsr": 0.12467890848569202,
+        "skew": 0.48818399445025035,
+        "kurtosis": 3.851340565793165,
+        "n_trials": 32,
+        "t": 119
+      },
+      "pbo": {
+        "pbo": 0.42857142857142855,
+        "splits": 252,
+        "blocks": 10,
+        "median_logit": 0.43078291609245434,
+        "oos_sr_best_minus_median": 0.0216808509686251
+      },
+      "edge_realisation": {
+        "by_bin": [
+          {
+            "ev": 0.02262294130857351,
+            "realised": 0.13326573513045625,
+            "trades": 57.0
+          },
+          {
+            "ev": 0.028963530403189986,
+            "realised": 0.009189515641985765,
+            "trades": 56.0
+          },
+          {
+            "ev": 0.04009329105885269,
+            "realised": 0.001435618644920981,
+            "trades": 56.0
+          },
+          {
+            "ev": 0.05119672681884805,
+            "realised": -0.15454535729567823,
+            "trades": 57.0
+          },
+          {
+            "ev": 0.07216872542472128,
+            "realised": 0.06621018777881524,
+            "trades": 56.0
+          }
+        ],
+        "slope": -2.1716255528762116
+      },
+      "all_configs": [
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": 917.1900000000003,
+          "sharpe_ann": 1.0359788208653706,
+          "trades": 207
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -324.9499999999997,
+          "sharpe_ann": -0.3906949188420162,
+          "trades": 385
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": -1011.4000000000001,
+          "sharpe_ann": -0.77040962936572,
+          "trades": 478
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": -622.2600000000001,
+          "sharpe_ann": -0.8846989732144503,
+          "trades": 222
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": -525.56,
+          "sharpe_ann": -1.278222695988747,
+          "trades": 102
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": -863.4700000000003,
+          "sharpe_ann": -1.3606028431824067,
+          "trades": 239
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": -1173.009999999999,
+          "sharpe_ann": -1.3670488529102272,
+          "trades": 305
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": -937.94,
+          "sharpe_ann": -1.371966624556647,
+          "trades": 240
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -1219.7099999999998,
+          "sharpe_ann": -1.4764192327862138,
+          "trades": 394
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -1536.4499999999996,
+          "sharpe_ann": -1.5436562231536106,
+          "trades": 387
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": -1236.5700000000002,
+          "sharpe_ann": -1.6565915564316214,
+          "trades": 220
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": -965.43,
+          "sharpe_ann": -2.031916398033185,
+          "trades": 60
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -3333.6199999999994,
+          "sharpe_ann": -2.12196146818743,
+          "trades": 668
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -1821.8599999999997,
+          "sharpe_ann": -2.1247401275647873,
+          "trades": 409
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -3377.63,
+          "sharpe_ann": -2.1750685488355486,
+          "trades": 577
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": -599.8600000000001,
+          "sharpe_ann": -2.2186564776588087,
+          "trades": 22
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -4405.509999999999,
+          "sharpe_ann": -2.338871211393265,
+          "trades": 901
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": -1344.7200000000003,
+          "sharpe_ann": -2.377189117581294,
+          "trades": 134
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -4672.280000000001,
+          "sharpe_ann": -2.464444558451611,
+          "trades": 939
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -3811.3,
+          "sharpe_ann": -2.49630849294,
+          "trades": 605
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": -1350.0700000000002,
+          "sharpe_ann": -2.561504787930752,
+          "trades": 116
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": -787.25,
+          "sharpe_ann": -2.6021876864267606,
+          "trades": 27
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": -1487.8500000000004,
+          "sharpe_ann": -2.766734185164143,
+          "trades": 114
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": -3087.6199999999994,
+          "sharpe_ann": -2.8709279627320936,
+          "trades": 303
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": -3642.37,
+          "sharpe_ann": -3.1783019959951098,
+          "trades": 349
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": -3842.1400000000012,
+          "sharpe_ann": -3.3417890310760763,
+          "trades": 320
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -6158.860000000001,
+          "sharpe_ann": -3.366302677484183,
+          "trades": 865
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": -4986.170000000001,
+          "sharpe_ann": -3.371530801416735,
+          "trades": 620
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": -2198.82,
+          "sharpe_ann": -3.435406752243423,
+          "trades": 93
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": -1234.62,
+          "sharpe_ann": -3.645631690499946,
+          "trades": 39
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": -7048.919999999999,
+          "sharpe_ann": -3.6910792712991456,
+          "trades": 958
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": -1927.24,
+          "sharpe_ann": -4.483172168178661,
+          "trades": 47
+        }
+      ],
+      "by_period": {
+        "2026H1": {
+          "pnl": -850.4499999999998,
+          "trades": 195,
+          "per_contract": -0.02756190044075706
+        },
+        "2026H2": {
+          "pnl": 1212.0199999999998,
+          "trades": 87,
+          "per_contract": 0.08399306999306998
+        }
+      },
+      "by_city": {
+        "MLB": {
+          "pnl": 361.5699999999995,
+          "trades": 282,
+          "per_contract": 0.0079841452104403
+        }
+      },
+      "robustness_config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 4h",
+      "robustness": [
+        {
+          "scenario": "base: trade-through fills",
+          "pnl": 917.1900000000003,
+          "sharpe_ann": 1.0359788208653706,
+          "trades": 207,
+          "fill_ratio": 0.6658608412645589
+        },
+        {
+          "scenario": "touch fills, 50% queue share",
+          "pnl": 2324.94,
+          "sharpe_ann": 1.5454776128200851,
+          "trades": 609,
+          "fill_ratio": 0.6885533011756033
+        },
+        {
+          "scenario": "maker fee 0.0175",
+          "pnl": 917.1900000000003,
+          "sharpe_ann": 1.0359788208653706,
+          "trades": 207,
+          "fill_ratio": 0.6658608412645589
+        },
+        {
+          "scenario": "no price improvement",
+          "pnl": 291.19999999999993,
+          "sharpe_ann": 0.3770838231321249,
+          "trades": 168,
+          "fill_ratio": 0.6646951042761405
+        },
+        {
+          "scenario": "horizon 1h",
+          "pnl": -525.56,
+          "sharpe_ann": -1.278222695988747,
+          "trades": 102,
+          "fill_ratio": 0.43860251560882685
+        },
+        {
+          "scenario": "horizon to close",
+          "pnl": 467.1500000000003,
+          "sharpe_ann": 0.3482432953753406,
+          "trades": 319,
+          "fill_ratio": 0.8702270019324245
+        },
+        {
+          "scenario": "size \u00d710",
+          "pnl": -75.68000000000052,
+          "sharpe_ann": -0.012359324282330842,
+          "trades": 207,
+          "fill_ratio": 0.34450932154740377
+        }
+      ],
+      "placebos": {
+        "oracle (must never lose)": {
+          "trades": 883,
+          "pnl": 63051.94,
+          "losing_trades": 0
+        },
+        "uninformed market maker": {
+          "trades": 870,
+          "pnl": -5784.5599999999995,
+          "losing_trades": 470
+        },
+        "noise_matched_turnover": {
+          "trades": 257,
+          "pnl": -2849.5600000000004,
+          "losing_trades": 141,
+          "sigma": 0.1
+        }
+      }
+    },
+    "t_3h \u00b7 taker": {
+      "execution": "taker",
+      "configs": 28,
+      "picks": [
+        {
+          "fold": "2025-07-01..2025-07-31",
+          "config": "pool \u00b7 all \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2025-08-01..2025-08-31",
+          "config": "pool \u00b7 all \u00b7 kelly 0.25"
+        },
+        {
+          "fold": "2025-09-01..2025-09-30",
+          "config": "Elo + starters \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2025-10-01..2025-10-31",
+          "config": "Elo + starters \u00b7 \u03b8 0.02"
+        },
+        {
+          "fold": "2026-03-01..2026-03-31",
+          "config": "Elo + starters \u00b7 \u03b8 0.02"
+        },
+        {
+          "fold": "2026-04-01..2026-04-30",
+          "config": "Elo + starters \u00b7 \u03b8 0.02"
+        },
+        {
+          "fold": "2026-05-01..2026-05-31",
+          "config": "Elo + starters \u00b7 \u03b8 0.02"
+        },
+        {
+          "fold": "2026-06-01..2026-06-30",
+          "config": "Elo + starters \u00b7 \u03b8 0.02"
+        },
+        {
+          "fold": "2026-07-01..2026-07-31",
+          "config": "pool \u00b7 market+Elo+SP \u00b7 \u03b8 0.04"
+        },
+        {
+          "fold": "2026-08-01..2026-08-31",
+          "config": "pool \u00b7 market+Elo+SP \u00b7 \u03b8 0.04"
+        }
+      ],
+      "selected": {
+        "days": 263,
+        "pnl": -1626.2599999999984,
+        "mean_daily": -6.183498098859309,
+        "sharpe_ann": -0.47589647078749797,
+        "sharpe_ann_ci": [
+          -2.8303474546725584,
+          1.8005517204810888
+        ],
+        "nw_t": -0.38423820212594434,
+        "max_drawdown": 4805.5199999999995,
+        "trades": 1137,
+        "active_days": 189,
+        "contracts": 157886.0,
+        "outlay": 72281.26,
+        "hit_rate": 0.4397537379067722,
+        "return_on_outlay": -0.0224990543883712,
+        "ev_per_contract": 0.0410661073070071,
+        "realised_per_contract": -0.01030021661198586,
+        "attribution": {
+          "alpha_vs_mid": 1840.2400000000005,
+          "spread_paid": -808.4900000000005,
+          "fees": -2658.01
+        }
+      },
+      "deflated_sharpe": {
+        "sr_daily": -0.024909559748643124,
+        "sr0_daily": 0.0948019555055357,
+        "dsr": 0.027252936450120065,
+        "skew": 0.5919673411723347,
+        "kurtosis": 6.277716367690582,
+        "n_trials": 28,
+        "t": 263
+      },
+      "pbo": {
+        "pbo": 0.49134199134199136,
+        "splits": 924,
+        "blocks": 12,
+        "median_logit": 0.06899287148695163,
+        "oos_sr_best_minus_median": 0.0
+      },
+      "edge_realisation": {
+        "by_bin": [
+          {
+            "ev": 0.00823442927801971,
+            "realised": 0.04896103896103896,
+            "trades": 229.0
+          },
+          {
+            "ev": 0.021854914577836556,
+            "realised": 0.0008525799555686166,
+            "trades": 226.0
+          },
+          {
+            "ev": 0.028772871877540532,
+            "realised": -0.03541121752394287,
+            "trades": 227.0
+          },
+          {
+            "ev": 0.03977773862004484,
+            "realised": 0.009808588164752552,
+            "trades": 227.0
+          },
+          {
+            "ev": 0.06148022702819704,
+            "realised": -0.013606318686798182,
+            "trades": 228.0
+          }
+        ],
+        "slope": -0.09404968128414434
+      },
+      "all_configs": [
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 \u03b8 0.04",
+          "pnl": 217.23999999999998,
+          "sharpe_ann": 1.1780631135978124,
+          "trades": 1
+        },
+        {
+          "config": "Elo + starters \u00b7 \u03b8 0.04",
+          "pnl": 2971.0299999999997,
+          "sharpe_ann": 1.0002320304394388,
+          "trades": 594
+        },
+        {
+          "config": "Elo + starters \u00b7 \u03b8 0.02",
+          "pnl": 4223.710000000003,
+          "sharpe_ann": 0.8283873368284551,
+          "trades": 1651
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.01",
+          "pnl": 774.8499999999999,
+          "sharpe_ann": 0.205834865823804,
+          "trades": 781
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.10",
+          "pnl": 8.739999999999963,
+          "sharpe_ann": 0.19030718186647536,
+          "trades": 980
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.25",
+          "pnl": 17.52999999999999,
+          "sharpe_ann": 0.1401941731784734,
+          "trades": 1367
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 kelly 0.50",
+          "pnl": 27.399999999999878,
+          "sharpe_ann": 0.10698349872248433,
+          "trades": 1502
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.08",
+          "pnl": 0.0,
+          "sharpe_ann": 0.0,
+          "trades": 0
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 \u03b8 0.08",
+          "pnl": 0.0,
+          "sharpe_ann": 0.0,
+          "trades": 0
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.04",
+          "pnl": 0.0,
+          "sharpe_ann": 0.0,
+          "trades": 0
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.08",
+          "pnl": 0.0,
+          "sharpe_ann": 0.0,
+          "trades": 0
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 kelly 0.10",
+          "pnl": -5.800000000000012,
+          "sharpe_ann": -0.17223783227059286,
+          "trades": 710
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 kelly 0.25",
+          "pnl": -16.780000000000044,
+          "sharpe_ann": -0.18012886222094002,
+          "trades": 1041
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 kelly 0.50",
+          "pnl": -43.560000000000045,
+          "sharpe_ann": -0.22507717001019942,
+          "trades": 1182
+        },
+        {
+          "config": "Elo + starters \u00b7 \u03b8 0.01",
+          "pnl": -1796.5800000000008,
+          "sharpe_ann": -0.29896106673689066,
+          "trades": 2474
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 \u03b8 0.01",
+          "pnl": -1028.1,
+          "sharpe_ann": -0.3136882876563397,
+          "trades": 524
+        },
+        {
+          "config": "Elo + starters \u00b7 kelly 0.50",
+          "pnl": -333.3100000000003,
+          "sharpe_ann": -0.4707213074144858,
+          "trades": 3028
+        },
+        {
+          "config": "Elo + starters \u00b7 kelly 0.10",
+          "pnl": -65.62000000000009,
+          "sharpe_ann": -0.4950516351476315,
+          "trades": 2529
+        },
+        {
+          "config": "Elo + starters \u00b7 kelly 0.25",
+          "pnl": -190.56000000000012,
+          "sharpe_ann": -0.5460484494446983,
+          "trades": 2898
+        },
+        {
+          "config": "Elo + starters \u00b7 \u03b8 0.08",
+          "pnl": -715.9999999999999,
+          "sharpe_ann": -0.7474764250636905,
+          "trades": 48
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.50",
+          "pnl": -199.81000000000003,
+          "sharpe_ann": -1.242385895114103,
+          "trades": 943
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.25",
+          "pnl": -101.95000000000005,
+          "sharpe_ann": -1.322769749362289,
+          "trades": 838
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.02",
+          "pnl": -3277.07,
+          "sharpe_ann": -1.3273167409368722,
+          "trades": 300
+        },
+        {
+          "config": "market (tempered) \u00b7 kelly 0.10",
+          "pnl": -39.66000000000002,
+          "sharpe_ann": -1.383823283850777,
+          "trades": 568
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 \u03b8 0.02",
+          "pnl": -2531.4900000000007,
+          "sharpe_ann": -1.4936763811749827,
+          "trades": 146
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.01",
+          "pnl": -4760.0,
+          "sharpe_ann": -1.5970126586473594,
+          "trades": 379
+        },
+        {
+          "config": "market (tempered) \u00b7 \u03b8 0.02",
+          "pnl": -2752.7600000000007,
+          "sharpe_ann": -2.165227762430959,
+          "trades": 83
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 \u03b8 0.04",
+          "pnl": -1548.87,
+          "sharpe_ann": -2.3907766186794324,
+          "trades": 19
+        }
+      ],
+      "by_period": {
+        "2025H2": {
+          "pnl": -1768.9500000000003,
+          "trades": 526,
+          "per_contract": -0.06812562581837789
+        },
+        "2026H1": {
+          "pnl": 142.6899999999996,
+          "trades": 611,
+          "per_contract": 0.0010816403881140054
+        }
+      },
+      "by_city": {
+        "MLB": {
+          "pnl": -1626.2599999999995,
+          "trades": 1137,
+          "per_contract": -0.01030021661198586
+        }
+      },
+      "robustness_config": "Elo + starters \u00b7 \u03b8 0.02",
+      "robustness": [
+        {
+          "scenario": "base",
+          "pnl": 4223.710000000003,
+          "sharpe_ann": 0.8283873368284551,
+          "trades": 1651
+        },
+        {
+          "scenario": "slip +1\u00a2",
+          "pnl": 789.9699999999993,
+          "sharpe_ann": 0.20194782499191635,
+          "trades": 1043
+        },
+        {
+          "scenario": "slip +2\u00a2",
+          "pnl": 532.5799999999981,
+          "sharpe_ann": 0.18803310119691424,
+          "trades": 593
+        },
+        {
+          "scenario": "fees \u00d71.5",
+          "pnl": 959.2399999999993,
+          "sharpe_ann": 0.23728501233952481,
+          "trades": 1112
+        },
+        {
+          "scenario": "participation 1%",
+          "pnl": 2546.3100000000004,
+          "sharpe_ann": 0.555770968283817,
+          "trades": 1651
+        },
+        {
+          "scenario": "participation 20%",
+          "pnl": 4415.630000000001,
+          "sharpe_ann": 0.8456645366188638,
+          "trades": 1651
+        },
+        {
+          "scenario": "size \u00d710",
+          "pnl": 12610.96000000001,
+          "sharpe_ann": 0.29460806307772935,
+          "trades": 1651
+        }
+      ],
+      "placebos": {
+        "oracle (must never lose)": {
+          "trades": 6334,
+          "pnl": 569444.26,
+          "losing_trades": 0
+        },
+        "in-spread market (must not trade)": {
+          "trades": 0,
+          "pnl": 0.0,
+          "losing_trades": 0
+        },
+        "normalised mid": {
+          "trades": 1,
+          "pnl": -99.93,
+          "losing_trades": 1
+        },
+        "noise_matched_turnover": {
+          "trades": 1352,
+          "pnl": -6124.460000000001,
+          "losing_trades": 676,
+          "sigma": 0.1
+        },
+        "arbitrage_ladders": {
+          "trades": 10,
+          "pnl": 0.0,
+          "losing_trades": 0
+        }
+      }
+    },
+    "t_3h \u00b7 maker": {
+      "execution": "maker",
+      "configs": 32,
+      "picks": [
+        {
+          "fold": "2025-07-01..2025-07-31",
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.02 \u00b7 4h"
+        },
+        {
+          "fold": "2025-08-01..2025-08-31",
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.02 \u00b7 4h"
+        },
+        {
+          "fold": "2025-09-01..2025-09-30",
+          "config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        },
+        {
+          "fold": "2025-10-01..2025-10-31",
+          "config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        },
+        {
+          "fold": "2026-03-01..2026-03-31",
+          "config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        },
+        {
+          "fold": "2026-04-01..2026-04-30",
+          "config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        },
+        {
+          "fold": "2026-05-01..2026-05-31",
+          "config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        },
+        {
+          "fold": "2026-06-01..2026-06-30",
+          "config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        },
+        {
+          "fold": "2026-07-01..2026-07-31",
+          "config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        },
+        {
+          "fold": "2026-08-01..2026-08-31",
+          "config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 4h"
+        }
+      ],
+      "selected": {
+        "days": 263,
+        "pnl": 3826.1500000000005,
+        "mean_daily": 14.54809885931559,
+        "sharpe_ann": 1.2212123198590645,
+        "sharpe_ann_ci": [
+          -0.9935165995889182,
+          3.480089686130922
+        ],
+        "nw_t": 0.9542289868210312,
+        "max_drawdown": 3621.7800000000016,
+        "trades": 743,
+        "active_days": 207,
+        "contracts": 163442.0,
+        "outlay": 67644.85,
+        "hit_rate": 0.44414535666218036,
+        "return_on_outlay": 0.05656232514374709,
+        "ev_per_contract": 0.049219615331926515,
+        "realised_per_contract": 0.023409833457740364,
+        "attribution": {
+          "alpha_vs_mid": 3771.2350000000015,
+          "spread_paid": 734.0649999999993,
+          "fees": -679.15
+        }
+      },
+      "deflated_sharpe": {
+        "sr_daily": 0.06392117427761264,
+        "sr0_daily": 0.12966966900611576,
+        "dsr": 0.14108891190019685,
+        "skew": 0.36015451432660883,
+        "kurtosis": 3.23928707643598,
+        "n_trials": 32,
+        "t": 263
+      },
+      "pbo": {
+        "pbo": 0.354978354978355,
+        "splits": 924,
+        "blocks": 12,
+        "median_logit": 0.3053816495511821,
+        "oos_sr_best_minus_median": 0.015533496585004214
+      },
+      "edge_realisation": {
+        "by_bin": [
+          {
+            "ev": 0.02439458787791192,
+            "realised": 0.00730347948197846,
+            "trades": 149.0
+          },
+          {
+            "ev": 0.036986265293277885,
+            "realised": 0.038874626865671634,
+            "trades": 149.0
+          },
+          {
+            "ev": 0.04746180787716141,
+            "realised": 0.06557304824696529,
+            "trades": 148.0
+          },
+          {
+            "ev": 0.05896432434622073,
+            "realised": 0.04942023633677991,
+            "trades": 148.0
+          },
+          {
+            "ev": 0.07792756789535081,
+            "realised": -0.04384907264062168,
+            "trades": 149.0
+          }
+        ],
+        "slope": -0.7596258735580826
+      },
+      "all_configs": [
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": 7250.48,
+          "sharpe_ann": 2.0614437857778056,
+          "trades": 655
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": 5292.86,
+          "sharpe_ann": 1.7591858336964405,
+          "trades": 645
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": 7916.020000000002,
+          "sharpe_ann": 1.6786470318050897,
+          "trades": 1521
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": 5249.189999999999,
+          "sharpe_ann": 1.5803045877750956,
+          "trades": 555
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": 7517.190000000006,
+          "sharpe_ann": 1.324367538948039,
+          "trades": 2330
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": 7446.280000000006,
+          "sharpe_ann": 1.3006046643638094,
+          "trades": 2289
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": 5942.51,
+          "sharpe_ann": 1.2500330524051715,
+          "trades": 1317
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": 2159.14,
+          "sharpe_ann": 1.1846827200361416,
+          "trades": 153
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": 6647.340000000004,
+          "sharpe_ann": 1.1549981846254243,
+          "trades": 2325
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": 4242.32,
+          "sharpe_ann": 1.1432177190444996,
+          "trades": 831
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": 1639.6899999999994,
+          "sharpe_ann": 1.0524166586840058,
+          "trades": 264
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": 4707.260000000001,
+          "sharpe_ann": 0.986902123434674,
+          "trades": 1365
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.00 \u00b7 4h",
+          "pnl": 3771.600000000002,
+          "sharpe_ann": 0.6691441914913687,
+          "trades": 2297
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.02 \u00b7 4h",
+          "pnl": 1744.79,
+          "sharpe_ann": 0.3765946187858075,
+          "trades": 1384
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": 688.2000000000007,
+          "sharpe_ann": 0.22763490025925415,
+          "trades": 919
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.01 \u00b7 4h",
+          "pnl": 1113.4100000000017,
+          "sharpe_ann": 0.21498617209830662,
+          "trades": 1814
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": 164.65000000000003,
+          "sharpe_ann": 0.1870179696771861,
+          "trades": 51
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": -179.41000000000017,
+          "sharpe_ann": -0.16005890420553362,
+          "trades": 66
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.04 \u00b7 4h",
+          "pnl": -231.26999999999998,
+          "sharpe_ann": -0.24041656267746284,
+          "trades": 34
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": -539.2900000000002,
+          "sharpe_ann": -0.24972728908374972,
+          "trades": 545
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": -449.35000000000014,
+          "sharpe_ann": -0.26158251694246426,
+          "trades": 256
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -1127.159999999998,
+          "sharpe_ann": -0.367742018806689,
+          "trades": 907
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": -1114.2599999999993,
+          "sharpe_ann": -0.45542722985225564,
+          "trades": 598
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": -1090.52,
+          "sharpe_ann": -0.6926903326168434,
+          "trades": 195
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.02 \u00b7 1h",
+          "pnl": -1445.1,
+          "sharpe_ann": -0.7587905026619581,
+          "trades": 319
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": -1973.2899999999997,
+          "sharpe_ann": -0.7753704480298637,
+          "trades": 725
+        },
+        {
+          "config": "pool \u00b7 all \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -2705.49,
+          "sharpe_ann": -0.8871368155895497,
+          "trades": 895
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": -2690.55,
+          "sharpe_ann": -1.0875917474502925,
+          "trades": 528
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.01 \u00b7 1h",
+          "pnl": -3078.4399999999996,
+          "sharpe_ann": -1.3211978904006754,
+          "trades": 505
+        },
+        {
+          "config": "Elo + starters \u00b7 maker \u03b8 0.00 \u00b7 1h",
+          "pnl": -3842.8199999999997,
+          "sharpe_ann": -1.334365496760961,
+          "trades": 912
+        },
+        {
+          "config": "pool \u00b7 market+Elo+SP \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": -483.00000000000006,
+          "sharpe_ann": -1.455371032623989,
+          "trades": 15
+        },
+        {
+          "config": "market (tempered) \u00b7 maker \u03b8 0.04 \u00b7 1h",
+          "pnl": -876.6700000000001,
+          "sharpe_ann": -3.0962349199669483,
+          "trades": 13
+        }
+      ],
+      "by_period": {
+        "2025H2": {
+          "pnl": 4952.17,
+          "trades": 408,
+          "per_contract": 0.05490210643015521
+        },
+        "2026H1": {
+          "pnl": 752.4500000000002,
+          "trades": 198,
+          "per_contract": 0.017365566582044776
+        },
+        "2026H2": {
+          "pnl": -1878.4699999999998,
+          "trades": 137,
+          "per_contract": -0.06279987964696442
+        }
+      },
+      "by_city": {
+        "MLB": {
+          "pnl": 3826.1500000000005,
+          "trades": 743,
+          "per_contract": 0.023409833457740364
+        }
+      },
+      "robustness_config": "Elo + starters \u00b7 maker \u03b8 0.04 \u00b7 4h",
+      "robustness": [
+        {
+          "scenario": "base: trade-through fills",
+          "pnl": 5292.86,
+          "sharpe_ann": 1.7591858336964405,
+          "trades": 645,
+          "fill_ratio": 0.9128331675712729
+        },
+        {
+          "scenario": "touch fills, 50% queue share",
+          "pnl": 11142.109999999999,
+          "sharpe_ann": 2.178038083950294,
+          "trades": 1740,
+          "fill_ratio": 0.9136443999584647
+        },
+        {
+          "scenario": "maker fee 0.0175",
+          "pnl": 5292.86,
+          "sharpe_ann": 1.7591858336964405,
+          "trades": 645,
+          "fill_ratio": 0.9128331675712729
+        },
+        {
+          "scenario": "no price improvement",
+          "pnl": 3728.3500000000013,
+          "sharpe_ann": 1.324516211294874,
+          "trades": 608,
+          "fill_ratio": 0.9170938830672606
+        },
+        {
+          "scenario": "horizon 1h",
+          "pnl": 1639.6899999999994,
+          "sharpe_ann": 1.0524166586840058,
+          "trades": 264,
+          "fill_ratio": 0.8033981445463013
+        },
+        {
+          "scenario": "horizon to close",
+          "pnl": 5292.86,
+          "sharpe_ann": 1.7591858336964405,
+          "trades": 645,
+          "fill_ratio": 0.9128331675712729
+        },
+        {
+          "scenario": "size \u00d710",
+          "pnl": 36720.13,
+          "sharpe_ann": 1.4228610306771377,
+          "trades": 645,
+          "fill_ratio": 0.7374495922965782
+        }
+      ],
+      "placebos": {
+        "oracle (must never lose)": {
+          "trades": 2372,
+          "pnl": 222708.33000000002,
+          "losing_trades": 0
+        },
+        "uninformed market maker": {
+          "trades": 3453,
+          "pnl": -2303.01,
+          "losing_trades": 1740
+        },
+        "noise_matched_turnover": {
+          "trades": 575,
+          "pnl": 0.8200000000008458,
+          "losing_trades": 291,
+          "sigma": 0.1
+        }
+      }
+    }
+  },
+  "seconds": 76.6
+}

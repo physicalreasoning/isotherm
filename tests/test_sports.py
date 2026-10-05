@@ -72,3 +72,22 @@ def test_pitcher_quality_ignores_the_game_day_itself():
     assert v[0] < 4.2          # only the dominant 04-01 start counts on 04-06
     assert v[1] > v[0]         # the 04-06 shelling counts from the next day on
     assert v[2] == 4.2         # unknown starter -> league mean
+
+
+def test_build_makes_coherent_two_bucket_ladders():
+    from pmdecide.sports.dataset import build
+    rows = []
+    for side, code, y, b, a in (("away", "BOS", 0, 0.44, 0.46), ("home", "NYY", 1, 0.54, 0.56)):
+        rows.append({"event": "E1", "ticker": "E1-" + code, "code": code, "side": side, "y": y,
+                     "day": pd.Timestamp("2026-05-01"), "period": "2026H1", "game_pk": 11,
+                     "first_pitch_ts": 2000, "read": "t_3h", "read_ts": 1000, "bid": b, "ask": a,
+                     "vol_after": 50.0, "candles_ok": True})
+    probs = pd.DataFrame({"game_pk": [11], "p_elo": [0.6], "p_elo_sp": [0.62], "home_won": [1]})
+    ls = build(pd.DataFrame(rows), probs)
+    assert len(ls) == 1 and ls.y[0] == 1                       # bucket 1 = home
+    assert ls.meta.loc[0, "label_agrees_mlb"]
+    assert ls.meta.loc[0, "close_ts"] == 2000                  # orders cancel at first pitch
+    for k in ("market", "elo", "elo_sp"):
+        assert np.allclose(ls.probs[k].sum(1), 1)
+    assert np.isclose(ls.probs["elo_sp"][0, 1], 0.62)
+    assert np.allclose(ls.quotes["ask"][0], [0.46, 0.56])
