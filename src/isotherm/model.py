@@ -228,3 +228,39 @@ class IsothermNet:
         with torch.no_grad():
             p = torch.stack([net(x, c, lp, mk).exp() for net in self.nets]).mean(0).numpy()
         return np.where(test.mask, p, 0.0)
+
+
+class _BucketTransformer(nn.Module):
+    """Buckets as tokens plus one context token; attention lets every bucket see the ladder.
+
+    The per-bucket output is the same learned log pool as `_Net` plus a zero-initialised head,
+    so an untrained network equals the market, exactly like the MLP it is compared against.
+    """
+
+    def __init__(self, f, cdim, s, d=64, heads=4, layers=2, ff=128, dropout=0.1):
+        super().__init__()
+        self.pool = nn.Parameter(torch.tensor([1.0] + [0.0] * (s - 1)))
+        self.bucket = nn.Linear(f + s, d)
+        self.context = nn.Linear(cdim, d)
+        layer = nn.TransformerEncoderLayer(d, heads, ff, dropout, batch_first=True, norm_first=True)
+        self.encoder = nn.TransformerEncoder(layer, layers, enable_nested_tensor=False)
+        self.head = nn.Linear(d, 1)
+        nn.init.zeros_(self.head.weight)
+        nn.init.zeros_(self.head.bias)
+
+    def forward(self, x, c, logp, mask):
+        tokens = torch.cat([self.context(c)[:, None, :], self.bucket(torch.cat([x, logp], -1))], 1)
+        pad = torch.cat([torch.zeros_like(mask[:, :1]), ~mask], 1)
+        h = self.encoder(tokens, src_key_padding_mask=pad)[:, 1:]
+        score = (logp * self.pool).sum(-1) + self.head(h).squeeze(-1)
+        return torch.log_softmax(score.masked_fill(~mask, -1e9), -1)
+
+
+class IsothermTransformer(IsothermNet):
+    """isotherm with the per-bucket MLP replaced by a bucket transformer (FINDINGS §16)."""
+
+    def __init__(self, name="isotherm · transformer", lr=1e-3, **kw):
+        super().__init__(name=name, lr=lr, **kw)
+
+    def _init_net(self, f, cdim, s, seed):
+        return _BucketTransformer(f, cdim, s)
