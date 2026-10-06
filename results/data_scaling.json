@@ -1,0 +1,315 @@
+{
+  "per_read": {
+    "d0_08": {
+      "pooled_tf_minus_mlp": {
+        "diff": 0.0026052329224402013,
+        "ci": [
+          -0.004340325577728387,
+          0.009393313933740674
+        ],
+        "n": 2554
+      },
+      "pooled_tf_minus_tf": {
+        "diff": -0.0037565015171379295,
+        "ci": [
+          -0.008448735331170762,
+          0.000948607789313598
+        ],
+        "n": 2554
+      },
+      "pooled_mlp_minus_mlp": {
+        "diff": -0.0007492185891979622,
+        "ci": [
+          -0.003828616276479345,
+          0.002300067446754969
+        ],
+        "n": 2554
+      },
+      "tf_minus_mlp_pooled": {
+        "diff": 0.003354451511638163,
+        "ci": [
+          -0.0028586767573976217,
+          0.009992081201857326
+        ],
+        "n": 2554
+      },
+      "control_vs_market_all": -0.0001969670291292823,
+      "vs_market_recent": {
+        "isotherm": 0.009258401559028028,
+        "isotherm \u00b7 transformer-L": 0.01562013599860616,
+        "isotherm \u00b7 pooled": 0.00850918296983007,
+        "isotherm \u00b7 transformer-L \u00b7 pooled": 0.011863634481468231,
+        "isotherm \u00b7 transformer-L \u00b7 pooled \u00b7 market-sampled labels (control)": 0.00025577261743781656,
+        "isotherm \u00b7 pooled \u00b7 25%": 0.005970063055376354,
+        "isotherm \u00b7 pooled \u00b7 50%": 0.007013012308975542,
+        "isotherm \u00b7 transformer-L \u00b7 pooled \u00b7 25%": 0.0035916322093260534,
+        "isotherm \u00b7 transformer-L \u00b7 pooled \u00b7 50%": 0.00805979288749752,
+        "isotherm \u00b7 transformer-L \u00b7 pooled + lows": -0.006371135748852973,
+        "isotherm \u00b7 transformer-L \u00b7 pooled + new cities": -0.006205416477957891
+      },
+      "plus_lows_q2": {
+        "diff": -0.0011004619805881982,
+        "ci": [
+          -0.008172469197852071,
+          0.006324207690463406
+        ],
+        "n": 636
+      },
+      "plus_cities_q2": {
+        "diff": -0.0009347427096931194,
+        "ci": [
+          -0.011451042332644497,
+          0.009371190337014858
+        ],
+        "n": 636
+      },
+      "pass": false
+    },
+    "d0_12": {
+      "pooled_tf_minus_mlp": {
+        "diff": 0.0011147694612600168,
+        "ci": [
+          -0.004329964026259087,
+          0.006770432682487348
+        ],
+        "n": 2554
+      },
+      "pooled_tf_minus_tf": {
+        "diff": -4.8281021844067896e-05,
+        "ci": [
+          -0.004158290915955162,
+          0.004191884065374795
+        ],
+        "n": 2554
+      },
+      "pooled_mlp_minus_mlp": {
+        "diff": -0.0034595044493132784,
+        "ci": [
+          -0.00633015768983688,
+          -0.0006128226873379188
+        ],
+        "n": 2554
+      },
+      "tf_minus_mlp_pooled": {
+        "diff": 0.004574273910573296,
+        "ci": [
+          -0.0006351219427049545,
+          0.010096975289575313
+        ],
+        "n": 2554
+      },
+      "control_vs_market_all": 0.0005314293057754235,
+      "vs_market_recent": {
+        "isotherm": 0.0096138536115248,
+        "isotherm \u00b7 transformer-L": 0.010776904094628887,
+        "isotherm \u00b7 pooled": 0.006154349162211523,
+        "isotherm \u00b7 transformer-L \u00b7 pooled": 0.010728623072784821,
+        "isotherm \u00b7 transformer-L \u00b7 pooled \u00b7 market-sampled labels (control)": -0.00017681519260784456,
+        "isotherm \u00b7 pooled \u00b7 25%": 0.0035910451219467346,
+        "isotherm \u00b7 pooled \u00b7 50%": 0.005022471551456594,
+        "isotherm \u00b7 transformer-L \u00b7 pooled \u00b7 25%": 0.000810682424153908,
+        "isotherm \u00b7 transformer-L \u00b7 pooled \u00b7 50%": 0.00545987004578732,
+        "isotherm \u00b7 transformer-L \u00b7 pooled + lows": -0.002433688187761564,
+        "isotherm \u00b7 transformer-L \u00b7 pooled + new cities": -0.006311603512742186
+      },
+      "plus_lows_q2": {
+        "diff": -0.0024397681148256964,
+        "ci": [
+          -0.007570655495068625,
+          0.0028341139297797524
+        ],
+        "n": 636
+      },
+      "plus_cities_q2": {
+        "diff": -0.006317683439806322,
+        "ci": [
+          -0.011664952984020998,
+          -0.0015765354384177416
+        ],
+        "n": 636
+      },
+      "pass": false
+    },
+    "d0_14": {
+      "pooled_tf_minus_mlp": {
+        "diff": 0.0006966731832114453,
+        "ci": [
+          -0.003755650915648255,
+          0.005343449506683973
+        ],
+        "n": 2554
+      },
+      "pooled_tf_minus_tf": {
+        "diff": -0.00024353521526734423,
+        "ci": [
+          -0.003926028470253459,
+          0.0038187830998878394
+        ],
+        "n": 2554
+      },
+      "pooled_mlp_minus_mlp": {
+        "diff": -0.0035201751591095744,
+        "ci": [
+          -0.006336841449942135,
+          -0.0005273486665008451
+        ],
+        "n": 2554
+      },
+      "tf_minus_mlp_pooled": {
+        "diff": 0.004216848342321021,
+        "ci": [
+          -0.0003485703664952137,
+          0.008797616913933892
+        ],
+        "n": 2554
+      },
+      "control_vs_market_all": 0.00011745855677666596,
+      "vs_market_recent": {
+        "isotherm": 0.016918526481036072,
+        "isotherm \u00b7 transformer-L": 0.017858734879514865,
+        "isotherm \u00b7 pooled": 0.013398351321926497,
+        "isotherm \u00b7 transformer-L \u00b7 pooled": 0.01761519966424752,
+        "isotherm \u00b7 transformer-L \u00b7 pooled \u00b7 market-sampled labels (control)": -0.0002090442455837707,
+        "isotherm \u00b7 pooled \u00b7 25%": 0.01368291799434033,
+        "isotherm \u00b7 pooled \u00b7 50%": 0.012518829133458776,
+        "isotherm \u00b7 transformer-L \u00b7 pooled \u00b7 25%": 0.009831707899979744,
+        "isotherm \u00b7 transformer-L \u00b7 pooled \u00b7 50%": 0.014036755379105962,
+        "isotherm \u00b7 transformer-L \u00b7 pooled + lows": 0.011121274959998375,
+        "isotherm \u00b7 transformer-L \u00b7 pooled + new cities": 0.007452343579501522
+      },
+      "plus_lows_q2": {
+        "diff": -0.0025941149067918276,
+        "ci": [
+          -0.00689333958750307,
+          0.0014015166631402196
+        ],
+        "n": 636
+      },
+      "plus_cities_q2": {
+        "diff": -0.006263046287288682,
+        "ci": [
+          -0.01046469306657772,
+          -0.0023323361813149413
+        ],
+        "n": 636
+      },
+      "pass": false
+    },
+    "d1_16": {
+      "pooled_tf_minus_mlp": {
+        "diff": 0.010584240647864701,
+        "ci": [
+          0.0037509865222400515,
+          0.01721860714053993
+        ],
+        "n": 2542
+      },
+      "pooled_tf_minus_tf": {
+        "diff": 0.0007285369484850664,
+        "ci": [
+          -0.004899393928298663,
+          0.006406457242190313
+        ],
+        "n": 2542
+      },
+      "pooled_mlp_minus_mlp": {
+        "diff": 0.008758952904978091,
+        "ci": [
+          0.002278266792701253,
+          0.014852768799087387
+        ],
+        "n": 2542
+      },
+      "tf_minus_mlp_pooled": {
+        "diff": 0.0018252877428866104,
+        "ci": [
+          -0.0041488924173794725,
+          0.007774865181532213
+        ],
+        "n": 2542
+      },
+      "control_vs_market_all": 0.0022682863673840503,
+      "vs_market_recent": {
+        "isotherm": 0.014278569259441216,
+        "isotherm \u00b7 transformer-L": 0.024134272958820854,
+        "isotherm \u00b7 pooled": 0.02303752216441931,
+        "isotherm \u00b7 transformer-L \u00b7 pooled": 0.02486280990730592,
+        "isotherm \u00b7 transformer-L \u00b7 pooled \u00b7 market-sampled labels (control)": 0.0003808131548917836,
+        "isotherm \u00b7 pooled \u00b7 25%": 0.01748853161032383,
+        "isotherm \u00b7 pooled \u00b7 50%": 0.01784587694984072,
+        "isotherm \u00b7 transformer-L \u00b7 pooled \u00b7 25%": 0.010759270331161521,
+        "isotherm \u00b7 transformer-L \u00b7 pooled \u00b7 50%": 0.018212916858059057,
+        "isotherm \u00b7 transformer-L \u00b7 pooled + lows": 0.0182944276170777,
+        "isotherm \u00b7 transformer-L \u00b7 pooled + new cities": 0.014325747451868024
+      },
+      "plus_lows_q2": {
+        "diff": -0.001126220586843913,
+        "ci": [
+          -0.00805860140563199,
+          0.005608712687873399
+        ],
+        "n": 636
+      },
+      "plus_cities_q2": {
+        "diff": -0.005094900752053588,
+        "ci": [
+          -0.0135658512397071,
+          0.0034299982648955253
+        ],
+        "n": 636
+      },
+      "pass": true
+    }
+  },
+  "pooled_reads": {},
+  "learning_curve": {
+    "25%": {
+      "mlp_vs_market": 0.010174548235581298,
+      "tf_vs_market": 0.00624301829990873,
+      "tf_minus_mlp": {
+        "diff": -0.003931529935672568,
+        "ci": [
+          -0.0067330765819128575,
+          -0.0012308723026994888
+        ],
+        "n": 10204
+      }
+    },
+    "50%": {
+      "mlp_vs_market": 0.010591526322314044,
+      "tf_vs_market": 0.011434371523229344,
+      "tf_minus_mlp": {
+        "diff": 0.0008428452009153006,
+        "ci": [
+          -0.0005536974736232885,
+          0.002248122147184324
+        ],
+        "n": 10204
+      }
+    },
+    "100%": {
+      "mlp_vs_market": 0.01276278240723132,
+      "tf_vs_market": 0.016257458694670924,
+      "tf_minus_mlp": {
+        "diff": 0.0034946762874396037,
+        "ci": [
+          -0.0006863274759228284,
+          0.008140734797572938
+        ],
+        "n": 10204
+      }
+    }
+  },
+  "gap_growth_50_to_100": {
+    "diff": 0.002651831086524303,
+    "ci": [
+      -0.0012308551772405646,
+      0.006726301740993564
+    ]
+  },
+  "adoption": {
+    "reads_passing": 1,
+    "controls_ok": true,
+    "verdict": "FAIL"
+  }
+}

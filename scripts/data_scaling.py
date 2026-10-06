@@ -136,7 +136,11 @@ def score(ls):
         for k in P:
             if "+ lows" not in k and "+ new cities" not in k:
                 ok &= np.isfinite(P[k]).all(1)
-        L = {k: np.where(ok, metrics.log_score(np.nan_to_num(p, nan=1.0), y), np.nan) for k, p in P.items()}
+        L = {
+            k: np.where(np.isfinite(p).all(1), metrics.log_score(np.nan_to_num(p, nan=1.0), y), np.nan)
+            for k, p in P.items()
+        }
+        L = {k: np.where(ok | ~np.isnan(v), v, np.nan) for k, v in L.items()}
         r = {}
         comps = {
             "pooled_tf_minus_mlp": (MLP, names["pooled-tf"]),
@@ -151,7 +155,10 @@ def score(ls):
             r["control_vs_market_all"] = float(np.nanmean((L["market"] - L[CTL])[ok]))
         for k in L:
             if k != "market":
-                r.setdefault("vs_market_recent", {})[k] = float(np.nanmean((L["market"] - L[k])[ok & recent]))
+                sel = recent & np.isfinite(L[k]) & (ok | np.isfinite(L[k]))
+                if k.endswith(("+ lows", "+ new cities")):
+                    sel &= lastf  # these arms only cover the last fold
+                r.setdefault("vs_market_recent", {})[k] = float(np.nanmean((L["market"] - L[k])[sel]))
         for tag in ("lows", "cities"):
             k = names["pooled-tf-" + tag]
             if k in L:

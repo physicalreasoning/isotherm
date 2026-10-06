@@ -468,3 +468,50 @@ the lockbox unless stated.
   only rows they can change), pooled over reads. Helps if the CI is above zero.
 
 Pooled-vs-per-read differences for each model are reported without a gate.
+
+## 21 · More data: the transformer keeps learning, the MLP does not; extra rows hurt (2026-10-06)
+
+`scripts/data_scaling.py --score` against §20 (pre-registered in commit a4454df). Raw:
+`results/data_scaling.json`. Paired, last 12 months before the lockbox, 95% date-block CI.
+
+**Adoption: fails.** Pooled transformer-L minus the per-read MLP:
+
+| Read | Difference | CI |
+|---|---|---|
+| 08:00 | +0.0026 | [−0.0043, +0.0094] |
+| 12:00 | +0.0011 | [−0.0043, +0.0068] |
+| 14:00 | +0.0007 | [−0.0038, +0.0053] |
+| 16:00 day before | **+0.0106** | **[+0.0038, +0.0172]** |
+
+One read of four against three required; the MLP stays. Controls sit within ±0.0023 of the market.
+
+**Pooling read times does not help on its own.** Pooled transformer-L ties the per-read
+transformer-L at every read (−0.0038 to +0.0007, no CI excludes zero). The pooled MLP is better
+at 16:00 (+0.0088) but worse at noon and 14:00 (−0.0035 each, CIs exclude zero): the same-day
+reads lean on intraday observations that the day-before rows do not have, and one network has to
+share capacity between them.
+
+**Learning curve: the transformer is still learning, the MLP has stopped.** Gain over the market
+pooled over reads, by share of training dates:
+
+| Training dates | MLP | Transformer-L | Transformer minus MLP |
+|---|---|---|---|
+| 25% | +0.0102 | +0.0062 | −0.0039 [−0.0067, −0.0012] |
+| 50% | +0.0106 | +0.0114 | +0.0008 [−0.0006, +0.0022] |
+| 100% | +0.0128 | +0.0163 | +0.0035 [−0.0007, +0.0081] |
+
+The MLP gains 0.003 nats from a fourfold increase in data; the transformer gains 0.010 and moves
+from clearly worse to ahead. The pre-registered test, gap growth from 50% to 100%, is +0.0027
+[−0.0012, +0.0067]: in the expected direction but **not significant**, so the data-limited claim
+is not confirmed. The shape of the curve is the strongest evidence so far that more ladders, not
+more parameters, are what the transformer needs.
+
+**Lows and new cities as extra training rows hurt or do nothing.** On the last fold:
+- *+ lows:* −0.0011 to −0.0026 at each read, no CI excludes zero.
+- *+ new cities:* −0.0009 to −0.0063, worse at noon and 14:00 with CIs excluding zero.
+
+The twelve new cities passed the label check (settlement equal to the NWS CLI on every day), so
+this is not bad labels. They enter with a blank city input and only about 2,900 ladders from one
+winter. That reads as distribution shift, not useful data: as extra rows they pull the network
+toward climates it is not scored on. Their rows after 2026-06-30, about 4,500 ladders never used
+by any test, remain a clean out-of-sample set for a future pre-registered test.
