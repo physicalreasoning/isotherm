@@ -196,7 +196,7 @@ def _monthly_fits(hist: pd.DataFrame, months, fitter):
     return fits
 
 
-def _attach_gaussians(ls: LadderSet, city: City) -> None:
+def _attach_gaussians(ls: LadderSet, city: City, nbm_spread: bool = False) -> None:
     cli = pd.read_parquet(DATA / "forecasts" / "{}_cli.parquet".format(city.station))
     cli = cli.rename(columns={"valid": "target"}).dropna(subset=["high"])
     cli["doy"] = cli["target"].dt.dayofyear
@@ -216,11 +216,15 @@ def _attach_gaussians(ls: LadderSet, city: City) -> None:
         fp = DATA / "forecasts" / "{}_{}.parquet".format(city.station, model)
         if not fp.exists():
             continue
-        table = daytime_max_table(pd.read_parquet(fp), col, AVAILABILITY_LAG[model])
+        # FINDINGS §22: optionally let NBM's sigma scale with NBM's own spread (XND).
+        spread = nbm_spread and model == "NBS"
+        extra = ("xnd",) if spread else ()
+        table = daytime_max_table(pd.read_parquet(fp), col, AVAILABILITY_LAG[model], extra=extra)
         p = np.full((n, k), np.nan)
         fc_all = np.full(n, np.nan)
         lead_all = np.full(n, np.nan)
         mu_all, sg_all = np.full(n, np.nan), np.full(n, np.nan)
+        xnd_all = np.full(n, np.nan)
         for read, (dd, hh) in READS.items():
             rs = (ls.meta["read"] == read).to_numpy()
             if not rs.any():
@@ -229,7 +233,9 @@ def _attach_gaussians(ls: LadderSet, city: City) -> None:
             hist["read_time"] = local_read_utc(hist["target"], city.tz, dd, hh)
             hist = hist.join(forecast_at(table, hist[["target", "read_time"]])).dropna(subset=["fcst"])
             fits = _monthly_fits(
-                hist, months[rs].unique(), lambda h: fit_emos(h["fcst"], h["high"], h["doy"])
+                hist,
+                months[rs].unique(),
+                lambda h, sp=spread: fit_emos(h["fcst"], h["high"], h["doy"], h["xnd"] if sp else None),
             )
             days = ls.meta.loc[rs, "day"]
             fc = forecast_at(
@@ -240,12 +246,14 @@ def _attach_gaussians(ls: LadderSet, city: City) -> None:
             )
             fc_all[rs] = fc["fcst"].to_numpy()
             lead_all[rs] = fc["lead_h"].to_numpy()
+            if spread:
+                xnd_all[rs] = fc["xnd"].to_numpy()
             idx = np.flatnonzero(rs)
             for m, f in fits.items():
                 s = idx[(months[rs] == m).to_numpy()]
                 ok = s[np.isfinite(fc_all[s])]
                 if len(ok):
-                    mu, sg = f.params(fc_all[ok], doy[ok])
+                    mu, sg = f.params(fc_all[ok], doy[ok], xnd_all[ok] if spread else None)
                     p[ok] = interval_probs(mu, sg, ls.lo[ok], ls.hi[ok])
                     mu_all[ok], sg_all[ok] = mu, sg
         ls.probs[name] = _finish(p, ls.mask)
@@ -374,7 +382,7 @@ def _finish(p, mask):
     return out
 
 
-def build_city(key: str, cache: bool = True) -> LadderSet:
+def build_city(key: str, cache: bool = True, nbm_spread: bool = False) -> LadderSet:
     city = ALL_CITIES[key]
     pp = DATA / "panel" / "{}.parquet".format(key)
     if not pp.exists():
@@ -385,12 +393,14 @@ def build_city(key: str, cache: bool = True) -> LadderSet:
         + sorted((DATA / "obs").glob(city.station + ".parquet"))
     )
     h = hashlib.sha256(repr((VERSION, [(str(f), f.stat().st_mtime_ns) for f in inputs])).encode())
-    cp = DATA / "features" / "{}_{}.pkl".format(key, h.hexdigest()[:12])
+    cp = (
+        DATA / ("features_spread" if nbm_spread else "features") / "{}_{}.pkl".format(key, h.hexdigest()[:12])
+    )
     if cache and cp.exists():
         return pickle.loads(cp.read_bytes())
     ls = _ladders(pd.read_parquet(pp), city)
     if len(ls):
-        _attach_gaussians(ls, city)
+        _attach_gaussians(ls, city, nbm_spread)
         _attach_obs(ls, city)
     cp.parent.mkdir(parents=True, exist_ok=True)
     for old in cp.parent.glob("{}_*.pkl".format(key)):
@@ -399,6 +409,6 @@ def build_city(key: str, cache: bool = True) -> LadderSet:
     return ls
 
 
-def load(cities=None) -> LadderSet:
+def load(cities=None, nbm_spread: bool = False) -> LadderSet:
     cities = cities or [k for k in CITIES if (DATA / "panel" / "{}.parquet".format(k)).exists()]
-    return LadderSet.concat([build_city(k) for k in cities])
+    return LadderSet.concat([build_city(k, nbm_spread=nbm_spread) for k in cities])

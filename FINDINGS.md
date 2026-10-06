@@ -515,3 +515,42 @@ this is not bad labels. They enter with a blank city input and only about 2,900 
 winter. That reads as distribution shift, not useful data: as extra rows they pull the network
 toward climates it is not scored on. Their rows after 2026-06-30, about 4,500 ladders never used
 by any test, remain a clean out-of-sample set for a future pre-registered test.
+
+## 22 · NBM's own spread in EMOS: pre-registration (2026-10-06)
+
+EMOS sets each forecast's sigma from the season alone. NBM publishes its own spread for the daily
+max (XND, cached since 2021 and unused). The variant lets sigma scale with it:
+log σ = γ·[1, cos t, sin t, log XND], refit monthly on strictly earlier days like every EMOS fit
+(`dataset.load(nbm_spread=True)`; the default path is unchanged and reproduces the cached
+features exactly). `emos_nbm_obs` inherits the new mean and sigma. Script: `scripts/nbm_spread.py`.
+
+**Gates.** Paired on identical rows, log score, 95% date-block bootstrap.
+- *Weather level:* EMOS-NBM with spread minus EMOS-NBM, on every ladder from 2023-07-01 to
+  2026-06-30. Pass if the CI is above zero at 3 or more of the 4 reads.
+- *Adoption:* the per-read isotherm MLP retrained on the spread inputs minus the current MLP, last
+  12 months before the lockbox. Pass at 3 or more of 4 reads with its market-label control within
+  ±0.005 of the market. Otherwise the inputs stay as they are.
+
+NBM v5 (2026-04-21) changes what XND means; with only ten weeks of v5 before the lockbox, the split
+is reported, not gated.
+
+## 23 · Unseen cities: pre-registration (2026-10-06)
+
+The twelve cities Kalshi added in January and February 2026 (§20) have rows after 2026-06-30
+that no test has scored: about 4,500 ladders. They test whether isotherm transfers to cities it
+has never seen, with no refitting. Script: `scripts/unseen_cities.py`, run once.
+
+**Frozen models**, fit as in the lockbox on the seven scored cities' highs before 2026-06-29
+(two-day embargo), per read: the market, pool · market+GFS, the isotherm MLP (five seeds) and
+transformer-L (five seeds). New cities enter with a blank city input. Their EMOS and climatology
+are fit on each city's own CLI history, monthly and causal, as everywhere else.
+
+**Test rows:** the twelve cities' settled ladders from 2026-07-01 to 2026-10-04, all four reads,
+rows where every source has a forecast.
+
+**Gates.**
+- *Primary:* isotherm minus the market, log score, CI above zero at 3 or more of the 4 reads:
+  isotherm transfers.
+- *Secondary:* the frozen strategy (pool · market+GFS, quarter Kelly, 16:00 taker; FINDINGS §9)
+  through the lockbox engine, judged by the lockbox rule: PASS if PnL > 0 and Newey-West t > 1.645.
+  Reported alongside: pool and transformer-L against the market, and results by city.
