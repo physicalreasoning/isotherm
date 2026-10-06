@@ -52,8 +52,13 @@ def main():
     lm = metrics.log_score(ls.probs["market"], ls.y)
     L = {k: metrics.log_score(m.predict(ls), ls.y) for k, m in models.items()}
     L.update({k: metrics.log_score(m.predict(lss), lss.y) for k, m in spread.items()})
+    P = {k: m.predict(ls) for k, m in models.items()}
+    P["isotherm-spread"] = spread["isotherm-spread"].predict(lss)
+    ens = (P["isotherm"] + P["transformer-L"] + P["isotherm-spread"]) / 3  # §29: equal weights, nothing fit
+    L["ensemble"] = metrics.log_score(ens, ls.y)
     diff = L["isotherm"] - L["transformer-L"]
     d2 = L["isotherm"] - L["isotherm-spread"]
+    d3 = L["isotherm"] - L["ensemble"]
     res = {
         "through": str(ls.meta["day"].max().date()),
         "ladders": len(ls),
@@ -67,6 +72,10 @@ def main():
             "diff": float(d2.mean()),
             "ci": metrics.date_bootstrap_mean(days, d2, 2000),
         },
+        "ensemble_minus_isotherm": {
+            "diff": float(d3.mean()),
+            "ci": metrics.date_bootstrap_mean(days, d3, 2000),
+        },
         "vs_market": {
             k: {"gain": float((lm - v).mean()), "ci": metrics.date_bootstrap_mean(days, lm - v, 2000)}
             for k, v in L.items()
@@ -75,6 +84,7 @@ def main():
     if res["complete"]:
         res["verdict"] = "PASS" if res["transformer_minus_isotherm"]["ci"][0] > 0 else "FAIL"
         res["secondary_verdict"] = "PASS" if res["spread_minus_isotherm"]["ci"][0] > 0 else "FAIL"
+        res["ensemble_verdict"] = "PASS" if res["ensemble_minus_isotherm"]["ci"][0] > 0 else "FAIL"
     pathlib.Path("results/forward_test.json").write_text(json.dumps(res, indent=2))
     print(json.dumps(res, indent=1))
 
