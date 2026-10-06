@@ -664,4 +664,4 @@ paper trades, Newey-West t 1.05. By month: Jul +$265, Aug +$2,032, Sep −$1,277
 The transformer transfers worse than the MLP (−0.011 at 08:00, CI excluding zero): the extra
 capacity fits the seven training cities more closely. Two readings of the null result: the
 twelve markets are newer and may be priced differently, and the model has no city input for them.
-The first matters for trading; the second suggests fitting per-city EMOS only, then pooling.
+Only the first matters for trading, and the data cannot yet tell them apart.

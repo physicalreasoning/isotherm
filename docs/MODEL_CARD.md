@@ -60,6 +60,9 @@ and noise with matched turnover loses. Full record: `FINDINGS.md` §8-10.
 | Result | +0.033 to +0.071 nats vs the market across read times; best calibrated model (debiased ECE 0.004 to 0.007); positive in every half-year |
 | Control | the same network trained on labels sampled from the market scores within ±0.002 of the market |
 | Architecture check | a transformer over the ladder's buckets, same inputs and training, lands within 0.004 of the MLP and fails its pre-registered gate (FINDINGS §16-17); the MLP is kept |
+| Scaling and data | an 8x larger transformer beats the MLP at 16:00 but fails its gate (§19); a learning curve shows it still improving with data while the MLP has flattened, and extra rows from lows or new cities hurt (§21) |
+| Generalisation | on twelve cities it never saw, isotherm is level with the market, no read clearing zero (§27) |
+| Open | transformer-L and an MLP on NBM-spread inputs are frozen in a sealed forward test, scored on 2026-10-07 to 2027-04-05 (§25) |
 
 ## Data
 

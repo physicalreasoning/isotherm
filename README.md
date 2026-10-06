@@ -48,7 +48,10 @@ ladder over the market; intervals are 95% date-block bootstraps [14].
 | Sealed test, highs (Jul to Oct 2026) | +$1,851, Newey-West *t* 1.77 [10]; monthly $1,029, $517, $246 |
 | Sealed test, lows (Sep to Oct 2026) | +$36 after a backtest with deflated Sharpe 0.98 |
 | MLB game winners | no edge, within ±0.001 of the market |
-| Transformer over buckets | within 0.004 of the MLP; fails its pre-registered gate, not adopted |
+| Transformer over buckets | 8x larger beats the MLP at 2 of 4 reads, fails its gate; still improving with more data |
+| NBM's own spread in EMOS | +0.04 to +0.05 for the forecast; isotherm +0.013 at 16:00, fails its 3-of-4 gate |
+| Twelve unseen cities (Jul to Oct 2026) | +0.001 to +0.006, no read clears zero; strategy +$1,549, *t* 1.05 |
+| Sealed forward test | transformer-L and NBM spread against the MLP, frozen 2026-10-06, scored 2027-04 |
 
 The edge was large in 2023 and has mostly decayed: the market now prices the National Blend of
 Models but still underweights GFS MOS. Every result, correction and negative finding is in
