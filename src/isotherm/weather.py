@@ -52,6 +52,27 @@ CITIES: Dict[str, City] = {
     ]
 }
 
+# Twelve more US cities, listed from January and February 2026 (FINDINGS §20). Kept apart from
+# CITIES so the model's city inputs, and every result keyed on them, stay as they were.
+NEW_CITIES: Dict[str, City] = {
+    c.key: c
+    for c in [
+        City("ATL", "KXHIGHTATL", "KATL", "America/New_York", -5),
+        City("BOS", "KXHIGHTBOS", "KBOS", "America/New_York", -5),
+        City("DAL", "KXHIGHTDAL", "KDFW", "America/Chicago", -6),
+        City("DC", "KXHIGHTDC", "KDCA", "America/New_York", -5),
+        City("LV", "KXHIGHTLV", "KLAS", "America/Los_Angeles", -8),
+        City("MIN", "KXHIGHTMIN", "KMSP", "America/Chicago", -6),
+        City("NOLA", "KXHIGHTNOLA", "KMSY", "America/Chicago", -6),
+        City("OKC", "KXHIGHTOKC", "KOKC", "America/Chicago", -6),
+        City("PHX", "KXHIGHTPHX", "KPHX", "America/Phoenix", -7),
+        City("SATX", "KXHIGHTSATX", "KSAT", "America/Chicago", -6),
+        City("SEA", "KXHIGHTSEA", "KSEA", "America/Los_Angeles", -8),
+        City("SFO", "KXHIGHTSFO", "KSFO", "America/Los_Angeles", -8),
+    ]
+}
+ALL_CITIES: Dict[str, City] = {**CITIES, **NEW_CITIES}
+
 # When a run is public, by model. GFS MOS hits the wire roughly 4h after its
 # nominal runtime; NBM text bulletins run hourly and post about 1h after. One
 # hour of margin on each: using a run before it was public is the classic
