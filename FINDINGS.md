@@ -554,3 +554,32 @@ rows where every source has a forecast.
 - *Secondary:* the frozen strategy (pool · market+GFS, quarter Kelly, 16:00 taker; FINDINGS §9)
   through the lockbox engine, judged by the lockbox rule: PASS if PnL > 0 and Newey-West t > 1.645.
   Reported alongside: pool and transformer-L against the market, and results by city.
+
+## 24 · Regime audit: the market got sharper; NBM v5 did not price out GFS (2026-10-06)
+
+`scripts/regime_audit.py`, descriptive, no gate. Raw: `results/regime_audit.json`. 16:00 day-before
+read, seven scored cities, by month from 2025-01. It uses months inside the lockbox, which was
+already scored, only to describe them.
+
+| | May to Sep 2025 | May to Sep 2026 |
+|---|---|---|
+| NBM point forecast MAE | 1.43 to 1.91°F | 1.60 to 1.83°F |
+| GFS MOS point forecast MAE | 1.75 to 2.24°F | 2.00 to 2.17°F |
+| Market log score | 1.30 to 1.37 | 1.14 to 1.22 |
+| EMOS-NBM log score | 1.36 to 1.56 | 1.39 to 1.56 |
+
+1. **NBM v5 (2026-04-21) did not make NBM visibly better at these stations.** Its summer 2026 error
+   is no lower than summer 2025's.
+2. **The market got about 0.15 nats sharper** in a year, while both public forecasts stood still.
+   Most of the decay in §6 and §15 is the crowd improving, not the forecasts.
+3. **The market now holds all of NBM.** In a 90-day trailing pool of market, NBM and GFS, NBM's
+   weight has sat at or below zero since 2026-01, against +0.16 to +0.26 through most of 2025.
+4. **GFS's weight is seasonal.** In the market+GFS pool it falls each winter and recovers each
+   summer: 0.27 to 0.38 from Jul to Oct 2025, 0.08 to 0.11 from Dec 2025 to Feb 2026, 0.26 to 0.38
+   from Apr to Aug 2026, then 0.19 in Sep and 0.11 in early Oct. The highs lockbox's falling
+   monthly PnL (Jul $1,029, Aug $517, Sep $246) tracks this autumn decline, so part of that
+   decay may be seasonal, not permanent. Expect a thin GFS edge through winter. Whether it returns
+   next summer is a forward question the shadow ledger can answer.
+
+Kalshi's `settle` field is blank for most of 2025-01, so forecast errors here are measured
+against the NWS CLI high. Labels come from `result` and are unaffected.
