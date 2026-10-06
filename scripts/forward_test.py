@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Score the sealed forward test (FINDINGS §25) on ladders that settled after the freeze.
 
-Refresh the panels first so the newest days exist, then score:
+Refresh the panels and trades first so the newest days exist, then score:
 
-    uv run scripts/build_weather_panel.py && uv run scripts/forward_test.py
+    uv run scripts/build_weather_panel.py && uv run scripts/fetch_trades.py --since 2026-10-06
+    uv run scripts/forward_test.py
 """
 
 from __future__ import annotations
@@ -42,6 +43,7 @@ def window(ls, read):
 def main():
     meta, models = frozen("")
     _, spread = frozen("_spread")
+    _, flow = frozen("_flow")
     ls = window(dataset.load(list(CITIES)), meta["read"])
     if not len(ls):
         print("no settled ladders after", START.date())
@@ -54,11 +56,16 @@ def main():
     L.update({k: metrics.log_score(m.predict(lss), lss.y) for k, m in spread.items()})
     P = {k: m.predict(ls) for k, m in models.items()}
     P["isotherm-spread"] = spread["isotherm-spread"].predict(lss)
+    from isotherm.flow import add_flow
+
+    add_flow(ls)
+    L["isotherm-flow"] = metrics.log_score(flow["isotherm-flow"].predict(ls), ls.y)
     ens = (P["isotherm"] + P["transformer-L"] + P["isotherm-spread"]) / 3  # §29: equal weights, nothing fit
     L["ensemble"] = metrics.log_score(ens, ls.y)
     diff = L["isotherm"] - L["transformer-L"]
     d2 = L["isotherm"] - L["isotherm-spread"]
     d3 = L["isotherm"] - L["ensemble"]
+    d4 = L["isotherm"] - L["isotherm-flow"]
     res = {
         "through": str(ls.meta["day"].max().date()),
         "ladders": len(ls),
@@ -76,6 +83,7 @@ def main():
             "diff": float(d3.mean()),
             "ci": metrics.date_bootstrap_mean(days, d3, 2000),
         },
+        "flow_minus_isotherm": {"diff": float(d4.mean()), "ci": metrics.date_bootstrap_mean(days, d4, 2000)},
         "vs_market": {
             k: {"gain": float((lm - v).mean()), "ci": metrics.date_bootstrap_mean(days, lm - v, 2000)}
             for k, v in L.items()
@@ -85,6 +93,7 @@ def main():
         res["verdict"] = "PASS" if res["transformer_minus_isotherm"]["ci"][0] > 0 else "FAIL"
         res["secondary_verdict"] = "PASS" if res["spread_minus_isotherm"]["ci"][0] > 0 else "FAIL"
         res["ensemble_verdict"] = "PASS" if res["ensemble_minus_isotherm"]["ci"][0] > 0 else "FAIL"
+        res["flow_verdict"] = "PASS" if res["flow_minus_isotherm"]["ci"][0] > 0 else "FAIL"
     pathlib.Path("results/forward_test.json").write_text(json.dumps(res, indent=2))
     print(json.dumps(res, indent=1))
 

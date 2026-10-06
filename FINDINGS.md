@@ -692,3 +692,32 @@ day before. Same window (2026-10-07 to 2027-04-05), same rule: PASS if ensemble 
 a 95% date-block CI above zero. The two-way mean of transformer-L and the spread MLP scored
 higher in §28, but choosing it would be selection on the result; the three-way mean is the
 pre-registered arm.
+
+## 30 · Exploration: order flow helps, momentum does not (2026-10-06)
+
+`scripts/explore_dynamics.py`, `src/isotherm/flow.py`. Raw: `results/explore_dynamics.json`.
+**Exploratory.** Extra bucket inputs for the per-read MLP, everything else unchanged:
+*momentum*, the change in the market's log-odds since the previous read and since 16:00 the day
+before; *flow*, the net taker-YES share and log volume of each bucket's trades in the three hours
+before the read (timestamps strictly before it). Each minus the MLP, last 12 months:
+
+| Read | + momentum | + flow | + both |
+|---|---|---|---|
+| 08:00 | −0.0018 [−0.0044, +0.0009] | **+0.0049 [+0.0016, +0.0083]** | +0.0037 [+0.0006, +0.0069] |
+| 12:00 | +0.0002 [−0.0031, +0.0035] | +0.0018 [−0.0020, +0.0055] | +0.0012 [−0.0020, +0.0044] |
+| 14:00 | −0.0007 [−0.0020, +0.0006] | +0.0004 [−0.0011, +0.0021] | −0.0005 [−0.0026, +0.0015] |
+| 16:00 day before | −0.0006 [−0.0017, +0.0004] | **+0.0057 [+0.0020, +0.0095]** | +0.0049 [+0.0012, +0.0090] |
+
+The market's own price history adds nothing: the current price already holds it. Who has been
+crossing the spread does add something, before the day starts, when no observation exists and
+the crowd's recent direction is the freshest information. Once the day's observations arrive
+(12:00, 14:00) it fades. Found by looking, so not adopted; it joins the forward test (§31).
+
+## 31 · Forward test: the order-flow MLP (pre-registration, 2026-10-06)
+
+Added to §25 before any test-window outcome exists. The per-read MLP with the two flow inputs
+(§30), fit like the §25 models on all settled 16:00 day-before ladders through 2026-10-04, five
+seeds: `shadow/forward/models_flow.pkl`, sha256 `e84ca72deeef511b…`. Same window (2026-10-07 to
+2027-04-05) and rule: PASS if flow MLP minus the MLP has a 95% date-block CI above zero. Scoring
+needs trades for the window (`scripts/fetch_trades.py`), filtered to before each read as in
+training.
