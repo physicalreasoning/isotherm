@@ -721,3 +721,37 @@ seeds: `shadow/forward/models_flow.pkl`, sha256 `e84ca72deeef511b…`. Same wind
 2027-04-05) and rule: PASS if flow MLP minus the MLP has a 95% date-block CI above zero. Scoring
 needs trades for the window (`scripts/fetch_trades.py`), filtered to before each read as in
 training.
+
+## 32 · Station corpus: fetch in progress (2026-10-06)
+
+`scripts/fetch_station_corpus.py`. Every NWS climate-report site in the lower 48 that IEM lists
+(598), with CLI highs and lows, GFS MOS and NBM for 2021 onward: about 1.3 million station-days
+of real forecasts and outcomes, no market. It feeds a multi-station distributional weather model
+that would replace EMOS as isotherm's forecast input. The download runs at one IEM request every
+3 s, about 11 hours.
+
+## 33 · Exploration: LAMP is the better forecast and adds nothing to isotherm (2026-10-06)
+
+`scripts/fetch_lamp.py`, `scripts/explore_lamp.py`, `src/isotherm/lamp.py`. Raw:
+`results/explore_lamp.json`, `results/explore_lamp_model.json`. **Exploratory.**
+
+At each same-day read, the higher of the high already observed and the latest public LAMP run's
+max over the rest of the climate day estimates the final high. Against the NWS CLI high,
+2023-07 to 2026-06, seven cities:
+
+| Read | NBM rest-of-day estimate, MAE | LAMP estimate, MAE | error correlation |
+|---|---|---|---|
+| 08:00 | 2.29°F | 1.82°F | 0.76 |
+| 12:00 | 1.84°F | 1.52°F | 0.77 |
+| 14:00 | 1.14°F | 0.98°F | 0.79 |
+
+LAMP's estimate is 14 to 21% more accurate than the NBM one the model already uses, and its errors
+are only partly shared. As two extra bucket inputs to the per-read MLP it is worth +0.0005 to
++0.0008 nats over the last 12 months, no CI excluding zero; with order flow, +0.0014 to +0.0017,
+also inside the noise. The 16:00 day-before read, where LAMP inputs are blank, moves by −0.0006:
+that is the size of seed noise alone.
+
+A better public forecast that the market already watches does not help. Traders follow LAMP and
+the live observations; by the read, the price holds what LAMP knows. Of everything tried, only
+the channels the crowd cannot simply read off a public page (NBM's spread, how the order flow
+leans) have added anything.
