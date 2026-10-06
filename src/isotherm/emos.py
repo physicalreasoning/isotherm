@@ -5,6 +5,7 @@
   EMOS         Xμ = [1, fcst]                          (Gneiting et al. 2005)
   climatology  Xμ = [1, cos t, sin t, cos 2t, sin 2t]   no forecast at all
   both         Xσ = [1, cos t, sin t]                   seasonal spread
+  EMOS+spread  Xσ = [1, cos t, sin t, log s]            the forecast's own spread s (NBM XND)
 
 Highs are integers, so the likelihood of an observation is the mass of
 [h-0.5, h+0.5), not a density. Seasonal spread matters: a 3°F miss is routine
@@ -37,16 +38,22 @@ class GaussianModel:
     kind: str  # "emos" | "climatology"
     beta: np.ndarray
     gamma: np.ndarray
+    spread: bool = False  # sigma also scales with the forecast's own spread
+    s_fill: float = 3.0  # spread used where the forecast carries none
 
-    def design(self, fcst, doy):
+    def design(self, fcst, doy, spread=None):
         if self.kind == "emos":
             xm = np.stack([np.ones(len(np.atleast_1d(doy))), np.atleast_1d(fcst)], 1)
         else:
             xm = _season(np.atleast_1d(doy), 2)
-        return xm, _season(np.atleast_1d(doy), 1)
+        xs = _season(np.atleast_1d(doy), 1)
+        if self.spread:
+            sp = np.atleast_1d(np.asarray(spread, float)) if spread is not None else np.full(len(xs), np.nan)
+            xs = np.column_stack([xs, np.log(np.maximum(np.where(np.isfinite(sp), sp, self.s_fill), 0.5))])
+        return xm, xs
 
-    def params(self, fcst, doy):
-        xm, xs = self.design(fcst, doy)
+    def params(self, fcst, doy, spread=None):
+        xm, xs = self.design(fcst, doy, spread)
         return xm @ self.beta, np.exp(xs @ self.gamma)
 
 
@@ -68,12 +75,19 @@ def _fit(kind, xm, xs, high) -> GaussianModel:
     return GaussianModel(kind, r.x[: xm.shape[1]], r.x[xm.shape[1] :])
 
 
-def fit_emos(fcst, high, doy) -> GaussianModel:
+def fit_emos(fcst, high, doy, spread=None) -> GaussianModel:
     fcst, high, doy = (np.asarray(x, float) for x in (fcst, high, doy))
     ok = np.isfinite(fcst) & np.isfinite(high)
-    m = GaussianModel("emos", None, None)
-    xm, xs = m.design(fcst[ok], doy[ok])
-    return _fit("emos", xm, xs, high[ok])
+    if spread is None:
+        m = GaussianModel("emos", None, None)
+        xm, xs = m.design(fcst[ok], doy[ok])
+        return _fit("emos", xm, xs, high[ok])
+    spread = np.asarray(spread, float)
+    fill = float(np.nanmedian(spread[ok])) if np.isfinite(spread[ok]).any() else 3.0
+    m = GaussianModel("emos", None, None, spread=True, s_fill=fill)
+    xm, xs = m.design(fcst[ok], doy[ok], spread[ok])
+    f = _fit("emos", xm, xs, high[ok])
+    return GaussianModel("emos", f.beta, f.gamma, spread=True, s_fill=fill)
 
 
 def fit_climatology(high, doy) -> GaussianModel:
@@ -89,14 +103,17 @@ def interval_probs(mu, sigma, lo, hi):
 
 
 def daytime_max_table(
-    mos: pd.DataFrame, value_col: str = "n_x", lag: pd.Timedelta = MOS_AVAILABILITY_LAG
+    mos: pd.DataFrame, value_col: str = "n_x", lag: pd.Timedelta = MOS_AVAILABILITY_LAG, extra=()
 ) -> pd.DataFrame:
-    """MOS rows that carry the daytime max for local day `target`, with public time."""
+    """MOS rows that carry the daytime max for local day `target`, with public time.
+
+    `extra` columns from the same rows (e.g. NBM's spread `xnd`) ride along unchanged.
+    """
     m = mos[mos[value_col].notna() & (mos["ftime"].dt.hour == 0)].copy()
     m["target"] = (m["ftime"] - pd.Timedelta(days=1)).dt.tz_localize(None).dt.normalize()
     m["public"] = m["runtime"] + lag
     m = m.rename(columns={value_col: "fcst"})
-    return m[["target", "runtime", "public", "fcst"]].sort_values("public")
+    return m[["target", "runtime", "public", "fcst", *extra]].sort_values("public")
 
 
 def forecast_at(table: pd.DataFrame, queries: pd.DataFrame) -> pd.DataFrame:
@@ -110,4 +127,5 @@ def forecast_at(table: pd.DataFrame, queries: pd.DataFrame) -> pd.DataFrame:
     out = pd.merge_asof(q, table, left_on="read_time", right_on="public", by="target", direction="backward")
     lead = out["target"].dt.tz_localize("UTC") + pd.Timedelta(days=1) - out["runtime"]
     out["lead_h"] = lead.dt.total_seconds() / 3600
-    return out.set_index("index").sort_index()[["fcst", "runtime", "lead_h"]]
+    extra = [c for c in table.columns if c not in ("target", "runtime", "public", "fcst")]
+    return out.set_index("index").sort_index()[["fcst", "runtime", "lead_h", *extra]]

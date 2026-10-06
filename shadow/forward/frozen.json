@@ -1,0 +1,16 @@
+{
+  "read": "d1_16",
+  "cities": [
+    "NY",
+    "CHI",
+    "MIA",
+    "AUS",
+    "LAX",
+    "DEN",
+    "PHIL"
+  ],
+  "fit_through": "2026-10-04",
+  "ladders": 7692,
+  "torch": "2.14.1",
+  "sha256": "c0f109a0bf8a2555a0578a5041393703afd61ee12bac9b55396ec5e4a22238a3"
+}

@@ -515,3 +515,153 @@ this is not bad labels. They enter with a blank city input and only about 2,900 
 winter. That reads as distribution shift, not useful data: as extra rows they pull the network
 toward climates it is not scored on. Their rows after 2026-06-30, about 4,500 ladders never used
 by any test, remain a clean out-of-sample set for a future pre-registered test.
+
+## 22 · NBM's own spread in EMOS: pre-registration (2026-10-06)
+
+EMOS sets each forecast's sigma from the season alone. NBM publishes its own spread for the daily
+max (XND, cached since 2021 and unused). The variant lets sigma scale with it:
+log σ = γ·[1, cos t, sin t, log XND], refit monthly on strictly earlier days like every EMOS fit
+(`dataset.load(nbm_spread=True)`; the default path is unchanged and reproduces the cached
+features exactly). `emos_nbm_obs` inherits the new mean and sigma. Script: `scripts/nbm_spread.py`.
+
+**Gates.** Paired on identical rows, log score, 95% date-block bootstrap.
+- *Weather level:* EMOS-NBM with spread minus EMOS-NBM, on every ladder from 2023-07-01 to
+  2026-06-30. Pass if the CI is above zero at 3 or more of the 4 reads.
+- *Adoption:* the per-read isotherm MLP retrained on the spread inputs minus the current MLP, last
+  12 months before the lockbox. Pass at 3 or more of 4 reads with its market-label control within
+  ±0.005 of the market. Otherwise the inputs stay as they are.
+
+NBM v5 (2026-04-21) changes what XND means; with only ten weeks of v5 before the lockbox, the split
+is reported, not gated.
+
+## 23 · Unseen cities: pre-registration (2026-10-06)
+
+The twelve cities Kalshi added in January and February 2026 (§20) have rows after 2026-06-30
+that no test has scored: about 4,500 ladders. They test whether isotherm transfers to cities it
+has never seen, with no refitting. Script: `scripts/unseen_cities.py`, run once.
+
+**Frozen models**, fit as in the lockbox on the seven scored cities' highs before 2026-06-29
+(two-day embargo), per read: the market, pool · market+GFS, the isotherm MLP (five seeds) and
+transformer-L (five seeds). New cities enter with a blank city input. Their EMOS and climatology
+are fit on each city's own CLI history, monthly and causal, as everywhere else.
+
+**Test rows:** the twelve cities' settled ladders from 2026-07-01 to 2026-10-04, all four reads,
+rows where every source has a forecast.
+
+**Gates.**
+- *Primary:* isotherm minus the market, log score, CI above zero at 3 or more of the 4 reads:
+  isotherm transfers.
+- *Secondary:* the frozen strategy (pool · market+GFS, quarter Kelly, 16:00 taker; FINDINGS §9)
+  through the lockbox engine, judged by the lockbox rule: PASS if PnL > 0 and Newey-West t > 1.645.
+  Reported alongside: pool and transformer-L against the market, and results by city.
+
+## 24 · Regime audit: the market got sharper; NBM v5 did not price out GFS (2026-10-06)
+
+`scripts/regime_audit.py`, descriptive, no gate. Raw: `results/regime_audit.json`. 16:00 day-before
+read, seven scored cities, by month from 2025-01. It uses months inside the lockbox, which was
+already scored, only to describe them.
+
+| | May to Sep 2025 | May to Sep 2026 |
+|---|---|---|
+| NBM point forecast MAE | 1.43 to 1.91°F | 1.60 to 1.83°F |
+| GFS MOS point forecast MAE | 1.75 to 2.24°F | 2.00 to 2.17°F |
+| Market log score | 1.30 to 1.37 | 1.14 to 1.22 |
+| EMOS-NBM log score | 1.36 to 1.56 | 1.39 to 1.56 |
+
+1. **NBM v5 (2026-04-21) did not make NBM visibly better at these stations.** Its summer 2026 error
+   is no lower than summer 2025's.
+2. **The market got about 0.15 nats sharper** in a year, while both public forecasts stood still.
+   Most of the decay in §6 and §15 is the crowd improving, not the forecasts.
+3. **The market now holds all of NBM.** In a 90-day trailing pool of market, NBM and GFS, NBM's
+   weight has sat at or below zero since 2026-01, against +0.16 to +0.26 through most of 2025.
+4. **GFS's weight is seasonal.** In the market+GFS pool it falls each winter and recovers each
+   summer: 0.27 to 0.38 from Jul to Oct 2025, 0.08 to 0.11 from Dec 2025 to Feb 2026, 0.26 to 0.38
+   from Apr to Aug 2026, then 0.19 in Sep and 0.11 in early Oct. The highs lockbox's falling
+   monthly PnL (Jul $1,029, Aug $517, Sep $246) tracks this autumn decline, so part of that
+   decay may be seasonal, not permanent. Expect a thin GFS edge through winter. Whether it returns
+   next summer is a forward question the shadow ledger can answer.
+
+Kalshi's `settle` field is blank for most of 2025-01, so forecast errors here are measured
+against the NWS CLI high. Labels come from `result` and are unaffected.
+
+## 25 · Sealed forward test: transformer-L against the MLP (pre-registration, 2026-10-06)
+
+The backtest rows are used up: §17, §19 and §21 all looked at them. The question of whether the
+transformer is better now goes to days that had not happened when this was written.
+
+**Frozen** (`scripts/forward_freeze.py`, committed with this section before 20:00 UTC on
+2026-10-06, the 16:00 ET read for 2026-10-07): the per-read MLP and transformer-L at 16:00 day
+before, five seeds each, fit on all 7,692 settled ladders of the seven scored cities through
+2026-10-04. `shadow/forward/models.pkl`, sha256 `c0f109a0bf8a2555…` (full hash in
+`shadow/forward/frozen.json`, checked on load). Nothing is refit.
+
+**Test window:** ladders for 2026-10-07 to 2027-04-05 at 16:00 day before, seven cities, built
+afterwards by the same point-in-time panel builder from candles that closed before the read
+(`scripts/forward_test.py`).
+
+**Primary gate:** transformer-L minus the MLP, log score, 95% date-block CI, on the full window.
+PASS if the CI is above zero; then transformer-L replaces the MLP at 16:00. Looks before
+2027-04-05 are descriptive only.
+
+**Secondary:** the MLP on NBM-spread inputs (§22) minus the MLP, same window and rule
+(`models_spread.pkl`, sha256 `af83b5f31a7b1095…`). Each model against the market is reported.
+
+## 26 · NBM's own spread: a large gain for EMOS, adoption fails 2 of 4 (2026-10-06)
+
+`scripts/nbm_spread.py` against §22 (pre-registered in commit 09207d3). Raw:
+`results/nbm_spread.json`.
+
+**Weather level: passes at every read.** EMOS-NBM with spread minus EMOS-NBM, every ladder from
+2023-07 to 2026-06:
+
+| Read | EMOS-NBM | EMOS-NBM after v5 | EMOS-NBM-obs |
+|---|---|---|---|
+| 08:00 | +0.050 [+0.042, +0.058] | +0.038 [+0.012, +0.066] | +0.048 [+0.041, +0.056] |
+| 12:00 | +0.050 [+0.042, +0.058] | +0.040 [+0.013, +0.069] | +0.043 [+0.036, +0.050] |
+| 14:00 | +0.050 [+0.042, +0.058] | +0.040 [+0.013, +0.069] | +0.035 [+0.028, +0.042] |
+| 16:00 day before | +0.043 [+0.035, +0.050] | +0.042 [+0.017, +0.067] | +0.043 [+0.035, +0.050] |
+
+Letting sigma follow NBM's own spread is worth 0.04 to 0.05 nats per ladder to the forecast
+itself, the largest single improvement to any input in this project. It holds after NBM v5.
+
+**Adoption: fails.** The MLP retrained on the spread inputs minus the current MLP, last 12 months:
+
+| Read | Difference | CI | MLP vs market, before → after |
+|---|---|---|---|
+| 08:00 | +0.0034 | [+0.0000, +0.0067] | +0.009 → +0.013 |
+| 12:00 | +0.0017 | [−0.0007, +0.0041] | +0.010 → +0.011 |
+| 14:00 | +0.0016 | [−0.0006, +0.0040] | +0.017 → +0.019 |
+| 16:00 day before | **+0.0133** | **[+0.0074, +0.0185]** | **+0.014 → +0.028** |
+
+Two reads of four clear zero against three required (08:00 by a hair), so the inputs stay as
+they are. Controls sit within ±0.001 of the market. Most of the forecast's 0.05 nats was already
+recovered by the MLP from the market and the other inputs; what is left is small at the same-day
+reads, where observations dominate, and large the day before, where the forecast is all there is.
+At 16:00 the spread nearly doubles isotherm's gain over the market. Picking that read now would
+be selection after the fact, so it goes into the forward test as the secondary arm (§25).
+
+## 27 · Unseen cities: isotherm does not clearly transfer (2026-10-06)
+
+`scripts/unseen_cities.py` against §23, run once. Raw: `results/unseen_cities.json`. Models
+frozen on the seven scored cities, scored on 4,588 ladders from the twelve new cities, 2026-07-01
+to 2026-10-04.
+
+| Read | isotherm vs market | pool · market+GFS | transformer-L |
+|---|---|---|---|
+| 08:00 | +0.0008 [−0.0043, +0.0061] | −0.0140 [−0.0271, −0.0012] | −0.0105 [−0.0216, +0.0014] |
+| 12:00 | +0.0033 [−0.0020, +0.0085] | +0.0015 [−0.0068, +0.0095] | +0.0047 [−0.0050, +0.0142] |
+| 14:00 | +0.0059 [−0.0012, +0.0132] | +0.0105 [+0.0004, +0.0206] | +0.0064 [−0.0001, +0.0131] |
+| 16:00 day before | +0.0034 [−0.0081, +0.0145] | +0.0061 [−0.0063, +0.0182] | −0.0022 [−0.0178, +0.0129] |
+
+**Primary: fails, 0 of 4.** Every point estimate for isotherm is positive, but none clears zero.
+On cities it has never seen, isotherm is roughly as good as the market and no better that we can
+detect.
+
+**Secondary: the frozen strategy is consistent but underpowered.** +$1,549 over 96 days and 3,149
+paper trades, Newey-West t 1.05. By month: Jul +$265, Aug +$2,032, Sep −$1,277, Oct (4 days)
++$529. By city it is split: LV +$1,072, NOLA +$659, BOS +$438, DAL −$884, ATL −$429, OKC −$403.
+
+The transformer transfers worse than the MLP (−0.011 at 08:00, CI excluding zero): the extra
+capacity fits the seven training cities more closely. Two readings of the null result: the
+twelve markets are newer and may be priced differently, and the model has no city input for them.
+Only the first matters for trading, and the data cannot yet tell them apart.
