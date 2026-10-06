@@ -605,3 +605,63 @@ PASS if the CI is above zero; then transformer-L replaces the MLP at 16:00. Look
 
 **Secondary:** the MLP on NBM-spread inputs (§22) minus the MLP, same window and rule
 (`models_spread.pkl`, sha256 `af83b5f31a7b1095…`). Each model against the market is reported.
+
+## 26 · NBM's own spread: a large gain for EMOS, adoption fails 2 of 4 (2026-10-06)
+
+`scripts/nbm_spread.py` against §22 (pre-registered in commit 09207d3). Raw:
+`results/nbm_spread.json`.
+
+**Weather level: passes at every read.** EMOS-NBM with spread minus EMOS-NBM, every ladder from
+2023-07 to 2026-06:
+
+| Read | EMOS-NBM | EMOS-NBM after v5 | EMOS-NBM-obs |
+|---|---|---|---|
+| 08:00 | +0.050 [+0.042, +0.058] | +0.038 [+0.012, +0.066] | +0.048 [+0.041, +0.056] |
+| 12:00 | +0.050 [+0.042, +0.058] | +0.040 [+0.013, +0.069] | +0.043 [+0.036, +0.050] |
+| 14:00 | +0.050 [+0.042, +0.058] | +0.040 [+0.013, +0.069] | +0.035 [+0.028, +0.042] |
+| 16:00 day before | +0.043 [+0.035, +0.050] | +0.042 [+0.017, +0.067] | +0.043 [+0.035, +0.050] |
+
+Letting sigma follow NBM's own spread is worth 0.04 to 0.05 nats per ladder to the forecast
+itself, the largest single improvement to any input in this project. It holds after NBM v5.
+
+**Adoption: fails.** The MLP retrained on the spread inputs minus the current MLP, last 12 months:
+
+| Read | Difference | CI | MLP vs market, before → after |
+|---|---|---|---|
+| 08:00 | +0.0034 | [+0.0000, +0.0067] | +0.009 → +0.013 |
+| 12:00 | +0.0017 | [−0.0007, +0.0041] | +0.010 → +0.011 |
+| 14:00 | +0.0016 | [−0.0006, +0.0040] | +0.017 → +0.019 |
+| 16:00 day before | **+0.0133** | **[+0.0074, +0.0185]** | **+0.014 → +0.028** |
+
+Two reads of four clear zero against three required (08:00 by a hair), so the inputs stay as
+they are. Controls sit within ±0.001 of the market. Most of the forecast's 0.05 nats was already
+recovered by the MLP from the market and the other inputs; what is left is small at the same-day
+reads, where observations dominate, and large the day before, where the forecast is all there is.
+At 16:00 the spread nearly doubles isotherm's gain over the market. Picking that read now would
+be selection after the fact, so it goes into the forward test as the secondary arm (§25).
+
+## 27 · Unseen cities: isotherm does not clearly transfer (2026-10-06)
+
+`scripts/unseen_cities.py` against §23, run once. Raw: `results/unseen_cities.json`. Models
+frozen on the seven scored cities, scored on 4,588 ladders from the twelve new cities, 2026-07-01
+to 2026-10-04.
+
+| Read | isotherm vs market | pool · market+GFS | transformer-L |
+|---|---|---|---|
+| 08:00 | +0.0008 [−0.0043, +0.0061] | −0.0140 [−0.0271, −0.0012] | −0.0105 [−0.0216, +0.0014] |
+| 12:00 | +0.0033 [−0.0020, +0.0085] | +0.0015 [−0.0068, +0.0095] | +0.0047 [−0.0050, +0.0142] |
+| 14:00 | +0.0059 [−0.0012, +0.0132] | +0.0105 [+0.0004, +0.0206] | +0.0064 [−0.0001, +0.0131] |
+| 16:00 day before | +0.0034 [−0.0081, +0.0145] | +0.0061 [−0.0063, +0.0182] | −0.0022 [−0.0178, +0.0129] |
+
+**Primary: fails, 0 of 4.** Every point estimate for isotherm is positive, but none clears zero.
+On cities it has never seen, isotherm is roughly as good as the market and no better that we can
+detect.
+
+**Secondary: the frozen strategy is consistent but underpowered.** +$1,549 over 96 days and 3,149
+paper trades, Newey-West t 1.05. By month: Jul +$265, Aug +$2,032, Sep −$1,277, Oct (4 days)
++$529. By city it is split: LV +$1,072, NOLA +$659, BOS +$438, DAL −$884, ATL −$429, OKC −$403.
+
+The transformer transfers worse than the MLP (−0.011 at 08:00, CI excluding zero): the extra
+capacity fits the seven training cities more closely. Two readings of the null result: the
+twelve markets are newer and may be priced differently, and the model has no city input for them.
+The first matters for trading; the second suggests fitting per-city EMOS only, then pooling.
