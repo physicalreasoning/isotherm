@@ -259,8 +259,9 @@ class _BucketTransformer(nn.Module):
 class IsothermTransformer(IsothermNet):
     """isotherm with the per-bucket MLP replaced by a bucket transformer (FINDINGS §16)."""
 
-    def __init__(self, name="isotherm · transformer", lr=1e-3, **kw):
+    def __init__(self, name="isotherm · transformer", lr=1e-3, d=64, layers=2, ff=128, **kw):
         super().__init__(name=name, lr=lr, **kw)
+        self.d, self.layers, self.ff = d, layers, ff
 
     def _init_net(self, f, cdim, s, seed):
-        return _BucketTransformer(f, cdim, s)
+        return _BucketTransformer(f, cdim, s, d=self.d, layers=self.layers, ff=self.ff)
