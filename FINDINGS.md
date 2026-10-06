@@ -753,5 +753,5 @@ that is the size of seed noise alone.
 
 A better public forecast that the market already watches does not help. Traders follow LAMP and
 the live observations; by the read, the price holds what LAMP knows. Of everything tried, only
-the channels the crowd cannot simply read off a public page (NBM's spread, how the order flow
-leans) have added anything.
+inputs that take work to use have added anything: NBM's spread is public but buried in text
+bulletins, and the lean of the order flow has to be computed from the tape.
