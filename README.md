@@ -51,7 +51,7 @@ ladder over the market; intervals are 95% date-block bootstraps [14].
 | Transformer over buckets | 8x larger beats the MLP at 2 of 4 reads, fails its gate; still improving with more data |
 | NBM's own spread in EMOS | +0.04 to +0.05 for the forecast; isotherm +0.013 at 16:00, fails its 3-of-4 gate |
 | Twelve unseen cities (Jul to Oct 2026) | +0.001 to +0.006, no read clears zero; strategy +$1,549, *t* 1.05 |
-| Sealed forward test | transformer-L and NBM spread against the MLP, frozen 2026-10-06, scored 2027-04 |
+| Sealed forward test | transformer-L, NBM spread, order flow and a three-way ensemble against the MLP, frozen 2026-10-06, scored 2027-04 |
 
 The edge was large in 2023 and has mostly decayed: the market now prices the National Blend of
 Models but still underweights GFS MOS. Every result, correction and negative finding is in

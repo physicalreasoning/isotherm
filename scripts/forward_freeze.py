@@ -34,18 +34,25 @@ def main():
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--spread", action="store_true")
+    ap.add_argument("--flow", action="store_true", help="the order-flow MLP (§31)")
     a = ap.parse_args()
     ls = dataset.load(list(CITIES), nbm_spread=a.spread)
+    if a.flow:
+        from isotherm.flow import FLOW, DynamicsNet, add_flow
+
+        add_flow(ls)
     ls = ls.take(np.flatnonzero((ls.meta["read"] == READ).to_numpy()))
     ls = ls.complete(["market", "emos_gfs", "emos_nbm", "emos_nbm_obs", "climatology"])
-    if a.spread:
+    if a.flow:
+        models = {"isotherm-flow": DynamicsNet("isotherm + flow", FLOW)}
+    elif a.spread:
         models = {"isotherm-spread": IsothermNet("isotherm · NBM spread")}
     else:
         models = {
             "isotherm": IsothermNet("isotherm"),
             "transformer-L": IsothermTransformer("isotherm · transformer-L", d=128, layers=4, ff=256),
         }
-    tag = "_spread" if a.spread else ""
+    tag = "_flow" if a.flow else "_spread" if a.spread else ""
     for name, m in models.items():
         m.fit(ls)
         print(name, "fit on", len(ls), "ladders", flush=True)

@@ -665,3 +665,59 @@ The transformer transfers worse than the MLP (−0.011 at 08:00, CI excluding ze
 capacity fits the seven training cities more closely. Two readings of the null result: the
 twelve markets are newer and may be priced differently, and the model has no city input for them.
 Only the first matters for trading, and the data cannot yet tell them apart.
+
+## 28 · Exploration: equal-weight ensembles beat the MLP at every read (2026-10-06)
+
+`scripts/explore_ensemble.py`. Raw: `results/explore_ensemble.json`. **Exploratory**: five
+combinations of cached walk-forward predictions, chosen after §19 and §26 were seen, on rows
+already used many times. Equal weights, nothing fit. Each minus the MLP, last 12 months:
+
+| Read | mean(MLP, transformer-L, spread MLP) | mean(transformer-L, spread MLP) |
+|---|---|---|
+| 08:00 | +0.0071 [+0.0047, +0.0096] | +0.0093 [+0.0058, +0.0129] |
+| 12:00 | +0.0023 [+0.0010, +0.0036] | +0.0030 [+0.0011, +0.0050] |
+| 14:00 | +0.0019 [+0.0006, +0.0033] | +0.0025 [+0.0005, +0.0044] |
+| 16:00 day before | +0.0103 [+0.0078, +0.0128] | +0.0141 [+0.0103, +0.0177] |
+
+The first variant in this project to clear zero at all four reads. Averaging members that err
+differently narrows the intervals: neither the transformer nor the spread MLP clears zero alone
+at noon or 14:00, but their mean does. Geometric means score within 0.0004 of arithmetic ones.
+Because this was found by looking, it is not adopted; it goes to the forward test (§29).
+
+## 29 · Forward test: the three-way ensemble (pre-registration, 2026-10-06)
+
+Added to §25 before any test-window outcome exists. Its three members are the models already
+frozen and hashed in §25, so nothing new is fit: the ensemble is their arithmetic mean at 16:00
+day before. Same window (2026-10-07 to 2027-04-05), same rule: PASS if ensemble minus the MLP has
+a 95% date-block CI above zero. The two-way mean of transformer-L and the spread MLP scored
+higher in §28, but choosing it would be selection on the result; the three-way mean is the
+pre-registered arm.
+
+## 30 · Exploration: order flow helps, momentum does not (2026-10-06)
+
+`scripts/explore_dynamics.py`, `src/isotherm/flow.py`. Raw: `results/explore_dynamics.json`.
+**Exploratory.** Extra bucket inputs for the per-read MLP, everything else unchanged:
+*momentum*, the change in the market's log-odds since the previous read and since 16:00 the day
+before; *flow*, the net taker-YES share and log volume of each bucket's trades in the three hours
+before the read (timestamps strictly before it). Each minus the MLP, last 12 months:
+
+| Read | + momentum | + flow | + both |
+|---|---|---|---|
+| 08:00 | −0.0018 [−0.0044, +0.0009] | **+0.0049 [+0.0016, +0.0083]** | +0.0037 [+0.0006, +0.0069] |
+| 12:00 | +0.0002 [−0.0031, +0.0035] | +0.0018 [−0.0020, +0.0055] | +0.0012 [−0.0020, +0.0044] |
+| 14:00 | −0.0007 [−0.0020, +0.0006] | +0.0004 [−0.0011, +0.0021] | −0.0005 [−0.0026, +0.0015] |
+| 16:00 day before | −0.0006 [−0.0017, +0.0004] | **+0.0057 [+0.0020, +0.0095]** | +0.0049 [+0.0012, +0.0090] |
+
+The market's own price history adds nothing: the current price already holds it. Who has been
+crossing the spread does add something, before the day starts, when no observation exists and
+the crowd's recent direction is the freshest information. Once the day's observations arrive
+(12:00, 14:00) it fades. Found by looking, so not adopted; it joins the forward test (§31).
+
+## 31 · Forward test: the order-flow MLP (pre-registration, 2026-10-06)
+
+Added to §25 before any test-window outcome exists. The per-read MLP with the two flow inputs
+(§30), fit like the §25 models on all settled 16:00 day-before ladders through 2026-10-04, five
+seeds: `shadow/forward/models_flow.pkl`, sha256 `e84ca72deeef511b…`. Same window (2026-10-07 to
+2027-04-05) and rule: PASS if flow MLP minus the MLP has a 95% date-block CI above zero. Scoring
+needs trades for the window (`scripts/fetch_trades.py`), filtered to before each read as in
+training.
