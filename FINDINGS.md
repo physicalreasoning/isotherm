@@ -583,3 +583,25 @@ already scored, only to describe them.
 
 Kalshi's `settle` field is blank for most of 2025-01, so forecast errors here are measured
 against the NWS CLI high. Labels come from `result` and are unaffected.
+
+## 25 · Sealed forward test: transformer-L against the MLP (pre-registration, 2026-10-06)
+
+The backtest rows are used up: §17, §19 and §21 all looked at them. The question of whether the
+transformer is better now goes to days that had not happened when this was written.
+
+**Frozen** (`scripts/forward_freeze.py`, committed with this section before 20:00 UTC on
+2026-10-06, the 16:00 ET read for 2026-10-07): the per-read MLP and transformer-L at 16:00 day
+before, five seeds each, fit on all 7,692 settled ladders of the seven scored cities through
+2026-10-04. `shadow/forward/models.pkl`, sha256 `c0f109a0bf8a2555…` (full hash in
+`shadow/forward/frozen.json`, checked on load). Nothing is refit.
+
+**Test window:** ladders for 2026-10-07 to 2027-04-05 at 16:00 day before, seven cities, built
+afterwards by the same point-in-time panel builder from candles that closed before the read
+(`scripts/forward_test.py`).
+
+**Primary gate:** transformer-L minus the MLP, log score, 95% date-block CI, on the full window.
+PASS if the CI is above zero; then transformer-L replaces the MLP at 16:00. Looks before
+2027-04-05 are descriptive only.
+
+**Secondary:** the MLP on NBM-spread inputs (§22) minus the MLP, same window and rule
+(`models_spread.pkl`, sha256 `af83b5f31a7b1095…`). Each model against the market is reported.
