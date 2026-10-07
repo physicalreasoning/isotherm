@@ -34,6 +34,13 @@ CRPS for Score, debiased ECE for Noul, and net-of-fee P&L in a conservative back
 **Non-goals:** forecasting the atmosphere (we consume NWS forecasts, see 01-market-selection);
 live trading; an LLM reading question text and emitting P(yes).
 
+*Revised 2026-10-07, beside the original:* the first non-goal held through FINDINGS §33, then
+§34-35 built a forecast post-processor, a network over 576 stations that recalibrates NBM and
+GFS MOS, because it was the largest gain on offer. We still consume NWS forecasts and do not
+model the atmosphere; we now also learn how those forecasts err. The decision layer is unchanged:
+one distribution, typed answers read off it. FINDINGS §38 is the first evaluation of those typed
+answers themselves.
+
 ---
 
 ## 1 · Lifecycle at a glance
