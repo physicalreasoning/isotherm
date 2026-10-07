@@ -4,7 +4,9 @@
 Both are fit on every settled ladder of the seven scored cities up to the freeze, then pickled
 with their feature normalisation into shadow/forward/models.pkl, whose hash goes in FINDINGS.
 `--spread` freezes the secondary arm instead: the MLP on NBM-spread inputs (§22), into
-shadow/forward/models_spread.pkl.
+shadow/forward/models_spread.pkl. `--wx` freezes the weather-model arm (§34): the station
+network fit on the whole corpus, and the MLP fit on its out-of-sample forecasts from expanding
+quarterly refits, into shadow/forward/models_wx.pkl.
 
     uv run scripts/forward_freeze.py && uv run scripts/forward_freeze.py --spread
 """
@@ -18,6 +20,7 @@ import pickle
 import sys
 
 import numpy as np
+import pandas as pd
 import torch
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
@@ -29,12 +32,28 @@ READ = "d1_16"
 OUT = pathlib.Path("shadow/forward")
 
 
+def wx_arm(ls):
+    from isotherm import wxnet
+    from isotherm.splits import EMBARGO
+
+    through = ls.meta["day"].max()
+    df = wxnet.corpus()
+    preds = wxnet.expanding_preds(
+        df, wxnet.ladder_rows(ls), "2021-10-01", through + pd.offsets.QuarterBegin(startingMonth=1), EMBARGO
+    )
+    wxnet.attach(ls, preds)
+    wx = wxnet.WxNet().fit(df[df["target"] <= through])
+    print("wx fit on", len(df[df["target"] <= through]), "station-days", flush=True)
+    return wxnet.as_inputs(ls), {"wx": wx, "isotherm-wx": IsothermNet("isotherm · weather model")}
+
+
 def main():
     import argparse
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--spread", action="store_true")
     ap.add_argument("--flow", action="store_true", help="the order-flow MLP (§31)")
+    ap.add_argument("--wx", action="store_true", help="the weather-model MLP (§34)")
     a = ap.parse_args()
     ls = dataset.load(list(CITIES), nbm_spread=a.spread)
     if a.flow:
@@ -43,7 +62,9 @@ def main():
         add_flow(ls)
     ls = ls.take(np.flatnonzero((ls.meta["read"] == READ).to_numpy()))
     ls = ls.complete(["market", "emos_gfs", "emos_nbm", "emos_nbm_obs", "climatology"])
-    if a.flow:
+    if a.wx:
+        ls, models = wx_arm(ls)
+    elif a.flow:
         models = {"isotherm-flow": DynamicsNet("isotherm + flow", FLOW)}
     elif a.spread:
         models = {"isotherm-spread": IsothermNet("isotherm · NBM spread")}
@@ -52,8 +73,10 @@ def main():
             "isotherm": IsothermNet("isotherm"),
             "transformer-L": IsothermTransformer("isotherm · transformer-L", d=128, layers=4, ff=256),
         }
-    tag = "_flow" if a.flow else "_spread" if a.spread else ""
+    tag = "_wx" if a.wx else "_flow" if a.flow else "_spread" if a.spread else ""
     for name, m in models.items():
+        if name == "wx":
+            continue  # fit on the corpus in wx_arm
         m.fit(ls)
         print(name, "fit on", len(ls), "ladders", flush=True)
     OUT.mkdir(parents=True, exist_ok=True)
