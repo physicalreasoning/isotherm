@@ -168,6 +168,7 @@ footer a { color: var(--model); }
   <section class="panel" id="research" role="tabpanel" aria-labelledby="tab-research" hidden>
     <div class="grid">
       <div class="card wide"><h3>Everything tried against the MLP</h3><p class="note">Log score gain over the per-read MLP, last 12 months before the lockbox, 95% date-block CI; highlighted where the CI is above zero. <b>gate</b>: written down before it ran, needs 3 of 4 reads. <b>explore</b>: found by looking, so only the forward test can confirm it. The weather model (§35) covers 16:00 day before only; its gate is that one read.</p><div class="tablewrap"><table class="arms" id="t-arms"></table></div><div class="src">results/transformer_large_gate.json · data_scaling.json · nbm_spread.json · explore_*.json</div></div>
+      <div class="card wide" id="card-cities" hidden><h3>Twelve newer cities, each as a city of its own</h3><p class="note">Training on all nineteen cities instead of seven, each with its own city input: Δ log score, test 2026-07-01 to 2026-10-04, 95% date-block CI (§36). Exploration only; the pre-registered test is on January to April 2027 (§37).</p><div class="tablewrap"><table class="arms" id="t-cities"></table></div><div class="src">results/explore_cities.json</div></div>
       <div class="card" id="card-wx" hidden><h3>One weather model across 576 stations</h3><p class="note">A network trained on 1.16 million station-days of NBM and GFS MOS forecasts against NWS climate reports, scored at 16:00 day before on the seven cities' ladders (§35).</p><table class="stats" id="t-wx"></table><div class="src">results/wx_gate.json</div></div>
       <div class="card"><h3>The transformer keeps learning; the MLP has stopped</h3><p class="note">Gain over the market by share of training dates, pooled over reads. The MLP gains 0.003 nats from four times the data, the transformer 0.010.</p><div class="chart" id="c-curve"></div><div class="src">results/data_scaling.json</div></div>
       <div class="card"><h3>Twelve cities it never saw</h3><p class="note" id="n-unseen"></p><div class="chart" id="c-unseen"></div><div class="src">results/unseen_cities.json</div></div>
@@ -223,7 +224,7 @@ function header() {
     ["bad", "Lows sealed test: flat"],
     ["bad", "MLB: no edge"],
     ["warn", "G3 pretraining: fails the gate"],
-    ["warn", "Transformer: still learning, fails its gate"], ["good", "Weather model: passes both gates"], ["warn", "Forward test: 5 arms, scored Apr 2027"],
+    ["warn", "Transformer: still learning, fails its gate"], ["good", "Weather model: passes both gates"], ["warn", "Forward test: 5 arms, scored Apr 2027"], ["warn", "19 cities: retest Jan to Apr 2027"],
     [sh.decay && sh.decay.status === "STOP" ? "bad" : (sh.decay && sh.decay.status === "OK" ? "good" : "warn"),
      "Live: " + (sh.decay ? sh.decay.status.replace("_", " ").toLowerCase() : "collecting, " + (sh.settled_ladders || 0) + " settled")],
   ];
@@ -387,6 +388,13 @@ function research() {
     $("card-wx").hidden = false;
     $("t-wx").innerHTML = [["Forecast vs EMOS-NBM with spread", ci(w.forecast)], ["MLP vs market", fmt.nats(w.mlp_vs_market)], ["MLP on the weather model vs market", fmt.nats(w.wx_vs_market)]]
       .map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("");
+  }
+
+  if (R.cities) {
+    const C = R.cities, cell = (v) => `<td class="${v.ci[0] > 0 ? "hit" : ""}">${fmt.nats(v.d)}<small>[${fmt.nats(v.ci[0])}, ${fmt.nats(v.ci[1])}]</small></td>`;
+    $("card-cities").hidden = false;
+    $("t-cities").innerHTML = "<tr><th>Read</th><th>MLP 19 − 7, on the seven</th><th>Transformer 19 − 7, on the seven</th><th>Transformer 19 − 7, on the twelve</th><th>Transformer − MLP, both on 19, on the seven</th></tr>" +
+      order.filter((r) => C[r]).map((r) => `<tr><td>${LBL[r]}</td>` + ["mlp_seven", "tf_seven", "tf_twelve", "tf_vs_mlp"].map((k) => cell(C[r][k])).join("") + "</tr>").join("");
   }
 
   const c = R.curve || {}, fr = Object.keys(c);
