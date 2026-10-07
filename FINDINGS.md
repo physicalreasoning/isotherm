@@ -833,3 +833,54 @@ freeze three times concurrently, all on the same code and data. CPU training is 
 bit-reproducible: the three freezes hashed `8eb849b6…`, `e7da06c4…` and `23988591…`. The frozen
 arm is the last written, whose model file and hash file agree; none was scored on anything. The
 recorded gate result was reproduced exactly from its caches afterwards.
+
+## 36 · Exploration: nineteen cities help the transformer, not the MLP; Polymarket is a different label (2026-10-07)
+
+The transformer looks data-limited (§21), and the seven cities add only about 2,550 ladders a
+year. Two cheap sources of more were checked.
+
+**The twelve newer cities, each with its own identity** (`src/isotherm/cities.py`,
+`scripts/explore_cities.py`, `results/explore_cities.json`). As extra rows with a blank city
+input they hurt (§21). Here the context gains a one-hot over the twelve. One split: train on
+every ladder before July 2026 (28,133 from the seven cities, 7,254 from the twelve, which list
+from January or February 2026), test 2026-07-01 to 2026-10-04 (2,683 ladders from the seven,
+4,588 from the twelve). These rows were seen in §23 and the sealed tests, so this is exploration.
+
+| Read | MLP: 19 − 7 cities, on the seven | Transformer: 19 − 7, on the seven | Transformer: 19 − 7, on the twelve | Transformer-19 − MLP-7 on the seven (point) |
+|---|---|---|---|---|
+| 08:00 | −0.009 [−0.014, −0.004] | −0.014 [−0.027, −0.002] | +0.013 [+0.003, +0.022] | −0.004 |
+| 12:00 | −0.002 [−0.006, +0.003] | +0.004 [+0.000, +0.007] | +0.004 [−0.002, +0.011] | +0.012 |
+| 14:00 | −0.001 [−0.005, +0.002] | +0.009 [+0.006, +0.013] | +0.004 [−0.000, +0.008] | +0.007 |
+| 16:00 day before | −0.002 [−0.008, +0.005] | −0.003 [−0.013, +0.007] | +0.007 [−0.001, +0.014] | +0.003 |
+
+The control (19-city MLP on market-sampled labels) is within ±0.001 of the market everywhere.
+
+- **The MLP gains nothing** from the twelve, as §21's learning curve predicted.
+- **The transformer mostly gains**: on the twelve at every read, on the seven at noon and 14:00,
+  but it loses at 08:00. On the seven, the 19-city transformer beats the 19-city MLP at three
+  of four reads (CI above zero at 08:00, noon and 14:00).
+- One split of 96 days; worth a test on a window nobody has seen (§37), not adoption.
+
+**Polymarket** (`docs/research/polymarket_2026-10.md`). 2,999 settled US city-days of "highest
+temperature" markets in 11 cities, mostly from December 2025 or March 2026, with minute-level
+prices. Not usable as Kalshi ladders: Polymarket settles on the highest *hourly* airport
+reading, and even at Kalshi's own station the NWS climate-report high falls in Polymarket's
+winning bucket only 59 to 71% of the time (usually 1°F higher); four cities settle at a
+different airport. It would need a second target and a multi-task model. Not pursued.
+
+## 37 · Nineteen cities on a fresh window: pre-registration (2026-10-07)
+
+Written before any ladder in the test window exists.
+
+**Design** (`scripts/explore_cities.py --gate`, unchanged from §36 apart from the window):
+train on every settled ladder before 2026-12-30 (two-day embargo), seven scored cities plus the
+twelve newer ones, each with its city input; test on ladders for **2027-01-01 to 2027-04-05**,
+all four reads. Models as in §36: the per-read MLP on the seven cities (today's isotherm), the
+19-city MLP, transformer-L on the seven, the 19-city transformer-L, and the 19-city
+market-labels control. By then the twelve have about eleven months of history.
+
+**Primary gate:** the 19-city transformer-L minus the 7-city MLP, log score on the seven scored
+cities, 95% date-block CI. PASS if the CI is above zero at 3 of 4 reads and the control is within
+±0.005 of the market on both city groups. Then the 19-city transformer replaces the MLP, and
+the twelve newer cities become scored cities. Reported, not gated: every other pairing in §36,
+on both groups. Run once, after the window settles (the script refuses earlier).
