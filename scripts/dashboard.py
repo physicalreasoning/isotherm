@@ -309,6 +309,18 @@ def research():
             "mlp_vs_market": round(wx["adoption"]["mlp_vs_market"], 4),
             "wx_vs_market": round(wx["adoption"]["wx_mlp_vs_market"], 4),
         }
+    ec = load("explore_cities.json")
+    if ec:
+        cols = {
+            "mlp_seven": ("seven", "mlp19_minus_mlp7"),
+            "tf_seven": ("seven", "tf19_minus_tf7"),
+            "tf_twelve": ("twelve", "tf19_minus_tf7"),
+            "tf_vs_mlp": ("seven", "tf19_minus_mlp19"),
+        }
+        out["cities"] = {
+            r: {c: {"d": round(v[g][k]["diff"], 4), "ci": ci(v[g][k]["ci"])} for c, (g, k) in cols.items()}
+            for r, v in ec["reads"].items()
+        }
     if ds:
         out["curve"] = {
             f: {"mlp": round(v["mlp_vs_market"], 4), "tf": round(v["tf_vs_market"], 4)}
