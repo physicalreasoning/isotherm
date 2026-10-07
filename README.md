@@ -52,6 +52,8 @@ ladder over the market; intervals are 95% date-block bootstraps [14].
 | NBM's own spread in EMOS | +0.04 to +0.05 for the forecast; isotherm +0.013 at 16:00, fails its 3-of-4 gate |
 | Twelve unseen cities (Jul to Oct 2026) | +0.001 to +0.006, no read clears zero; strategy +$1,549, *t* 1.05 |
 | Weather model, 576 stations | forecast +0.043 over the best EMOS; isotherm +0.018 at 16:00, passes; +0.004 over the spread MLP, CI spans zero |
+| Twelve newer cities as cities of their own | MLP gains nothing; transformer mostly gains (exploratory); fresh-window test on Jan to Apr 2027 |
+| Polymarket daily highs | different label (hourly airport max), not usable as Kalshi ladders |
 | Sealed forward test | transformer-L, NBM spread, order flow and a three-way ensemble against the MLP, frozen 2026-10-06; the weather model from 2026-10-09; scored 2027-04 |
 
 The edge was large in 2023 and has mostly decayed: the market now prices the National Blend of
