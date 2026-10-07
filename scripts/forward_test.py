@@ -25,6 +25,7 @@ from isotherm.weather import CITIES  # noqa: E402
 DIR = pathlib.Path("shadow/forward")
 START = pd.Timestamp("2026-10-07")  # first target day whose ladder opened after the freeze
 FINAL = pd.Timestamp("2027-04-05")  # last day of the primary window
+START_WX = pd.Timestamp("2026-10-09")  # the weather-model arm (§35) was frozen after START
 
 
 def frozen(tag):
@@ -38,6 +39,40 @@ def window(ls, read):
     d = ls.meta["day"]
     ls = ls.take(np.flatnonzero(((ls.meta["read"] == read) & (d >= START) & (d <= FINAL)).to_numpy()))
     return ls.complete(["market", "emos_gfs", "emos_nbm", "emos_nbm_obs", "climatology"])
+
+
+def wx_arm(ls, mlp):
+    """The weather-model MLP minus the MLP, on its own window from START_WX (None before it is frozen)."""
+    if not (DIR / "frozen_wx.json").exists():
+        return None
+    from isotherm import wxnet
+
+    _, m = frozen("_wx")
+    sub = ls.take(np.flatnonzero((ls.meta["day"] >= START_WX).to_numpy()))
+    if not len(sub):
+        return None
+    rows = wxnet.ladder_rows(sub)
+    c, p = m["wx"].predict(rows)
+    wxnet.attach(sub, rows.assign(centre=c, p=list(p)))
+    base = sub.take(np.flatnonzero(np.isfinite(sub.probs["wx_net"]).all(1)))
+    alt = wxnet.as_inputs(sub)
+    days = base.meta["day"].to_numpy()
+    lm = metrics.log_score(base.probs["market"], base.y)
+    l0 = metrics.log_score(mlp.predict(base), base.y)
+    lw = metrics.log_score(m["isotherm-wx"].predict(alt), alt.y)
+    lf = metrics.log_score(np.nan_to_num(base.probs["wx_net"], nan=1.0), base.y)
+    return {
+        "ladders": len(base),
+        "wx_mlp_minus_isotherm": {
+            "diff": float((l0 - lw).mean()),
+            "ci": metrics.date_bootstrap_mean(days, l0 - lw, 2000),
+        },
+        "vs_market": {
+            "isotherm-wx": float((lm - lw).mean()),
+            "isotherm": float((lm - l0).mean()),
+            "wx forecast alone": float((lm - lf).mean()),
+        },
+    }
 
 
 def main():
@@ -56,6 +91,7 @@ def main():
     L.update({k: metrics.log_score(m.predict(lss), lss.y) for k, m in spread.items()})
     P = {k: m.predict(ls) for k, m in models.items()}
     P["isotherm-spread"] = spread["isotherm-spread"].predict(lss)
+    wx = wx_arm(ls, models["isotherm"])
     from isotherm.flow import add_flow
 
     add_flow(ls)
@@ -89,11 +125,15 @@ def main():
             for k, v in L.items()
         },
     }
+    if wx is not None:
+        res["weather_model"] = wx
     if res["complete"]:
         res["verdict"] = "PASS" if res["transformer_minus_isotherm"]["ci"][0] > 0 else "FAIL"
         res["secondary_verdict"] = "PASS" if res["spread_minus_isotherm"]["ci"][0] > 0 else "FAIL"
         res["ensemble_verdict"] = "PASS" if res["ensemble_minus_isotherm"]["ci"][0] > 0 else "FAIL"
         res["flow_verdict"] = "PASS" if res["flow_minus_isotherm"]["ci"][0] > 0 else "FAIL"
+        if wx is not None:
+            res["weather_model_verdict"] = "PASS" if wx["wx_mlp_minus_isotherm"]["ci"][0] > 0 else "FAIL"
     pathlib.Path("results/forward_test.json").write_text(json.dumps(res, indent=2))
     print(json.dumps(res, indent=1))
 
