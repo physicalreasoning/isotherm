@@ -200,6 +200,30 @@ class WxNet:
         return c, p
 
 
+def ladder_rows(ls: LadderSet) -> pd.DataFrame:
+    """Prediction rows (no labels) for every ladder day of the cities in `ls`."""
+    tz = station_tz()
+    parts = []
+    for k in ls.meta["city"].unique():
+        st = ALL_CITIES[k].station
+        days = ls.meta.loc[ls.meta["city"] == k, "day"].unique()
+        parts.append(station_frame(st, tz[st], targets=days))
+    return pd.concat(parts, ignore_index=True)
+
+
+def expanding_preds(df: pd.DataFrame, rows: pd.DataFrame, start, end, embargo) -> pd.DataFrame:
+    """Predict each quarter of `rows` from start to end with a model fit on every corpus row before it."""
+    qs = pd.date_range(start, end, freq="QS")
+    out = []
+    for a, b in zip(qs[:-1], qs[1:], strict=True):
+        te = rows[(rows["target"] >= a) & (rows["target"] < b)]
+        if te.empty:
+            continue
+        c, p = WxNet().fit(df[df["target"] < a - embargo]).predict(te)
+        out.append(te.assign(centre=c, p=list(p)))
+    return pd.concat(out, ignore_index=True)
+
+
 def bucket_probs(centre: np.ndarray, p: np.ndarray, lo: np.ndarray, hi: np.ndarray, mask: np.ndarray):
     """Sum integer probabilities over each bucket's settlement interval (lo, hi)."""
     v = centre[:, None] + np.arange(-K, K + 1)[None, :]  # (n, 2K+1)
@@ -208,6 +232,15 @@ def bucket_probs(centre: np.ndarray, p: np.ndarray, lo: np.ndarray, hi: np.ndarr
     inside = (v[:, None, :] > lo_) & (v[:, None, :] < hi_)  # (n, buckets, 2K+1)
     out = (inside * p[:, None, :]).sum(-1)
     return _finish(np.where(mask, out, np.nan), mask)
+
+
+def as_inputs(ls: LadderSet, name: str = "wx_net") -> LadderSet:
+    """Rows with a weather-model forecast, which stands in for EMOS-NBM in the MLP's inputs (§34)."""
+    alt = ls.take(np.flatnonzero(np.isfinite(ls.probs[name]).all(1)))
+    alt.probs["emos_nbm"] = alt.probs[name].copy()
+    alt.probs["emos_nbm_obs"] = alt.probs[name].copy()  # no observations the day before
+    alt.meta["mu_nbs"], alt.meta["sigma_nbs"] = alt.meta["mu_" + name], alt.meta["sigma_" + name]
+    return alt
 
 
 def attach(ls: LadderSet, preds: pd.DataFrame, name: str = "wx_net") -> None:
