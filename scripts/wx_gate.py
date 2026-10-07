@@ -4,13 +4,15 @@
 Weather-model predictions for every ladder day come from expanding quarterly refits: each
 quarter is predicted by a model fit on every station-day before it (two-day embargo).
 
-    uv run scripts/wx_gate.py --dry     # coverage only, no scores
+    uv run scripts/wx_gate.py --dry        # coverage only, no scores
+    uv run scripts/wx_gate.py --preflight  # partial corpus, separate cache and output
     uv run scripts/wx_gate.py
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import pathlib
 import pickle
@@ -51,9 +53,9 @@ def paired(days, a, b, sel):
     }
 
 
-def weather_preds(ls):
-    if CACHE.exists():
-        return pickle.loads(CACHE.read_bytes())
+def weather_preds(ls, cache=CACHE):
+    if cache.exists():
+        return pickle.loads(cache.read_bytes())
     df = wxnet.corpus()
     tz = wxnet.station_tz()
     rows = []
@@ -78,14 +80,17 @@ def weather_preds(ls):
         out.append(te.assign(centre=c, p=list(p)))
         print("  {} {} days, fit {:.0f}s".format(a.date(), len(te), time.time() - t0), flush=True)
     preds = pd.concat(out, ignore_index=True)
-    CACHE.write_bytes(pickle.dumps(preds))
+    cache.write_bytes(pickle.dumps(preds))
     return preds
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry", action="store_true")
+    ap.add_argument("--preflight", action="store_true", help="trial on a partial corpus")
     a = ap.parse_args()
+    cache = CACHE.with_name("wx_preds_preflight.pkl") if a.preflight else CACHE
+    out = "results/wx_gate_preflight.json" if a.preflight else "results/wx_gate.json"
     cities = list(CITIES)
     ls, lss = d16(dataset.load(cities)), d16(dataset.load(cities, nbm_spread=True))
     assert (key(ls) == key(lss)).all()
@@ -93,7 +98,7 @@ def main():
         df = wxnet.corpus()
         print("corpus", len(df), "station-days,", df["station"].nunique(), "stations; ladders", len(ls))
         return
-    wxnet.attach(ls, weather_preds(ls))
+    wxnet.attach(ls, weather_preds(ls, cache))
     days = ls.meta["day"].to_numpy()
     res = {}
 
@@ -117,7 +122,9 @@ def main():
     alt.probs["emos_nbm"] = alt.probs["wx_net"].copy()
     alt.probs["emos_nbm_obs"] = alt.probs["wx_net"].copy()  # no observations the day before
     alt.meta["mu_nbs"], alt.meta["sigma_nbs"] = alt.meta["mu_wx_net"], alt.meta["sigma_wx_net"]
-    new = oos_predictions(alt, [Source("market"), IsothermNet(WX)])[READ]
+    # The OOS cache key ignores probability values, so key this run on the weather predictions.
+    wx_id = hashlib.sha256(np.nan_to_num(alt.probs["wx_net"]).tobytes()).hexdigest()[:12]
+    new = oos_predictions(alt, [Source("market"), IsothermNet(WX)], cache_dir="data/oos_wx/" + wx_id)[READ]
     base = oos_predictions(dataset.load(cities), transformer_large_suite())[READ]
     spr = oos_predictions(
         dataset.load(cities, nbm_spread=True),
@@ -145,7 +152,7 @@ def main():
         "mlp_vs_market": float((lm - l0)[recent].mean()),
     }
     res["adoption"]["pass"] = res["adoption"]["vs_mlp"]["ci"][0] > 0
-    pathlib.Path("results/wx_gate.json").write_text(json.dumps(res, indent=2))
+    pathlib.Path(out).write_text(json.dumps(res, indent=2))
     print(json.dumps(res, indent=1))
 
 

@@ -216,7 +216,7 @@ def build():
 
 
 def research():
-    """FINDINGS §18-33: every variant against the MLP, the learning curve, unseen cities, regime."""
+    """FINDINGS §18-35: every variant against the MLP, the learning curve, unseen cities, regime."""
 
     def ci(x):
         return [round(c, 4) for c in x]
@@ -292,7 +292,23 @@ def research():
                 if r != "d1_16"
             },
         )
+    wx = load("wx_gate.json")
+    if wx:
+        v = wx["adoption"]["vs_mlp"]
+        arm(
+            "Weather model, 576 stations",
+            "gate",
+            "§35",
+            {"d1_16": {"d": round(v["diff"], 4), "ci": ci(v["ci"])}},
+        )
     out = {"arms": arms}
+    if wx:
+        f = wx["forecast"]["vs_emos_spread"]
+        out["wx"] = {
+            "forecast": {"d": round(f["diff"], 4), "ci": ci(f["ci"])},
+            "mlp_vs_market": round(wx["adoption"]["mlp_vs_market"], 4),
+            "wx_vs_market": round(wx["adoption"]["wx_mlp_vs_market"], 4),
+        }
     if ds:
         out["curve"] = {
             f: {"mlp": round(v["mlp_vs_market"], 4), "tf": round(v["tf_vs_market"], 4)}
@@ -326,6 +342,7 @@ def research():
         ("", ["MLP (reference)", "Transformer, 8x larger"]),
         ("_spread", ["NBM's own spread"]),
         ("_flow", ["Order flow"]),
+        ("_wx", ["Weather model, from 2026-10-09"]),
     ):
         f = pathlib.Path("shadow/forward/frozen{}.json".format(tag))
         if f.exists():

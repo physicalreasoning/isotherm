@@ -722,13 +722,15 @@ seeds: `shadow/forward/models_flow.pkl`, sha256 `e84ca72deeef511b…`. Same wind
 needs trades for the window (`scripts/fetch_trades.py`), filtered to before each read as in
 training.
 
-## 32 · Station corpus: fetch in progress (2026-10-06)
+## 32 · Station corpus: 576 stations, 1.16 million station-days (2026-10-07)
 
 `scripts/fetch_station_corpus.py`. Every NWS climate-report site in the lower 48 that IEM lists
-(598), with CLI highs and lows, GFS MOS and NBM for 2021 onward: about 1.3 million station-days
-of real forecasts and outcomes, no market. It feeds a multi-station distributional weather model
-that would replace EMOS as isotherm's forecast input. The download runs at one IEM request every
-3 s, about 11 hours.
+(598), with CLI highs and lows, GFS MOS and NBM for 2021 onward: real forecasts and real
+outcomes, no market. 576 stations are usable; 20 have no GFS MOS and 2 too short a CLI record
+(`data/corpus_coverage.json`). After the 16:00 day-before point-in-time join and the removal of
+CLI typos (§34), 1,155,446 station-days remain, about 150 times the ladder days of the seven
+scored cities. The download took 11 hours at one IEM request every 3 s. It feeds the
+multi-station weather model (§34, §35).
 
 ## 33 · Exploration: LAMP is the better forecast and adds nothing to isotherm (2026-10-06)
 
@@ -781,3 +783,53 @@ every station-day before the fold and predicts the seven scored cities' ladders 
 - *Adoption:* the per-read MLP with the weather model in place of EMOS-NBM, minus the current
   MLP, last 12 months before the lockbox. Pass if the CI is above zero; then it joins the forward
   test as a new arm. Reported beside it: the same against the spread MLP.
+
+## 35 · The weather model passes both gates; a fifth forward arm (2026-10-07)
+
+`scripts/wx_gate.py`, results in `results/wx_gate.json`. 576 stations, 1,155,446 station-days,
+expanding quarterly refits from 2022-04; nothing in §34 was changed. The model was not tuned
+(no hyperparameter was varied after §34 was written).
+
+**Preflight, disclosed.** While the download ran, the same script ran once on the first 338
+stations (`--preflight`, `results/wx_gate_preflight.json`) to catch bugs before the long run.
+It passed both gates (+0.041 and +0.019). Setting it up exposed one defect: the MLP's out-of-sample cache key
+ignored input probabilities, so the partial run would have been reused by the full one; the
+gate's MLP is now cached under a hash of the weather predictions. Nothing about the model
+changed after the preflight.
+
+| 16:00 day before | Δ log score | 95% CI | n |
+|---|---|---|---|
+| Forecast: weather model − EMOS-NBM with spread, 2023-07 to 2026-06 | **+0.043** | [+0.034, +0.051] | 6,063 ladders |
+| Forecast: weather model − EMOS-NBM | +0.085 | [+0.075, +0.097] | 6,063 |
+| Adoption: MLP on the weather model − MLP, last 12 months | **+0.018** | [+0.010, +0.025] | 2,542 |
+| Same − the MLP on NBM-spread inputs (§26), reported only | +0.004 | [−0.002, +0.011] | 2,542 |
+
+Both gates pass. Against the market over the same 12 months the MLP gains +0.014 nats and the
+MLP on the weather model +0.032.
+
+What this does and does not show:
+- **Most of the gain is the spread.** The spread MLP already takes +0.013 of the +0.018; the
+  margin over it is not distinguishable from zero. The network adds a modest amount on top of
+  what NBM's own spread gives EMOS.
+- **Station count saturates early.** 338 stations gave +0.041 at the forecast level, 576 gave
+  +0.043. More stations of the same two forecasts add little; a third forecast source would
+  likely matter more than more sites.
+- **One read.** §34 scoped the gate to 16:00 day before; same-day reads are untested.
+
+**Forward arm** (pre-registration). Frozen by `scripts/forward_freeze.py --wx` into
+`shadow/forward/models_wx.pkl`, sha256 `23988591642664f4…` (full hash in
+`shadow/forward/frozen_wx.json`, checked on load): the station network fit on every corpus station-day through 2026-10-04, and
+the per-read MLP at 16:00 day before fit on 7,692 ladders through 2026-10-04 whose
+weather-model inputs come from the expanding refits above. The arm was frozen after the §25
+window opened, so it gets its own: ladders for **2026-10-09 to 2027-04-05**, built by the same
+point-in-time pipeline; at each, the frozen network predicts from the 16:00 forecasts and the
+frozen MLP takes its output in place of EMOS-NBM. **Gate:** the MLP on the weather model minus
+the frozen MLP of §25, paired on those ladders, PASS if the 95% date-block CI is above zero over
+the whole window (`scripts/forward_test.py`, key `weather_model`). Looks before 2027-04-05 are
+descriptive only.
+
+*Process note.* Background jobs thought dead were still running, so the gate ran twice and the
+freeze three times concurrently, all on the same code and data. CPU training is not
+bit-reproducible: the three freezes hashed `8eb849b6…`, `e7da06c4…` and `23988591…`. The frozen
+arm is the last written, whose model file and hash file agree; none was scored on anything. The
+recorded gate result was reproduced exactly from its caches afterwards.
