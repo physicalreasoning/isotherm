@@ -8,6 +8,7 @@ nineteen with a city input for each, and scored on the seven and on the twelve s
 These rows were all looked at before (§23 and the sealed tests), so this is exploration only.
 
     uv run scripts/explore_cities.py
+    uv run scripts/explore_cities.py --gate   # §37: the same design on a fresh window, after 2027-04-05
 """
 
 from __future__ import annotations
@@ -27,6 +28,7 @@ from isotherm.splits import EMBARGO  # noqa: E402
 from isotherm.weather import CITIES, NEW_CITIES  # noqa: E402
 
 TEST_FROM, TEST_TO = pd.Timestamp("2026-07-01"), pd.Timestamp("2026-10-04")
+GATE_FROM, GATE_TO = pd.Timestamp("2027-01-01"), pd.Timestamp("2027-04-05")  # §37, pre-registered
 SOURCES = ["market", "emos_gfs", "emos_nbm", "emos_nbm_obs", "climatology"]
 CTL = "isotherm · 19 cities · market-sampled labels (control)"
 
@@ -41,10 +43,10 @@ def models():
     }
 
 
-def split(ls):
+def split(ls, a, b):
     d = ls.meta["day"]
-    tr = ls.take(np.flatnonzero((d < TEST_FROM - EMBARGO).to_numpy()))
-    te = ls.take(np.flatnonzero(((d >= TEST_FROM) & (d <= TEST_TO)).to_numpy()))
+    tr = ls.take(np.flatnonzero((d < a - EMBARGO).to_numpy()))
+    te = ls.take(np.flatnonzero(((d >= a) & (d <= b)).to_numpy()))
     return tr, te
 
 
@@ -54,17 +56,25 @@ def paired(days, a, b):
 
 
 def main():
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--gate", action="store_true", help="score the §37 fresh-window gate")
+    args = ap.parse_args()
+    a, b = (GATE_FROM, GATE_TO) if args.gate else (TEST_FROM, TEST_TO)
     seen = dataset.load(list(CITIES)).complete(SOURCES)
+    if args.gate and seen.meta["day"].max() < GATE_TO:
+        sys.exit("the §37 window is not complete: data through {}".format(seen.meta["day"].max().date()))
     new = dataset.LadderSet.concat([dataset.build_city(k) for k in NEW_CITIES]).complete(SOURCES)
-    s_tr, s_te = split(seen)
-    n_tr, n_te = split(new)
+    s_tr, s_te = split(seen, a, b)
+    n_tr, n_te = split(new, a, b)
     print(
         "train {} + {} ladders, test {} (seven) and {} (twelve)".format(
             len(s_tr), len(n_tr), len(s_te), len(n_te)
         ),
         flush=True,
     )
-    res = {"from": str(TEST_FROM.date()), "to": str(TEST_TO.date()), "reads": {}}
+    res = {"from": str(a.date()), "to": str(b.date()), "reads": {}}
     for read in sorted(seen.meta["read"].unique()):
 
         def pick(ls, r=read):
@@ -87,6 +97,7 @@ def main():
                 "mlp19_minus_mlp7": paired(days, lg["mlp-7"], lg["mlp-19"]),
                 "tf19_minus_tf7": paired(days, lg["tf-7"], lg["tf-19"]),
                 "tf19_minus_mlp19": paired(days, lg["mlp-19"], lg["tf-19"]),
+                "tf19_minus_mlp7": paired(days, lg["mlp-7"], lg["tf-19"]),
             }
             print(
                 "{} {:6s} mlp19-mlp7 {:+.4f} [{:+.4f}, {:+.4f}] tf19-tf7 {:+.4f} ctl {:+.4f}".format(
@@ -100,7 +111,16 @@ def main():
                 flush=True,
             )
         res["reads"][read] = r
-    pathlib.Path("results/explore_cities.json").write_text(json.dumps(res, indent=2))
+    if args.gate:
+        rr = res["reads"].values()
+        res["reads_passing"] = int(sum(r["seven"]["tf19_minus_mlp7"]["ci"][0] > 0 for r in rr))
+        res["controls_ok"] = all(
+            abs(r[g]["vs_market"]["control-19"]) <= 0.005 for r in rr for g in ("seven", "twelve")
+        )
+        res["verdict"] = "PASS" if res["reads_passing"] >= 3 and res["controls_ok"] else "FAIL"
+        print(res["verdict"], res["reads_passing"], "of", len(res["reads"]), flush=True)
+    out = "results/cities_gate.json" if args.gate else "results/explore_cities.json"
+    pathlib.Path(out).write_text(json.dumps(res, indent=2))
 
 
 if __name__ == "__main__":
