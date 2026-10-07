@@ -722,13 +722,15 @@ seeds: `shadow/forward/models_flow.pkl`, sha256 `e84ca72deeef511b…`. Same wind
 needs trades for the window (`scripts/fetch_trades.py`), filtered to before each read as in
 training.
 
-## 32 · Station corpus: fetch in progress (2026-10-06)
+## 32 · Station corpus: 576 stations, 1.16 million station-days (2026-10-07)
 
 `scripts/fetch_station_corpus.py`. Every NWS climate-report site in the lower 48 that IEM lists
-(598), with CLI highs and lows, GFS MOS and NBM for 2021 onward: about 1.3 million station-days
-of real forecasts and outcomes, no market. It feeds a multi-station distributional weather model
-that would replace EMOS as isotherm's forecast input. The download runs at one IEM request every
-3 s, about 11 hours.
+(598), with CLI highs and lows, GFS MOS and NBM for 2021 onward: real forecasts and real
+outcomes, no market. 576 stations are usable; 20 have no GFS MOS and 2 too short a CLI record
+(`data/corpus_coverage.json`). After the 16:00 day-before point-in-time join and the removal of
+CLI typos (§34), 1,155,446 station-days remain, about 150 times the ladder days of the seven
+scored cities. The download took 11 hours at one IEM request every 3 s. It feeds the
+multi-station weather model (§34, §35).
 
 ## 33 · Exploration: LAMP is the better forecast and adds nothing to isotherm (2026-10-06)
 
