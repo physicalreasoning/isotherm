@@ -223,7 +223,7 @@ function header() {
     ["bad", "Lows sealed test: flat"],
     ["bad", "MLB: no edge"],
     ["warn", "G3 pretraining: fails the gate"],
-    ["warn", "Transformer: still learning, fails its gate"], ["warn", "Forward test: 4 arms, scored Apr 2027"],
+    ["warn", "Transformer: still learning, fails its gate"], ["good", "Weather model: passes both gates"], ["warn", "Forward test: 5 arms, scored Apr 2027"],
     [sh.decay && sh.decay.status === "STOP" ? "bad" : (sh.decay && sh.decay.status === "OK" ? "good" : "warn"),
      "Live: " + (sh.decay ? sh.decay.status.replace("_", " ").toLowerCase() : "collecting, " + (sh.settled_ladders || 0) + " settled")],
   ];
