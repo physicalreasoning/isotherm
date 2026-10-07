@@ -46,6 +46,7 @@ distribution and stays consistent with the bucket prices.
 | Nested walk-forward backtest, taker (2023-07 to 2026-06) | +$22,122, Sharpe 2.05 [0.81, 3.27], deflated Sharpe 0.85, PBO 0.26 |
 | Lockbox, scored once (2026-07-01 to 2026-10-03) | **pass**: +$1,851, Newey-West t 1.77, hit rate 80%; log score +0.014 [+0.001, +0.027] |
 | Lockbox by month | July +$1,029, August +$517, September +$246 |
+| Typed answers, research MLP (§38) | coherent on every ladder; Noul calibration error 0.007 to 0.017 against the market's 0.019 to 0.027; Score CRPS level with the market. The served pool above is not yet evaluated this way |
 
 Engine checks held in every run: the oracle never loses, a coherent in-spread market never trades,
 and noise with matched turnover loses. Full record: `FINDINGS.md` §8-10.
