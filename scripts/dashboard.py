@@ -210,8 +210,132 @@ def build():
         if tg
         else {}
     )
+    d["research"] = research()
     d["shadow"] = shadow()
     return d
+
+
+def research():
+    """FINDINGS §18-33: every variant against the MLP, the learning curve, unseen cities, regime."""
+
+    def ci(x):
+        return [round(c, 4) for c in x]
+
+    arms = []
+
+    def arm(name, kind, sec, per_read):
+        if per_read:
+            arms.append({"name": name, "kind": kind, "sec": sec, "reads": per_read})
+
+    tl = load("transformer_large_gate.json")
+    if tl:
+        arm(
+            "Transformer, 8x larger",
+            "gate",
+            "§19",
+            {
+                r: {"d": round(v["transformer_minus_isotherm_recent"], 4), "ci": ci(v["ci"])}
+                for r, v in tl["results"].items()
+            },
+        )
+    ds = load("data_scaling.json")
+    if ds:
+        arm(
+            "Transformer, pooled reads",
+            "gate",
+            "§21",
+            {
+                r: {"d": round(v["pooled_tf_minus_mlp"]["diff"], 4), "ci": ci(v["pooled_tf_minus_mlp"]["ci"])}
+                for r, v in ds["per_read"].items()
+            },
+        )
+    ns = load("nbm_spread.json")
+    if ns:
+        arm(
+            "NBM's own spread",
+            "gate",
+            "§26",
+            {r: {"d": round(v["diff"], 4), "ci": ci(v["ci"])} for r, v in ns["adoption"].items()},
+        )
+    en = load("explore_ensemble.json")
+    if en:
+        arm(
+            "Ensemble of three",
+            "explore",
+            "§28",
+            {
+                r: {
+                    "d": round(v["mean(mlp,tf,spread)"]["vs_mlp"], 4),
+                    "ci": ci(v["mean(mlp,tf,spread)"]["ci"]),
+                }
+                for r, v in en.items()
+            },
+        )
+    dy = load("explore_dynamics.json")
+    if dy:
+        for key, name in (("isotherm + flow", "Order flow"), ("isotherm + momentum", "Price momentum")):
+            arm(
+                name,
+                "explore",
+                "§30",
+                {r: {"d": round(v[key]["vs_mlp"], 4), "ci": ci(v[key]["ci"])} for r, v in dy.items()},
+            )
+    lm = load("explore_lamp_model.json")
+    if lm:
+        arm(
+            "LAMP",
+            "explore",
+            "§33",
+            {
+                r: {"d": round(v["isotherm + LAMP"]["vs_mlp"], 4), "ci": ci(v["isotherm + LAMP"]["ci"])}
+                for r, v in lm.items()
+                if r != "d1_16"
+            },
+        )
+    out = {"arms": arms}
+    if ds:
+        out["curve"] = {
+            f: {"mlp": round(v["mlp_vs_market"], 4), "tf": round(v["tf_vs_market"], 4)}
+            for f, v in ds["learning_curve"].items()
+        }
+    un = load("unseen_cities.json")
+    if un:
+        out["unseen"] = {
+            "reads": {
+                r: {"g": round(v["isotherm"]["gain"], 4), "ci": ci(v["isotherm"]["ci"])}
+                for r, v in un["reads"].items()
+            },
+            "pnl": round(un["strategy"]["pnl"]),
+            "t": round(un["strategy"]["nw_t"], 2),
+            "ladders": sum(v["ladders"] for v in un["reads"].values()),
+        }
+    ra = load("regime_audit.json")
+    if ra:
+        out["regime"] = {
+            m: {
+                "mkt": round(v["ls_market"], 3),
+                "nbm": round(v["ls_emos_nbm"], 3),
+                "w_gfs": v["w_market+GFS"][1],
+                "n": v["ladders"],
+            }
+            for m, v in ra.items()
+            if v["ladders"] >= 100
+        }
+    fz = []
+    for tag, names in (
+        ("", ["MLP (reference)", "Transformer, 8x larger"]),
+        ("_spread", ["NBM's own spread"]),
+        ("_flow", ["Order flow"]),
+    ):
+        f = pathlib.Path("shadow/forward/frozen{}.json".format(tag))
+        if f.exists():
+            m = json.loads(f.read_text())
+            fz += [{"name": n, "sha": m["sha256"][:12], "fit_through": m["fit_through"]} for n in names]
+    if fz:
+        fz.append({"name": "Ensemble of three", "sha": "members above", "fit_through": fz[0]["fit_through"]})
+    ft = load("forward_test.json")
+    out["forward"] = {"arms": fz, "window": ["2026-10-07", "2027-04-05"], "result": ft}
+    return out
 
 
 HEAD = """<!doctype html>

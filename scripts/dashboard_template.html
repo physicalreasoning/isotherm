@@ -82,6 +82,15 @@ select { font: 13px var(--sans); color: var(--ink); background: var(--surface); 
 table.stats { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
 table.stats td { padding: 5px 0; border-bottom: 1px solid var(--rule); }
 table.stats td:last-child { text-align: right; font-family: var(--mono); }
+.tablewrap { overflow-x: auto; }
+table.arms { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; min-width: 560px; }
+table.arms th { text-align: right; font-weight: 500; color: var(--muted); padding: 4px 6px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+table.arms th:first-child, table.arms td:first-child { text-align: left; }
+table.arms td { padding: 6px; border-bottom: 1px solid var(--rule); text-align: right; font-family: var(--mono); white-space: nowrap; }
+table.arms td:first-child { font-family: var(--sans); }
+table.arms td.hit { color: var(--model); font-weight: 600; }
+table.arms small { display: block; font-size: 10.5px; color: var(--muted); font-weight: 400; }
+.kind { font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
 .verdict { font-family: var(--mono); font-size: 12px; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-left: 6px; }
 .verdict.good { color: var(--good); border: 1px solid var(--good); }
 .verdict.warn { color: var(--warn); border: 1px solid var(--warn); }
@@ -112,6 +121,7 @@ footer a { color: var(--model); }
     <button role="tab" id="tab-trade" aria-controls="trade" aria-selected="false">Trading</button>
     <button role="tab" id="tab-sealed" aria-controls="sealed" aria-selected="false">Sealed tests</button>
     <button role="tab" id="tab-ablate" aria-controls="ablate" aria-selected="false">Markets &amp; ablations</button>
+    <button role="tab" id="tab-research" aria-controls="research" aria-selected="false">Research</button>
     <button role="tab" id="tab-live" aria-controls="live" aria-selected="false">Live</button>
   </nav>
 
@@ -152,6 +162,17 @@ footer a { color: var(--model); }
       <div class="card"><h3>MLB: same pipeline, no edge</h3><p class="note">Elo and starting pitchers pooled with the market, by time before first pitch.</p><div class="chart" id="c-mlb"></div><div class="src">results/sports_benchmark.json</div></div>
       <div class="card"><h3>Transformer over buckets</h3><p class="note">Attention across a ladder's buckets in place of the per-bucket MLP, pre-registered. Transformer minus isotherm on the last 12 months: it needed 3 of 4 read times above zero and cleared 1, so the MLP stays.</p><div class="chart" id="c-tf"></div><div class="src">results/transformer_gate.json</div></div>
       <div class="card"><h3>Daily lows gate 0</h3><p class="note">Pooling the market with each forecast, February to August 2026.</p><div class="chart" id="c-lows"></div><div class="src">results/lows_benchmark.json</div></div>
+    </div>
+  </section>
+
+  <section class="panel" id="research" role="tabpanel" aria-labelledby="tab-research" hidden>
+    <div class="grid">
+      <div class="card wide"><h3>Everything tried against the MLP</h3><p class="note">Log score gain over the per-read MLP, last 12 months before the lockbox, 95% date-block CI; highlighted where the CI is above zero. <b>gate</b>: written down before it ran, needs 3 of 4 reads. <b>explore</b>: found by looking, so only the forward test can confirm it.</p><div class="tablewrap"><table class="arms" id="t-arms"></table></div><div class="src">results/transformer_large_gate.json · data_scaling.json · nbm_spread.json · explore_*.json</div></div>
+      <div class="card"><h3>The transformer keeps learning; the MLP has stopped</h3><p class="note">Gain over the market by share of training dates, pooled over reads. The MLP gains 0.003 nats from four times the data, the transformer 0.010.</p><div class="chart" id="c-curve"></div><div class="src">results/data_scaling.json</div></div>
+      <div class="card"><h3>Twelve cities it never saw</h3><p class="note" id="n-unseen"></p><div class="chart" id="c-unseen"></div><div class="src">results/unseen_cities.json</div></div>
+      <div class="card"><h3>The market got sharper</h3><p class="note">Log loss by month at 16:00 day before, seven cities; lower is better. The crowd improved by about 0.15 nats in a year while EMOS-NBM stood still.</p><div class="chart" id="c-regime"></div><div class="src">results/regime_audit.json</div></div>
+      <div class="card"><h3>GFS's weight is seasonal</h3><p class="note">Weight on EMOS-GFS in a market+GFS pool refit on the trailing 90 days: high in summer, low in winter.</p><div class="chart" id="c-wgfs"></div><div class="src">results/regime_audit.json</div></div>
+      <div class="card wide"><h3>Sealed forward test</h3><p class="note">Frozen on 2026-10-06 before the first test read and scored on ladders from 2026-10-07 to 2027-04-05 at 16:00 day before. An arm wins only if its gain over the MLP has a 95% CI above zero over the whole window.</p><table class="stats" id="t-forward"></table><div class="src">shadow/forward/ · scripts/forward_test.py</div></div>
     </div>
   </section>
 
@@ -201,7 +222,7 @@ function header() {
     ["bad", "Lows sealed test: flat"],
     ["bad", "MLB: no edge"],
     ["warn", "G3 pretraining: fails the gate"],
-    ["warn", "Transformer: no better than the MLP"],
+    ["warn", "Transformer: still learning, fails its gate"], ["warn", "Forward test: 4 arms, scored Apr 2027"],
     [sh.decay && sh.decay.status === "STOP" ? "bad" : (sh.decay && sh.decay.status === "OK" ? "good" : "warn"),
      "Live: " + (sh.decay ? sh.decay.status.replace("_", " ").toLowerCase() : "collecting, " + (sh.settled_ladders || 0) + " settled")],
   ];
@@ -351,6 +372,47 @@ function ablate() {
   gate(D.lows_gate, ["d1_16", "d1_22"], (r) => ({ d1_16: "4pm day before", d1_22: "10pm day before" })[r], ["NBM", "GFS MOS"], [t.base, t.model], "c-lows");
 }
 
+/* ---------- research ---------- */
+function research() {
+  const t = theme(), R = D.research || {}, order = D.reads;
+  const ax = (title) => Object.assign(layout(t).yaxis, { title: { text: title, font: { size: 11 } }, zeroline: true });
+  const head = "<tr><th>Variant</th><th>kind</th>" + order.map((r) => `<th>${LBL[r]}</th>`).join("") + "</tr>";
+  $("t-arms").innerHTML = head + (R.arms || []).map((a) => "<tr><td>" + a.name + "</td><td class=kind>" + a.kind + " " + a.sec + "</td>" +
+    order.map((r) => { const v = a.reads[r]; if (!v) return "<td>–</td>";
+      return `<td class="${v.ci[0] > 0 ? "hit" : ""}">${fmt.nats(v.d)}<small>[${fmt.nats(v.ci[0])}, ${fmt.nats(v.ci[1])}]</small></td>`; }).join("") + "</tr>").join("");
+
+  const c = R.curve || {}, fr = Object.keys(c);
+  plot("c-curve", [["mlp", "MLP", t.base], ["tf", "transformer-L", t.model]].map(([k, name, col]) => ({ x: fr, y: fr.map((f) => c[f][k]), name, mode: "lines+markers", line: { color: col, width: 2.5 }, marker: { size: 8 }, hovertemplate: name + "<br>%{x} of dates: %{y:+.4f}<extra></extra>" })),
+    layout(t, { showlegend: true, xaxis: Object.assign(layout(t).xaxis, { type: "category", title: { text: "share of training dates", font: { size: 11 } } }), yaxis: ax("Δ log score vs market") }));
+
+  const u = R.unseen;
+  if (u) {
+    $("n-unseen").textContent = `Frozen on the seven scored cities, scored once on ${u.ladders.toLocaleString("en-US")} ladders from twelve newer ones, July to October 2026. No read clears zero. The frozen strategy made ${fmt.usd(u.pnl)} on paper, Newey-West t ${u.t}.`;
+    const ur = order.filter((r) => u.reads[r]);
+    plot("c-unseen", [{ x: ur.map((r) => LBL[r]), y: ur.map((r) => u.reads[r].g), type: "bar", marker: { color: ur.map((r) => (u.reads[r].ci[0] > 0 ? t.model : t.base)) },
+      error_y: { type: "data", symmetric: false, array: ur.map((r) => u.reads[r].ci[1] - u.reads[r].g), arrayminus: ur.map((r) => u.reads[r].g - u.reads[r].ci[0]), color: t.ink, thickness: 1.2, width: 4 },
+      hovertemplate: "%{x}<br>isotherm vs market %{y:+.4f}<extra></extra>" }], layout(t, { bargap: 0.45, yaxis: ax("Δ log score vs market") }));
+  }
+
+  const g = R.regime || {}, ms = Object.keys(g);
+  plot("c-regime", [["mkt", "market", t.model], ["nbm", "EMOS-NBM", t.base]].map(([k, name, col]) => ({ x: ms, y: ms.map((m) => g[m][k]), name, mode: "lines+markers", line: { color: col, width: 2 }, marker: { size: 6 }, hovertemplate: name + "<br>%{x}: %{y:.3f}<extra></extra>" })),
+    layout(t, { showlegend: true, yaxis: Object.assign(layout(t).yaxis, { title: { text: "log loss, nats", font: { size: 11 } } }) }));
+  plot("c-wgfs", [{ x: ms, y: ms.map((m) => g[m].w_gfs), mode: "lines+markers", line: { color: t.model, width: 2.5 }, marker: { size: 6 }, hovertemplate: "%{x}: weight %{y:.2f}<extra></extra>" }],
+    layout(t, { yaxis: ax("weight on EMOS-GFS") }));
+
+  const f = R.forward || {}, res = f.result;
+  const rows = (f.arms || []).map((a) => {
+    let st = "collecting";
+    if (res) {
+      const k = { "Transformer, 8x larger": "transformer_minus_isotherm", "NBM's own spread": "spread_minus_isotherm", "Ensemble of three": "ensemble_minus_isotherm", "Order flow": "flow_minus_isotherm" }[a.name];
+      st = k && res[k] ? `${fmt.nats(res[k].diff)} [${fmt.nats(res[k].ci[0])}, ${fmt.nats(res[k].ci[1])}]` + (res.complete ? "" : " · interim") : "reference";
+    }
+    return [`${a.name} <span class="kind">${a.sha}</span>`, a.name.startsWith("MLP") ? "reference" : st];
+  });
+  rows.push(["Ladders scored", res ? `${res.ladders} through ${res.through}` : "none yet"]);
+  $("t-forward").innerHTML = rows.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("");
+}
+
 /* ---------- live ---------- */
 function live() {
   const t = theme(), s = D.shadow, dec = s.decay;
@@ -371,7 +433,7 @@ function live() {
 }
 
 /* ---------- tabs, theme, boot ---------- */
-const RENDER = { prob, trade, sealed, ablate, live };
+const RENDER = { prob, trade, sealed, ablate, research, live };
 let shown = new Set();
 function show(id) {
   document.querySelectorAll('[role="tab"]').forEach((b) => b.setAttribute("aria-selected", b.getAttribute("aria-controls") === id));

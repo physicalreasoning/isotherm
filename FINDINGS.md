@@ -721,3 +721,63 @@ seeds: `shadow/forward/models_flow.pkl`, sha256 `e84ca72deeef511b…`. Same wind
 2027-04-05) and rule: PASS if flow MLP minus the MLP has a 95% date-block CI above zero. Scoring
 needs trades for the window (`scripts/fetch_trades.py`), filtered to before each read as in
 training.
+
+## 32 · Station corpus: fetch in progress (2026-10-06)
+
+`scripts/fetch_station_corpus.py`. Every NWS climate-report site in the lower 48 that IEM lists
+(598), with CLI highs and lows, GFS MOS and NBM for 2021 onward: about 1.3 million station-days
+of real forecasts and outcomes, no market. It feeds a multi-station distributional weather model
+that would replace EMOS as isotherm's forecast input. The download runs at one IEM request every
+3 s, about 11 hours.
+
+## 33 · Exploration: LAMP is the better forecast and adds nothing to isotherm (2026-10-06)
+
+`scripts/fetch_lamp.py`, `scripts/explore_lamp.py`, `src/isotherm/lamp.py`. Raw:
+`results/explore_lamp.json`, `results/explore_lamp_model.json`. **Exploratory.**
+
+At each same-day read, the higher of the high already observed and the latest public LAMP run's
+max over the rest of the climate day estimates the final high. Against the NWS CLI high,
+2023-07 to 2026-06, seven cities:
+
+| Read | NBM rest-of-day estimate, MAE | LAMP estimate, MAE | error correlation |
+|---|---|---|---|
+| 08:00 | 2.29°F | 1.82°F | 0.76 |
+| 12:00 | 1.84°F | 1.52°F | 0.77 |
+| 14:00 | 1.14°F | 0.98°F | 0.79 |
+
+LAMP's estimate is 14 to 21% more accurate than the NBM one the model already uses, and its errors
+are only partly shared. As two extra bucket inputs to the per-read MLP it is worth +0.0005 to
++0.0008 nats over the last 12 months, no CI excluding zero; with order flow, +0.0014 to +0.0017,
+also inside the noise. The 16:00 day-before read, where LAMP inputs are blank, moves by −0.0006:
+that is the size of seed noise alone.
+
+A better public forecast that the market already watches does not help. Traders follow LAMP and
+the live observations; by the read, the price holds what LAMP knows. Of everything tried, only
+inputs that take work to use have added anything: NBM's spread is public but buried in text
+bulletins, and the lean of the order flow has to be computed from the tape.
+
+## 34 · A weather model across stations: pre-registration (2026-10-06)
+
+EMOS fits each city alone on a few years of its own forecasts. The station corpus (§32) has the
+same forecasts and outcomes at about 600 sites. One network across all of them can learn how NBM
+and GFS MOS err in general, and per station through a learned embedding.
+
+**Model** (`src/isotherm/wxnet.py`), fixed before any Kalshi row is scored. Scope: the 16:00
+day-before read. Inputs, as public at that read (same `daytime_max_table` / `forecast_at`
+point-in-time join as EMOS): NBM max and its spread XND, GFS MOS max, their difference, lead
+times, season, and a station embedding (dimension 8). Output: a softmax over the integer high as
+an offset of −20 to +20°F from the rounded NBM forecast, trained on log loss against the CLI high.
+Three hidden layers of 128, three seeds averaged. Bucket probabilities are sums over the integers
+each bucket settles on. Station time zones come from the city tables where known, otherwise from
+longitude (corpus stations are training data only). Hyperparameters may be tuned on non-Kalshi
+stations only.
+
+**Walk-forward**: the same quarterly folds and two-day embargo as everywhere; each fold trains on
+every station-day before the fold and predicts the seven scored cities' ladders in it.
+
+**Gates**, 16:00 day before, paired, 95% date-block CI:
+- *Forecast level:* the weather model minus EMOS-NBM with spread (§26, the best EMOS) on every
+  ladder from 2023-07 to 2026-06. Pass if the CI is above zero.
+- *Adoption:* the per-read MLP with the weather model in place of EMOS-NBM, minus the current
+  MLP, last 12 months before the lockbox. Pass if the CI is above zero; then it joins the forward
+  test as a new arm. Reported beside it: the same against the spread MLP.
