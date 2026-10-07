@@ -309,6 +309,27 @@ def research():
             "mlp_vs_market": round(wx["adoption"]["mlp_vs_market"], 4),
             "wx_vs_market": round(wx["adoption"]["wx_mlp_vs_market"], 4),
         }
+    te = load("typed_eval.json")
+    if te:
+
+        def gap(v):
+            return round(100 * (v["score_80_coverage"] - v["score_80_predicted_mass"]), 1)
+
+        out["typed"] = {
+            r: {
+                "ece": [
+                    round(x["models"]["market"]["noul_ece"], 3),
+                    round(x["models"]["isotherm"]["noul_ece"], 3),
+                ],
+                "cover": [gap(x["models"]["market"]), gap(x["models"]["isotherm"])],
+                "crps": {
+                    "d": round(x["models"]["isotherm"]["vs_market_mean"]["score_crps"], 4),
+                    "ci": ci(x["models"]["isotherm"]["vs_market"]["score_crps"]),
+                },
+                "violations": x["coherence_violations"],
+            }
+            for r, x in te["reads"].items()
+        }
     ec = load("explore_cities.json")
     if ec:
         cols = {
