@@ -54,6 +54,7 @@ ladder over the market; intervals are 95% date-block bootstraps [14].
 | Weather model, 576 stations | forecast +0.043 over the best EMOS; isotherm +0.018 at 16:00, passes; +0.004 over the spread MLP, CI spans zero |
 | Twelve newer cities as cities of their own | MLP gains nothing; transformer mostly gains (exploratory); fresh-window test on Jan to Apr 2027 |
 | Polymarket daily highs | different label (hourly airport max), not usable as Kalshi ladders |
+| Typed answers (Choice, Noul, Score) | coherent on every ladder; Noul calibration error a third to two thirds below the market's; point forecast no better |
 | Sealed forward test | transformer-L, NBM spread, order flow and a three-way ensemble against the MLP, frozen 2026-10-06; the weather model from 2026-10-09; scored 2027-04 |
 
 The edge was large in 2023 and has mostly decayed: the market now prices the National Blend of

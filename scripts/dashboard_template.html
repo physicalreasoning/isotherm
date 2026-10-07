@@ -168,6 +168,7 @@ footer a { color: var(--model); }
   <section class="panel" id="research" role="tabpanel" aria-labelledby="tab-research" hidden>
     <div class="grid">
       <div class="card wide"><h3>Everything tried against the MLP</h3><p class="note">Log score gain over the per-read MLP, last 12 months before the lockbox, 95% date-block CI; highlighted where the CI is above zero. <b>gate</b>: written down before it ran, needs 3 of 4 reads. <b>explore</b>: found by looking, so only the forward test can confirm it. The weather model (§35) covers 16:00 day before only; its gate is that one read.</p><div class="tablewrap"><table class="arms" id="t-arms"></table></div><div class="src">results/transformer_large_gate.json · data_scaling.json · nbm_spread.json · explore_*.json</div></div>
+      <div class="card wide" id="card-typed" hidden><h3>The typed answers: better calibrated, not better located</h3><p class="note">What an API user receives, read off one integer distribution, last 12 months before the lockbox (§38). Noul: calibration error of P(high ≥ t) at every integer within 6°F of the forecast. Score: how much more often the 80% interval holds the high than its own probability says, and Δ CRPS against the market (positive is better).</p><div class="tablewrap"><table class="arms" id="t-typed"></table></div><div class="src">results/typed_eval.json</div></div>
       <div class="card wide" id="card-cities" hidden><h3>Twelve newer cities, each as a city of its own</h3><p class="note">Training on all nineteen cities instead of seven, each with its own city input: Δ log score, test 2026-07-01 to 2026-10-04, 95% date-block CI (§36). Exploration only; the pre-registered test is on January to April 2027 (§37).</p><div class="tablewrap"><table class="arms" id="t-cities"></table></div><div class="src">results/explore_cities.json</div></div>
       <div class="card" id="card-wx" hidden><h3>One weather model across 576 stations</h3><p class="note">A network trained on 1.16 million station-days of NBM and GFS MOS forecasts against NWS climate reports, scored at 16:00 day before on the seven cities' ladders (§35).</p><table class="stats" id="t-wx"></table><div class="src">results/wx_gate.json</div></div>
       <div class="card"><h3>The transformer keeps learning; the MLP has stopped</h3><p class="note">Gain over the market by share of training dates, pooled over reads. The MLP gains 0.003 nats from four times the data, the transformer 0.010.</p><div class="chart" id="c-curve"></div><div class="src">results/data_scaling.json</div></div>
@@ -388,6 +389,14 @@ function research() {
     $("card-wx").hidden = false;
     $("t-wx").innerHTML = [["Forecast vs EMOS-NBM with spread", ci(w.forecast)], ["MLP vs market", fmt.nats(w.mlp_vs_market)], ["MLP on the weather model vs market", fmt.nats(w.wx_vs_market)]]
       .map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("");
+  }
+
+  if (R.typed) {
+    const T = R.typed;
+    $("card-typed").hidden = false;
+    $("t-typed").innerHTML = "<tr><th>Read</th><th>Noul calibration error, market → isotherm</th><th>80% interval excess coverage, market → isotherm</th><th>Score: Δ CRPS</th><th>Coherence violations</th></tr>" +
+      order.filter((r) => T[r]).map((r) => { const x = T[r];
+        return `<tr><td>${LBL[r]}</td><td>${x.ece[0].toFixed(3)} → ${x.ece[1].toFixed(3)}</td><td>${x.cover[0].toFixed(1)} → ${x.cover[1].toFixed(1)} pts</td><td class="${x.crps.ci[0] > 0 ? "hit" : ""}">${fmt.nats(x.crps.d)}<small>[${fmt.nats(x.crps.ci[0])}, ${fmt.nats(x.crps.ci[1])}]</small></td><td>${x.violations}</td></tr>`; }).join("");
   }
 
   if (R.cities) {

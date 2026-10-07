@@ -884,3 +884,47 @@ cities, 95% date-block CI. PASS if the CI is above zero at 3 of 4 reads and the 
 ±0.005 of the market on both city groups. Then the 19-city transformer replaces the MLP, and
 the twelve newer cities become scored cities. Reported, not gated: every other pairing in §36,
 on both groups. Run once, after the window settles (the script refuses earlier).
+
+## 38 · The typed answers: coherent, better calibrated, no better at locating the high (2026-10-07)
+
+`scripts/typed_eval.py`, `results/typed_eval.json`. Every result before this scores bucket
+probabilities. The API (`isotherm.api`, PLAN §0) answers three question types off one integer
+distribution, built from those probabilities as `serve.integer_distribution` builds it. This
+scores what an API user receives, on the out-of-sample rows of the last 12 months before the
+lockbox (about 2,550 ladders per read):
+- **Choice:** the bucket, by log loss.
+- **Noul:** P(high ≥ t) at every integer t within 6°F of the NBM forecast, by Brier score and
+  debiased calibration error.
+- **Score:** the high itself, by CRPS, the error of the median and the 80% interval.
+
+The within-bucket shape (the forecast Gaussian) is the same for every model, so they differ only
+through their bucket probabilities.
+
+**Coherence holds**: 0 violations on 10,204 ladders × 3 models (Choice sums to one, Noul
+monotone, mean inside the 1-99% range), as the design promises.
+
+| Read | Choice: Δ log loss vs market | Noul calibration error, market → isotherm | Score: Δ CRPS vs market | 80% interval: coverage − own mass, market → isotherm | Width, market → isotherm |
+|---|---|---|---|---|---|
+| 08:00 | +0.009 [+0.001, +0.017] | 0.020 → 0.007 | +0.003 [−0.003, +0.008] | +2.8 → −0.2 pts | 4.4 → 4.1°F |
+| 12:00 | +0.010 [+0.004, +0.015] | 0.019 → 0.010 | −0.001 [−0.005, +0.002] | +3.9 → +1.8 pts | 3.6 → 3.4°F |
+| 14:00 | +0.017 [+0.010, +0.024] | 0.027 → 0.017 | +0.001 [−0.002, +0.004] | +4.4 → +0.9 pts | 2.8 → 2.5°F |
+| 16:00 day before | +0.014 [+0.006, +0.022] | 0.026 → 0.013 | +0.005 [−0.005, +0.014] | +3.8 → +1.4 pts | 5.6 → 5.2°F |
+
+- **isotherm's edge is in shape and calibration, not location.** Across thresholds its yes/no
+  probabilities' calibration error is a third to two thirds lower than the market's. The market's 80% intervals
+  are too wide (they hold the outcome 2.8 to 4.4 points more often than its own probabilities say);
+  isotherm's are about 7% narrower and close to their stated mass.
+- **For a point forecast it adds nothing.** CRPS and the error of the median (0.7 to 1.6°F) match
+  the market's. For the MLP no CRPS CI clears zero, and only the 16:00 Noul Brier does, barely
+  (+0.0006 [+0.00002, +0.0012]). The crowd already knows where the high will land; what it
+  misprices is how sure to be.
+- **Transformer-L at 16:00 day before** is the exception: CRPS +0.014 [+0.006, +0.024] and Noul
+  Brier +0.0012 [+0.0006, +0.0018], both above zero.
+- **The weather-model MLP (§35)** at 16:00: Choice +0.032 [+0.021, +0.042], Noul calibration error
+  0.015 against the market's 0.027, CRPS +0.005 [−0.008, +0.017]. (Its rows use the weather
+  model's moments for the within-bucket shape, so its market row differs slightly from the table.)
+
+This is the first evaluation of the typed interface itself. It supports the Jev design (one
+distribution, coherent answers, better calibrated than the market) and narrows the claim: the
+answers to "which bucket" and "how likely is above t" beat the market; the answer to "what will
+the high be" does not.
