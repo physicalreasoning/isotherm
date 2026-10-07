@@ -167,12 +167,13 @@ footer a { color: var(--model); }
 
   <section class="panel" id="research" role="tabpanel" aria-labelledby="tab-research" hidden>
     <div class="grid">
-      <div class="card wide"><h3>Everything tried against the MLP</h3><p class="note">Log score gain over the per-read MLP, last 12 months before the lockbox, 95% date-block CI; highlighted where the CI is above zero. <b>gate</b>: written down before it ran, needs 3 of 4 reads. <b>explore</b>: found by looking, so only the forward test can confirm it.</p><div class="tablewrap"><table class="arms" id="t-arms"></table></div><div class="src">results/transformer_large_gate.json · data_scaling.json · nbm_spread.json · explore_*.json</div></div>
+      <div class="card wide"><h3>Everything tried against the MLP</h3><p class="note">Log score gain over the per-read MLP, last 12 months before the lockbox, 95% date-block CI; highlighted where the CI is above zero. <b>gate</b>: written down before it ran, needs 3 of 4 reads. <b>explore</b>: found by looking, so only the forward test can confirm it. The weather model (§35) covers 16:00 day before only; its gate is that one read.</p><div class="tablewrap"><table class="arms" id="t-arms"></table></div><div class="src">results/transformer_large_gate.json · data_scaling.json · nbm_spread.json · explore_*.json</div></div>
+      <div class="card" id="card-wx" hidden><h3>One weather model across 576 stations</h3><p class="note">A network trained on 1.16 million station-days of NBM and GFS MOS forecasts against NWS climate reports, scored at 16:00 day before on the seven cities' ladders (§35).</p><table class="stats" id="t-wx"></table><div class="src">results/wx_gate.json</div></div>
       <div class="card"><h3>The transformer keeps learning; the MLP has stopped</h3><p class="note">Gain over the market by share of training dates, pooled over reads. The MLP gains 0.003 nats from four times the data, the transformer 0.010.</p><div class="chart" id="c-curve"></div><div class="src">results/data_scaling.json</div></div>
       <div class="card"><h3>Twelve cities it never saw</h3><p class="note" id="n-unseen"></p><div class="chart" id="c-unseen"></div><div class="src">results/unseen_cities.json</div></div>
       <div class="card"><h3>The market got sharper</h3><p class="note">Log loss by month at 16:00 day before, seven cities; lower is better. The crowd improved by about 0.15 nats in a year while EMOS-NBM stood still.</p><div class="chart" id="c-regime"></div><div class="src">results/regime_audit.json</div></div>
       <div class="card"><h3>GFS's weight is seasonal</h3><p class="note">Weight on EMOS-GFS in a market+GFS pool refit on the trailing 90 days: high in summer, low in winter.</p><div class="chart" id="c-wgfs"></div><div class="src">results/regime_audit.json</div></div>
-      <div class="card wide"><h3>Sealed forward test</h3><p class="note">Frozen on 2026-10-06 before the first test read and scored on ladders from 2026-10-07 to 2027-04-05 at 16:00 day before. An arm wins only if its gain over the MLP has a 95% CI above zero over the whole window.</p><table class="stats" id="t-forward"></table><div class="src">shadow/forward/ · scripts/forward_test.py</div></div>
+      <div class="card wide"><h3>Sealed forward test</h3><p class="note">Frozen on 2026-10-06 before the first test read and scored on ladders from 2026-10-07 to 2027-04-05 at 16:00 day before; the weather model, frozen a day later, from 2026-10-09. An arm wins only if its gain over the MLP has a 95% CI above zero over the whole window.</p><table class="stats" id="t-forward"></table><div class="src">shadow/forward/ · scripts/forward_test.py</div></div>
     </div>
   </section>
 
@@ -381,6 +382,13 @@ function research() {
     order.map((r) => { const v = a.reads[r]; if (!v) return "<td>–</td>";
       return `<td class="${v.ci[0] > 0 ? "hit" : ""}">${fmt.nats(v.d)}<small>[${fmt.nats(v.ci[0])}, ${fmt.nats(v.ci[1])}]</small></td>`; }).join("") + "</tr>").join("");
 
+  if (R.wx) {
+    const w = R.wx, ci = (v) => `${fmt.nats(v.d)} [${fmt.nats(v.ci[0])}, ${fmt.nats(v.ci[1])}]`;
+    $("card-wx").hidden = false;
+    $("t-wx").innerHTML = [["Forecast vs EMOS-NBM with spread", ci(w.forecast)], ["MLP vs market", fmt.nats(w.mlp_vs_market)], ["MLP on the weather model vs market", fmt.nats(w.wx_vs_market)]]
+      .map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("");
+  }
+
   const c = R.curve || {}, fr = Object.keys(c);
   plot("c-curve", [["mlp", "MLP", t.base], ["tf", "transformer-L", t.model]].map(([k, name, col]) => ({ x: fr, y: fr.map((f) => c[f][k]), name, mode: "lines+markers", line: { color: col, width: 2.5 }, marker: { size: 8 }, hovertemplate: name + "<br>%{x} of dates: %{y:+.4f}<extra></extra>" })),
     layout(t, { showlegend: true, xaxis: Object.assign(layout(t).xaxis, { type: "category", title: { text: "share of training dates", font: { size: 11 } } }), yaxis: ax("Δ log score vs market") }));
@@ -405,7 +413,8 @@ function research() {
     let st = "collecting";
     if (res) {
       const k = { "Transformer, 8x larger": "transformer_minus_isotherm", "NBM's own spread": "spread_minus_isotherm", "Ensemble of three": "ensemble_minus_isotherm", "Order flow": "flow_minus_isotherm" }[a.name];
-      st = k && res[k] ? `${fmt.nats(res[k].diff)} [${fmt.nats(res[k].ci[0])}, ${fmt.nats(res[k].ci[1])}]` + (res.complete ? "" : " · interim") : "reference";
+      const r = a.name.startsWith("Weather model") ? (res.weather_model || {}).wx_mlp_minus_isotherm : k && res[k];
+      st = r ? `${fmt.nats(r.diff)} [${fmt.nats(r.ci[0])}, ${fmt.nats(r.ci[1])}]` + (res.complete ? "" : " · interim") : a.name.startsWith("MLP") ? "reference" : "collecting";
     }
     return [`${a.name} <span class="kind">${a.sha}</span>`, a.name.startsWith("MLP") ? "reference" : st];
   });
