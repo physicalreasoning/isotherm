@@ -905,14 +905,14 @@ monotone, mean inside the 1-99% range), as the design promises.
 
 | Read | Choice: Δ log loss vs market | Noul calibration error, market → isotherm | Score: Δ CRPS vs market | 80% interval: coverage − own mass, market → isotherm | Width, market → isotherm |
 |---|---|---|---|---|---|
-| 08:00 | +0.009 [+0.001, +0.017] | 0.020 → 0.007 | +0.003 [−0.003, +0.008] | +2.7 → −0.2 pts | 4.4 → 4.1°F |
-| 12:00 | +0.010 [+0.004, +0.015] | 0.019 → 0.011 | −0.001 [−0.005, +0.002] | +3.9 → +1.8 pts | 3.6 → 3.4°F |
+| 08:00 | +0.009 [+0.001, +0.017] | 0.020 → 0.007 | +0.003 [−0.003, +0.008] | +2.8 → −0.2 pts | 4.4 → 4.1°F |
+| 12:00 | +0.010 [+0.004, +0.015] | 0.019 → 0.010 | −0.001 [−0.005, +0.002] | +3.9 → +1.8 pts | 3.6 → 3.4°F |
 | 14:00 | +0.017 [+0.010, +0.024] | 0.027 → 0.017 | +0.001 [−0.002, +0.004] | +4.4 → +0.9 pts | 2.8 → 2.5°F |
-| 16:00 day before | +0.014 [+0.006, +0.022] | 0.026 → 0.013 | +0.005 [−0.005, +0.014] | +3.9 → +1.5 pts | 5.6 → 5.2°F |
+| 16:00 day before | +0.014 [+0.006, +0.022] | 0.026 → 0.013 | +0.005 [−0.005, +0.014] | +3.8 → +1.4 pts | 5.6 → 5.2°F |
 
 - **isotherm's edge is in shape and calibration, not location.** Across thresholds its yes/no
   probabilities' calibration error is a third to two thirds lower than the market's. The market's 80% intervals
-  are too wide (they hold the outcome 2.7 to 4.4 points more often than its own probabilities say);
+  are too wide (they hold the outcome 2.8 to 4.4 points more often than its own probabilities say);
   isotherm's are about 7% narrower and close to their stated mass.
 - **For a point forecast it adds nothing.** CRPS and the error of the median (0.7 to 1.6°F) match
   the market's. For the MLP no CRPS CI clears zero, and only the 16:00 Noul Brier does, barely
