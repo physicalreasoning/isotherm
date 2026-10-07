@@ -62,7 +62,7 @@ and noise with matched turnover loses. Full record: `FINDINGS.md` §8-10.
 | Architecture check | a transformer over the ladder's buckets, same inputs and training, lands within 0.004 of the MLP and fails its pre-registered gate (FINDINGS §16-17); the MLP is kept |
 | Scaling and data | an 8x larger transformer beats the MLP at 16:00 but fails its gate (§19); a learning curve shows it still improving with data while the MLP has flattened, and extra rows from lows or new cities hurt (§21) |
 | Generalisation | on twelve cities it never saw, isotherm is level with the market, no read clearing zero (§27) |
-| Open | transformer-L and an MLP on NBM-spread inputs are frozen in a sealed forward test, scored on 2026-10-07 to 2027-04-05 (§25); the MLP on a 576-station weather model passed its gates (+0.018 at 16:00) and is scored from 2026-10-09 (§35) |
+| Open | transformer-L and an MLP on NBM-spread inputs are frozen in a sealed forward test, scored on 2026-10-07 to 2027-04-05 (§25); the MLP on a 576-station weather model passed its gates (+0.018 at 16:00) and is scored from 2026-10-09 (§35); transformer-L trained on nineteen cities is pre-registered against the MLP on 2027-01-01 to 2027-04-05 (§37) |
 
 ## Data
 
