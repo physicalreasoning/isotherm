@@ -23,8 +23,8 @@ from .weather import CITIES
 INSTRUCTIONS = """isotherm gives calibrated probabilities for Kalshi's daily high-temperature markets
 in seven US cities, from a model that combines the market's own prices with NWS forecasts and
 beat the market out of sample (physicalreasoning.ai/isotherm). Temperatures are whole °F, as
-settled by the NWS Daily Climate Report. A ladder exists only while Kalshi lists it, usually from
-the morning two days before the target day. Every answer for a city-day is read off one
+settled by the NWS Daily Climate Report. A ladder exists once Kalshi lists it, at 10:00 ET the day
+before the target day. Every answer for a city-day is read off one
 probability distribution, so answers never contradict each other. Probabilities, not advice."""
 
 mcp = MCPServer("isotherm", instructions=INSTRUCTIONS, website_url="https://physicalreasoning.ai/isotherm/")
