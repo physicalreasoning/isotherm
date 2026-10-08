@@ -19,7 +19,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           python-version: "3.11"
-      - run: uv sync --locked
+      - run: uv sync --locked --no-default-groups  # scoring needs neither torch nor dev tools
       - name: Check out ledger branch
         run: |
           if git fetch -q origin shadow-ledger; then
@@ -30,7 +30,7 @@ jobs:
             git -C ledger rm -rfq .
           fi
           cp shadow/frozen.json ledger/frozen.json
-      - run: uv run scripts/shadow.py score settle report --root ledger
+      - run: uv run --no-sync scripts/shadow.py score settle report --root ledger
       - name: Commit ledger
         run: |
           cd ledger

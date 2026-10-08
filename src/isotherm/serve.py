@@ -1,6 +1,7 @@
 """HTTP service for the frozen model: typed questions in, calibrated typed answers out.
 
-    uv run uvicorn isotherm.serve:app --port 8000
+    uv run uvicorn isotherm.serve:app --port 8000      # REST only
+    uv run uvicorn isotherm.app:app --port 8000        # REST and MCP (/mcp), as deployed
 
     GET  /health                  model hash and what it was fit on
     GET  /ladder/{city}?day=      live ladder: market, forecast and model probability per bucket
@@ -14,10 +15,16 @@ bucket's mass over its integers in proportion to the forecast Gaussian, and the 
 ±6 sigma. Every typed answer is read off that one distribution, so a Choice over the listed
 buckets reproduces the model's bucket probabilities exactly, and any other question (a
 threshold, a range, a quantile) stays coherent with them.
+
+Every /decide answer is appended to a JSON-lines log with the integer distribution it was read
+from (`ISOTHERM_ANSWER_LOG`, default data/served/answers.jsonl; empty to disable), so served
+answers can be scored against outcomes later the way FINDINGS §38 scores the backtest.
 """
 
 from __future__ import annotations
 
+import json
+import os
 import pathlib
 from typing import List, Optional
 
@@ -31,7 +38,8 @@ from . import shadow
 from .api import Answer, Choice, IntegerDistribution, Noul, Score, answer
 from .weather import CITIES
 
-FROZEN_PATH = pathlib.Path(__file__).resolve().parents[2] / "shadow" / "frozen.json"
+ROOT = pathlib.Path(__file__).resolve().parents[2]
+FROZEN_PATH = pathlib.Path(os.environ.get("ISOTHERM_FROZEN", ROOT / "shadow" / "frozen.json"))
 
 
 def integer_distribution(p, intervals, mu: float, sigma: float) -> IntegerDistribution:
@@ -76,9 +84,13 @@ def _frozen() -> dict:
     return shadow.load_frozen(FROZEN_PATH)
 
 
+class NotServable(Exception):
+    """No ladder, quotes or forecast for that city-day yet."""
+
+
 def _predict(city: str, day: Optional[str]):
     if city not in CITIES:
-        raise HTTPException(404, "unknown city {!r}; one of {}".format(city, sorted(CITIES)))
+        raise KeyError("unknown city {!r}; one of {}".format(city, sorted(CITIES)))
     now = pd.Timestamp.now(tz="UTC")
     if day is None:
         d, _ = shadow.due(CITIES[city], now)
@@ -86,12 +98,11 @@ def _predict(city: str, day: Optional[str]):
         d = pd.Timestamp(day)
     out = shadow.predict_city(city, d, now, _frozen())
     if isinstance(out, str):
-        raise HTTPException(409, "cannot score {} {}: {}".format(city, d.date(), out))
+        raise NotServable("cannot score {} {}: {}".format(city, d.date(), out))
     return d, out
 
 
-@app.get("/health")
-def health():
+def health_payload() -> dict:
     f = _frozen()
     return {
         "status": "ok",
@@ -102,25 +113,22 @@ def health():
     }
 
 
-@app.get("/ladder/{city}")
-def ladder(city: str, day: Optional[str] = None):
+def ladder_payload(city: str, day: Optional[str] = None) -> dict:
     d, out = _predict(city, day)
-    buckets = [
-        {
-            "ticker": r["ticker"],
-            "lo": a,
-            "hi": b,
-            "bid": float(out["bid"][j]),
-            "ask": float(out["ask"][j]),
-            "p_market": float(out["p_market"][j]),
-            "p_forecast": float(out["p_emos"][j]),
-            "p_model": float(out["p_model"][j]),
-        }
-        for j, (r, (a, b)) in enumerate(zip(out["rows"], out["iv"], strict=True))
-    ]
-    for b in buckets:  # JSON has no infinity
-        b["lo"] = None if not np.isfinite(b["lo"]) else b["lo"]
-        b["hi"] = None if not np.isfinite(b["hi"]) else b["hi"]
+    buckets = []
+    for j, (r, (a, b)) in enumerate(zip(out["rows"], out["iv"], strict=True)):
+        buckets.append(
+            {
+                "ticker": r["ticker"],
+                "lo": float(a) if np.isfinite(a) else None,  # JSON has no infinity
+                "hi": float(b) if np.isfinite(b) else None,
+                "bid": float(out["bid"][j]),
+                "ask": float(out["ask"][j]),
+                "p_market": float(out["p_market"][j]),
+                "p_forecast": float(out["p_emos"][j]),
+                "p_model": float(out["p_model"][j]),
+            }
+        )
     return {
         "city": city,
         "day": str(d.date()),
@@ -131,14 +139,61 @@ def ladder(city: str, day: Optional[str] = None):
     }
 
 
+def _log(record: dict) -> None:
+    path = os.environ.get("ISOTHERM_ANSWER_LOG", str(ROOT / "data" / "served" / "answers.jsonl"))
+    if not path:
+        return
+    try:
+        p = pathlib.Path(path)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        with p.open("a") as f:
+            f.write(json.dumps(record) + "\n")
+    except OSError:
+        pass  # logging must never break an answer
+
+
+def decide_payload(city: str, questions: List[Choice | Noul | Score], day: Optional[str] = None, via="http"):
+    d, out = _predict(city, day)
+    dist = integer_distribution(out["p_model"], out["iv"], out["mu"], out["sigma"])
+    model_hash = _frozen()["hash"]
+    answers = answer(dist, questions)
+    _log(
+        {
+            "served_at": pd.Timestamp.now(tz="UTC").isoformat(),
+            "via": via,
+            "city": city,
+            "day": str(d.date()),
+            "event": out["event"],
+            "model_hash": model_hash,
+            "questions": [q.model_dump() for q in questions],
+            "answers": [a.model_dump() for a in answers],
+            "dist": {"lo": dist.lo, "p": [round(float(x), 6) for x in dist.p]},
+        }
+    )
+    return DecideResponse(
+        city=city, day=str(d.date()), event=out["event"], model_hash=model_hash, answers=answers
+    )
+
+
+def _http(fn, *a):
+    try:
+        return fn(*a)
+    except KeyError as e:
+        raise HTTPException(404, str(e.args[0])) from None
+    except NotServable as e:
+        raise HTTPException(409, str(e)) from None
+
+
+@app.get("/health")
+def health():
+    return health_payload()
+
+
+@app.get("/ladder/{city}")
+def ladder(city: str, day: Optional[str] = None):
+    return _http(ladder_payload, city, day)
+
+
 @app.post("/decide", response_model=DecideResponse)
 def decide(req: DecideRequest):
-    d, out = _predict(req.city, req.day)
-    dist = integer_distribution(out["p_model"], out["iv"], out["mu"], out["sigma"])
-    return DecideResponse(
-        city=req.city,
-        day=str(d.date()),
-        event=out["event"],
-        model_hash=_frozen()["hash"],
-        answers=answer(dist, req.questions),
-    )
+    return _http(decide_payload, req.city, req.questions, req.day)

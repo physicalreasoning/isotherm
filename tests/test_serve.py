@@ -21,7 +21,8 @@ def test_integer_distribution_reproduces_bucket_probabilities():
 
 
 @pytest.fixture
-def client(monkeypatch):
+def client(monkeypatch, tmp_path):
+    monkeypatch.setenv("ISOTHERM_ANSWER_LOG", str(tmp_path / "answers.jsonl"))
     fake = {
         "event": "KXHIGHNY-26OCT06",
         "rows": [{"ticker": "T{}".format(j)} for j in range(4)],
