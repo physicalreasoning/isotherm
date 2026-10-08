@@ -10,6 +10,6 @@ COPY src ./src
 COPY shadow/frozen.json ./shadow/frozen.json
 RUN uv sync --locked --no-dev --no-default-groups
 # Kalshi market data is public: no API key goes in this image.
-ENV ISOTHERM_PUBLIC_HOST=0.0.0.0 PORT=8000 ISOTHERM_ANSWER_LOG=/app/data/served/answers.jsonl
+ENV ISOTHERM_PUBLIC_HOST=0.0.0.0 PORT=8000 ISOTHERM_ANSWER_LOG=/tmp/isotherm/answers.jsonl
 EXPOSE 8000
 CMD ["sh", "-c", "exec /app/.venv/bin/uvicorn isotherm.app:app --host 0.0.0.0 --port ${PORT}"]
