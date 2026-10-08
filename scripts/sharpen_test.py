@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Score the sealed sharpening test (FINDINGS §40) on ladders that settled after the freeze.
+"""Score the sealed sharpening test (FINDINGS §40, corrected in §41) on ladders settled after the freeze.
 
 The market's own bucket probabilities raised to a frozen exponent per read and renormalised
 (shadow/forward/sharpen.json, hash checked), against the raw market, on every ladder of the 19
@@ -35,6 +35,14 @@ def frozen():
     return f
 
 
+BID_FLOOR = 0.005  # §41: the bid-priced market floors bids at half a cent, then renormalises
+
+
+def bid_market(bid, mask):
+    q = np.where(mask, np.clip(bid, BID_FLOOR, 1), 0.0)
+    return q / q.sum(1, keepdims=True)
+
+
 def sharpen(p, mask, a):
     q = np.where(mask, np.power(np.clip(p, 1e-6, 1), a), 0.0)
     return q / q.sum(1, keepdims=True)
@@ -62,8 +70,13 @@ def main():
         diff = metrics.log_score(s.probs["market"], s.y) - metrics.log_score(
             sharpen(s.probs["market"], s.mask, a), s.y
         )
+        # §41 primary: against the market priced at its bids (dead quotes carry no mass).
+        db = metrics.log_score(bid_market(s.quotes["bid"], s.mask), s.y) - metrics.log_score(
+            sharpen(s.probs["market"], s.mask, a), s.y
+        )
         r = {
             "ladders": len(s),
+            "vs_bid": {"diff": float(db.mean()), "ci": metrics.date_bootstrap_mean(days, db, 2000)},
             "diff": float(diff.mean()),
             "ci": metrics.date_bootstrap_mean(days, diff, 2000),
         }
@@ -89,8 +102,9 @@ def main():
         }
     if res["complete"]:
         rr = res["reads"]
-        res["verdict"] = "PASS" if rr.get("d1_16", {}).get("ci", [0])[0] > 0 else "FAIL"
-        res["reads_passing"] = int(sum(r["ci"][0] > 0 for r in rr.values()))
+        res["verdict"] = "PASS" if rr.get("d1_16", {}).get("vs_bid", {}).get("ci", [0])[0] > 0 else "FAIL"
+        res["reads_passing"] = int(sum(r["vs_bid"]["ci"][0] > 0 for r in rr.values()))
+        res["verdict_original_s40"] = "PASS" if rr.get("d1_16", {}).get("ci", [0])[0] > 0 else "FAIL"
     pathlib.Path("results/sharpen_test.json").write_text(json.dumps(res, indent=2))
     print(json.dumps(res, indent=1))
 

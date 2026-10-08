@@ -1,0 +1,27 @@
+{
+ "new_requests": 236,
+ "cap": 1400,
+ "stopped_by_cap": false,
+ "filters": {
+  "KXINX": {
+   "settled events listed (newest 1000 max)": 1000,
+   "newest kept for fetch": 280,
+   "partition ladder fetched": 280
+  },
+  "KXNASDAQ100": {
+   "settled events listed (newest 1000 max)": 1000,
+   "newest kept for fetch": 280,
+   "partition ladder fetched": 280
+  },
+  "KXEURUSD": {
+   "settled events listed (newest 1000 max)": 1000,
+   "newest kept for fetch": 280,
+   "partition ladder fetched": 280
+  },
+  "KXUSDJPY": {
+   "settled events listed (newest 1000 max)": 1000,
+   "newest kept for fetch": 280,
+   "partition ladder fetched": 280
+  }
+ }
+}

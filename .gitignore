@@ -8,3 +8,4 @@ __pycache__/
 results/*.log
 .claude/
 results/alpha/*.parquet
+results/alpha_xcat/*.parquet

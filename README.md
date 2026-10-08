@@ -56,7 +56,7 @@ ladder over the market; intervals are 95% date-block bootstraps [14].
 | Twelve newer cities as cities of their own | MLP gains nothing; transformer mostly gains (exploratory); fresh-window test on Jan to Apr 2027 |
 | Polymarket daily highs | different label (hourly airport max), not usable as Kalshi ladders |
 | Typed answers (Choice, Noul, Score) | coherent on every ladder; Noul calibration error a third to two thirds below the market's; point forecast no better |
-| Market-only signals | sharpening the market's own prices (power ≈ 1.17) beats it by +0.010 at 16:00 (exploratory); sealed test from 2026-10-10 |
+| Market-only signals | sharpening the mid-price market beats it, but mostly because mids count unbid asks; against bid prices it wins only at 14:00. isotherm's edge survives the stricter baseline at 3 of 4 reads |
 | Sealed forward test | transformer-L, NBM spread, order flow and a three-way ensemble against the MLP, frozen 2026-10-06; the weather model from 2026-10-09; scored 2027-04 |
 
 The edge was large in 2023 and has mostly decayed: the market now prices the National Blend of
