@@ -82,13 +82,27 @@ uv run scripts/fetch_trades.py && uv run scripts/backtest.py --suite g2
 uv run scripts/report.py && uv run scripts/plots.py && uv run scripts/dashboard.py
 ```
 
-Ask the frozen model a question about tomorrow's ladder:
+Ask the frozen model a question about tomorrow's ladder, over REST:
 
 ```bash
-uv run uvicorn isotherm.serve:app
+uv run uvicorn isotherm.app:app
 curl -s -X POST localhost:8000/decide -H 'content-type: application/json' \
   -d '{"city": "NY", "questions": [{"kind": "noul", "set": {"lo": 70}}]}'
 ```
+
+Or let an agent ask. isotherm is an [MCP](https://modelcontextprotocol.io) server with four tools:
+`cities`, `ladder`, `probability` (P(high in a range)) and `decide` (any typed questions at once).
+Every answer for a city-day comes from the same distribution, so an agent's answers never
+contradict each other.
+
+```bash
+claude mcp add isotherm -- uv run --directory /path/to/isotherm isotherm-mcp   # stdio
+```
+
+The same server speaks streamable HTTP at `/mcp` when run with `uvicorn isotherm.app:app`, and the
+`Dockerfile` builds it without the training stack (no torch). Every served answer is logged with
+the distribution it came from (`ISOTHERM_ANSWER_LOG`), so live answers can be scored against
+outcomes as [FINDINGS §38](FINDINGS.md) scores the backtest.
 
 The sealed tests have already been scored and should not be re-scored with new configurations.
 
