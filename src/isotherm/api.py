@@ -120,7 +120,7 @@ def answer(dist: IntegerDistribution, questions: List[Question]) -> List[Answer]
                     value=i,
                     probabilities=pr.tolist(),
                     confidence=float(pr[i]),
-                    uncovered_mass=float(1 - pr.sum()),
+                    uncovered_mass=max(0.0, float(1 - pr.sum())),  # no float noise below zero
                 )
             )
         elif isinstance(q, Noul):

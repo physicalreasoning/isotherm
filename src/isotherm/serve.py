@@ -77,7 +77,16 @@ class DecideResponse(BaseModel):
     answers: List[Answer]
 
 
-app = FastAPI(title="isotherm", version="0.1.0")
+app = FastAPI(
+    title="isotherm",
+    version="0.1.0",
+    description=(
+        "Calibrated, typed answers for Kalshi's daily high-temperature markets in seven US cities. "
+        "Every answer for a city-day is read off one distribution, so answers never contradict each "
+        "other. The same tools are available to agents over MCP (streamable HTTP) at `/mcp`. "
+        "Reference: https://github.com/physicalreasoning/isotherm/blob/main/docs/API.md"
+    ),
+)
 
 
 def _frozen() -> dict:
