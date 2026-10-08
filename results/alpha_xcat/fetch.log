@@ -1,0 +1,38 @@
+100/1120 events, 22 new requests
+200/1120 events, 41 new requests
+300/1120 events, 71 new requests
+400/1120 events, 106 new requests
+500/1120 events, 107 new requests
+600/1120 events, 134 new requests
+700/1120 events, 135 new requests
+800/1120 events, 197 new requests
+900/1120 events, 219 new requests
+1000/1120 events, 227 new requests
+1100/1120 events, 227 new requests
+{
+ "new_requests": 236,
+ "cap": 1400,
+ "stopped_by_cap": false,
+ "filters": {
+  "KXINX": {
+   "settled events listed (newest 1000 max)": 1000,
+   "newest kept for fetch": 280,
+   "partition ladder fetched": 280
+  },
+  "KXNASDAQ100": {
+   "settled events listed (newest 1000 max)": 1000,
+   "newest kept for fetch": 280,
+   "partition ladder fetched": 280
+  },
+  "KXEURUSD": {
+   "settled events listed (newest 1000 max)": 1000,
+   "newest kept for fetch": 280,
+   "partition ladder fetched": 280
+  },
+  "KXUSDJPY": {
+   "settled events listed (newest 1000 max)": 1000,
+   "newest kept for fetch": 280,
+   "partition ladder fetched": 280
+  }
+ }
+}
