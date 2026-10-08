@@ -928,3 +928,63 @@ This is the first evaluation of the typed interface itself. It supports the Jev 
 distribution, coherent answers, better calibrated than the market) and narrows the claim: the
 answers to "which bucket" and "how likely is above t" beat the market; the answer to "what will
 the high be" does not.
+
+## 39 · Exploration: market-only signals, and what Kalshi holds beyond weather (2026-10-08)
+
+**What Kalshi holds** (`scripts/survey_kalshi.py --events-only`, `results/kalshi_survey.json`). The
+public listing has 799,186 settled events: sports 378,148, crypto 301,411, climate and weather
+35,851, commodities 30,010, financials 27,831, entertainment 11,022, economics 3,895. Beyond the
+daily highs, the numeric ladders with thousands of settled events are the S&P 500 (daily 1,132,
+hourly 3,307), Nasdaq 100, EUR/USD and USD/JPY (hourly about 4,000 each), WTI, gold and silver
+(hourly about 1,400, 15-minute about 4,800 each) and hourly NYC temperature (3,806). That is the
+cross-category data a general model would train on. The per-market listing was stopped: at this
+size it takes days, and per-series fetches are the better tool.
+
+**Market-only signals** (`scripts/alpha/`, `results/alpha/`; an agent's exploratory search on rows
+that other sections have used). Data: 42,806 weather ladders over 19 cities after cleaning (7
+events with failed candle fetches, 46 empty books and 2,040 non-partition ladders dropped; 3,061
+books whose mids sum outside 0.8 to 1.5 kept and flagged), and 1,165 non-weather binary markets
+in 8 categories (111 events whose close time depends on the outcome dropped as leaky, 17,599
+zero-volume markets and 435 bad-book rows dropped). Log-score gain over the market at the same
+timestamp, 95% date-block CI:
+
+| Signal | 2024-25, walk-forward | 2026, seven cities | 2026, twelve newer cities |
+|---|---|---|---|
+| Sharpening exponent, 16:00 day before | +0.006 [+0.004, +0.009] | **+0.010 [+0.005, +0.015]** | **+0.009 [+0.005, +0.012]** |
+| Sharpening exponent, 08:00 / 12:00 / 14:00 | +0.007 / +0.007 / +0.018, all CIs above 0 | +0.007 / +0.007 / +0.015, all CIs above 0 | not significant |
+| Stale quotes, bucket shape | +0.008 to +0.033 | about 0 | |
+| Order flow, linear, market only | about 0 | slightly negative | |
+| Kalshi-wide binary recalibration | | +0.0004 [−0.0013, +0.0020] | |
+
+- **The one survivor is sharpening**: each bucket's market probability raised to a power (about
+  1.17; 1.32 at 14:00) and renormalised. It is positive in every half-year, read and scored city.
+  The market is a favourite-longshot crowd: buckets priced 2 to 10% settle 30 to 45% less often
+  than priced. This is §38's finding (the crowd misprices how sure to be) recovered from price
+  alone. It is not new to isotherm: the frozen pool of §9 already raises the market to 1.073
+  (§3: tempering the market gained +0.002 then), and whether the stronger exponent adds to the MLP is untested.
+  Recomputed on the project's own market probabilities, 2026 rows: +0.011 [+0.005, +0.016] at
+  16:00 day before, matching.
+- **Stale quotes and bucket shape faded** with 2024's thin books (9¢ median spread then, 1¢
+  now): a data repair, not a signal.
+- **Order flow alone does nothing**; §30's gain needs the forecasts beside it.
+- **Kalshi-wide, the bias points the same way but is too small to see** on 542 test markets.
+  Apparent arbitrage in ladders (bids summing above $1 after fees, 154 of 24,111) comes from
+  non-simultaneous hourly quotes.
+
+## 40 · Sharpening the market: sealed forward test (pre-registration, 2026-10-08)
+
+Written before any ladder in the window opened (the 2026-10-10 ladders open at 14:00 UTC on
+2026-10-09).
+
+**Frozen** (`shadow/forward/sharpen.json`, sha256 `6ae8017d1f98cd98…`, checked on load): one
+exponent per read, fit on every seven-city ladder through 2026-10-04: 16:00 day before 1.1822,
+08:00 1.1661, 12:00 1.1569, 14:00 1.3212. The forecast is p ∝ p_market^a, renormalised over the
+ladder; nothing is refit.
+
+**Window:** every settled ladder of the 19 cities from **2026-10-10 to 2027-04-05**, at all four
+reads, from the same point-in-time panel (`scripts/sharpen_test.py`).
+
+**Primary gate:** sharpened minus raw market, log score, 16:00 day before, 95% date-block CI.
+PASS if the CI is above zero. Secondary: CI above zero at 3 of 4 reads. Reported, not gated: the
+seven and the twelve cities separately, and the frozen §25 MLP minus the sharpened market at 16:00
+day before (does isotherm already hold this edge?). Looks before 2027-04-05 are descriptive only.

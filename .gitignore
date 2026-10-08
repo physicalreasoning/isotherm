@@ -7,3 +7,4 @@ __pycache__/
 .ruff_cache/
 results/*.log
 .claude/
+results/alpha/*.parquet

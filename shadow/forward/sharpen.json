@@ -1,0 +1,24 @@
+{
+  "rule": "p_i proportional to p_market_i ** exponent[read], renormalised over the ladder",
+  "exponent": {
+    "d1_16": 1.1822,
+    "d0_08": 1.1661,
+    "d0_12": 1.1569,
+    "d0_14": 1.3212
+  },
+  "fit_through": "2026-10-04",
+  "fit_cities": [
+    "NY",
+    "CHI",
+    "MIA",
+    "AUS",
+    "LAX",
+    "DEN",
+    "PHIL"
+  ],
+  "window": [
+    "2026-10-10",
+    "2027-04-05"
+  ],
+  "sha256": "6ae8017d1f98cd98d54c595cca58731ac49191922968001169ea6147f2a2c400"
+}

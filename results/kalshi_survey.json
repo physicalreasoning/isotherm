@@ -1,0 +1,767 @@
+{
+ "events": 799186,
+ "by_category": [
+  {
+   "category": "Sports",
+   "events": 378148,
+   "series": 2765
+  },
+  {
+   "category": "Crypto",
+   "events": 301411,
+   "series": 171
+  },
+  {
+   "category": "Climate and Weather",
+   "events": 35851,
+   "series": 201
+  },
+  {
+   "category": "Commodities",
+   "events": 30010,
+   "series": 47
+  },
+  {
+   "category": "Financials",
+   "events": 27831,
+   "series": 486
+  },
+  {
+   "category": "Entertainment",
+   "events": 11022,
+   "series": 1688
+  },
+  {
+   "category": "Economics",
+   "events": 3895,
+   "series": 475
+  },
+  {
+   "category": "Mentions",
+   "events": 3453,
+   "series": 366
+  },
+  {
+   "category": "Politics",
+   "events": 2967,
+   "series": 1557
+  },
+  {
+   "category": "Elections",
+   "events": 1897,
+   "series": 1113
+  },
+  {
+   "category": "Science and Technology",
+   "events": 806,
+   "series": 219
+  },
+  {
+   "category": "Health",
+   "events": 519,
+   "series": 67
+  },
+  {
+   "category": "Transportation",
+   "events": 509,
+   "series": 29
+  },
+  {
+   "category": "Companies",
+   "events": 433,
+   "series": 285
+  },
+  {
+   "category": "World",
+   "events": 239,
+   "series": 141
+  },
+  {
+   "category": "Social",
+   "events": 100,
+   "series": 76
+  },
+  {
+   "category": "Education",
+   "events": 2,
+   "series": 2
+  },
+  {
+   "category": "AI",
+   "events": 2,
+   "series": 2
+  },
+  {
+   "category": "COVID-19",
+   "events": 1,
+   "series": 1
+  }
+ ],
+ "top_series": [
+  {
+   "category": "Crypto",
+   "series_ticker": "KXBTC15M",
+   "events": 28149
+  },
+  {
+   "category": "Crypto",
+   "series_ticker": "KXETH15M",
+   "events": 28136
+  },
+  {
+   "category": "Crypto",
+   "series_ticker": "KXSOL15M",
+   "events": 25772
+  },
+  {
+   "category": "Crypto",
+   "series_ticker": "KXXRP15M",
+   "events": 22553
+  },
+  {
+   "category": "Sports",
+   "series_ticker": "KXITFMATCH",
+   "events": 19242
+  },
+  {
+   "category": "Crypto",
+   "series_ticker": "KXBNB15M",
+   "events": 19170
+  },
+  {
+   "category": "Crypto",
+   "series_ticker": "KXHYPE15M",
+   "events": 19169
+  },
+  {
+   "category": "Crypto",
+   "series_ticker": "KXDOGE15M",
+   "events": 19169
+  },
+  {
+   "category": "Sports",
+   "series_ticker": "KXITFWMATCH",
+   "events": 17318
+  },
+  {
+   "category": "Crypto",
+   "series_ticker": "KXETHD",
+   "events": 12657
+  },
+  {
+   "category": "Sports",
+   "series_ticker": "KXCS2MAP",
+   "events": 11179
+  },
+  {
+   "category": "Sports",
+   "series_ticker": "KXTTELITEMATCH",
+   "events": 11043
+  },
+  {
+   "category": "Sports",
+   "series_ticker": "KXATPCHALLENGERMATCH",
+   "events": 9655
+  },
+  {
+   "category": "Sports",
+   "series_ticker": "KXNCAABBGAME",
+   "events": 7272
+  },
+  {
+   "category": "Sports",
+   "series_ticker": "KXCS2GAME",
+   "events": 6744
+  },
+  {
+   "category": "Sports",
+   "series_ticker": "KXATPSETWINNER",
+   "events": 6534
+  },
+  {
+   "category": "Commodities",
+   "series_ticker": "KXWTI15M",
+   "events": 4817
+  },
+  {
+   "category": "Commodities",
+   "series_ticker": "KXGOLD15M",
+   "events": 4776
+  },
+  {
+   "category": "Commodities",
+   "series_ticker": "KXSILVER15M",
+   "events": 4740
+  },
+  {
+   "category": "Climate and Weather",
+   "series_ticker": "KXCITIESWEATHER",
+   "events": 4182
+  },
+  {
+   "category": "Financials",
+   "series_ticker": "KXEURUSDH",
+   "events": 4169
+  },
+  {
+   "category": "Financials",
+   "series_ticker": "KXUSDJPYH",
+   "events": 3917
+  },
+  {
+   "category": "Climate and Weather",
+   "series_ticker": "KXTEMPNYCH",
+   "events": 3806
+  },
+  {
+   "category": "Financials",
+   "series_ticker": "KXINXU",
+   "events": 3307
+  },
+  {
+   "category": "Financials",
+   "series_ticker": "KXNASDAQ100U",
+   "events": 3307
+  },
+  {
+   "category": "Commodities",
+   "series_ticker": "KXNATGAS15M",
+   "events": 2952
+  },
+  {
+   "category": "Commodities",
+   "series_ticker": "KXCOPPER15M",
+   "events": 2875
+  },
+  {
+   "category": "Climate and Weather",
+   "series_ticker": "KXHIGHNY",
+   "events": 1885
+  },
+  {
+   "category": "Climate and Weather",
+   "series_ticker": "KXHIGHCHI",
+   "events": 1873
+  },
+  {
+   "category": "Climate and Weather",
+   "series_ticker": "KXTEMPLAXH",
+   "events": 1524
+  },
+  {
+   "category": "Climate and Weather",
+   "series_ticker": "KXTEMPDCH",
+   "events": 1524
+  },
+  {
+   "category": "Climate and Weather",
+   "series_ticker": "KXTEMPCHIH",
+   "events": 1524
+  },
+  {
+   "category": "Climate and Weather",
+   "series_ticker": "KXTEMPAUSH",
+   "events": 1522
+  },
+  {
+   "category": "Commodities",
+   "series_ticker": "KXWTIH",
+   "events": 1457
+  },
+  {
+   "category": "Commodities",
+   "series_ticker": "KXGOLDH",
+   "events": 1439
+  },
+  {
+   "category": "Commodities",
+   "series_ticker": "KXSILVERH",
+   "events": 1395
+  },
+  {
+   "category": "Financials",
+   "series_ticker": "KXUSDJPY",
+   "events": 1236
+  },
+  {
+   "category": "Financials",
+   "series_ticker": "KXEURUSD",
+   "events": 1233
+  },
+  {
+   "category": "Financials",
+   "series_ticker": "KXNASDAQ100",
+   "events": 1147
+  },
+  {
+   "category": "Financials",
+   "series_ticker": "KXINX",
+   "events": 1132
+  },
+  {
+   "category": "Entertainment",
+   "series_ticker": "KXALBUMSTREAMSU",
+   "events": 1036
+  },
+  {
+   "category": "Entertainment",
+   "series_ticker": "KXOSCARWINNERS",
+   "events": 1012
+  },
+  {
+   "category": "Entertainment",
+   "series_ticker": "KXSPOTIFYD",
+   "events": 592
+  },
+  {
+   "category": "Entertainment",
+   "series_ticker": "KXSPOTIFYGLOBALD",
+   "events": 510
+  },
+  {
+   "category": "Entertainment",
+   "series_ticker": "KXSPOTIFYARTISTD",
+   "events": 449
+  },
+  {
+   "category": "Entertainment",
+   "series_ticker": "KXSPOTIFY2D",
+   "events": 445
+  },
+  {
+   "category": "Entertainment",
+   "series_ticker": "KXARTISTSTREAMS",
+   "events": 429
+  },
+  {
+   "category": "Entertainment",
+   "series_ticker": "KXARTISTSTREAMSU",
+   "events": 429
+  },
+  {
+   "category": "Mentions",
+   "series_ticker": "KXNBAMENTION",
+   "events": 344
+  },
+  {
+   "category": "Politics",
+   "series_ticker": "KXAPRPOTUS",
+   "events": 258
+  },
+  {
+   "category": "Health",
+   "series_ticker": "KXCASED",
+   "events": 256
+  },
+  {
+   "category": "Economics",
+   "series_ticker": "KXAAAGASD",
+   "events": 221
+  },
+  {
+   "category": "Transportation",
+   "series_ticker": "KXTSAW",
+   "events": 189
+  },
+  {
+   "category": "Mentions",
+   "series_ticker": "KXMLBMENTION",
+   "events": 184
+  },
+  {
+   "category": "Mentions",
+   "series_ticker": "KXTRUMPMENTION",
+   "events": 177
+  },
+  {
+   "category": "Mentions",
+   "series_ticker": "KXMAMDANIMENTION",
+   "events": 146
+  },
+  {
+   "category": "Politics",
+   "series_ticker": "KX538APPROVE",
+   "events": 143
+  },
+  {
+   "category": "Economics",
+   "series_ticker": "KXAAAGASW",
+   "events": 139
+  },
+  {
+   "category": "Mentions",
+   "series_ticker": "KXNCAABMENTION",
+   "events": 134
+  },
+  {
+   "category": "Economics",
+   "series_ticker": "KXFRM",
+   "events": 132
+  },
+  {
+   "category": "Elections",
+   "series_ticker": "KXVOTEPRIMARY",
+   "events": 117
+  },
+  {
+   "category": "Mentions",
+   "series_ticker": "KXTRUMPMENTIONB",
+   "events": 110
+  },
+  {
+   "category": "Economics",
+   "series_ticker": "KXGAS",
+   "events": 109
+  },
+  {
+   "category": "Mentions",
+   "series_ticker": "KXWCMENTION",
+   "events": 104
+  },
+  {
+   "category": "Economics",
+   "series_ticker": "KXTRUEV",
+   "events": 98
+  },
+  {
+   "category": "Elections",
+   "series_ticker": "KXCAPRIMARY",
+   "events": 95
+  },
+  {
+   "category": "Mentions",
+   "series_ticker": "KXFIGHTMENTION",
+   "events": 93
+  },
+  {
+   "category": "Transportation",
+   "series_ticker": "KXTSA",
+   "events": 79
+  },
+  {
+   "category": "Economics",
+   "series_ticker": "KXJOBLESS",
+   "events": 69
+  },
+  {
+   "category": "Economics",
+   "series_ticker": "KXDIESELD",
+   "events": 67
+  },
+  {
+   "category": "Economics",
+   "series_ticker": "KXU3",
+   "events": 63
+  },
+  {
+   "category": "Elections",
+   "series_ticker": "KXPRIMARYMOV",
+   "events": 61
+  },
+  {
+   "category": "Politics",
+   "series_ticker": "KXTRUMPMENTION",
+   "events": 56
+  },
+  {
+   "category": "Science and Technology",
+   "series_ticker": "KXLLM1",
+   "events": 55
+  },
+  {
+   "category": "Science and Technology",
+   "series_ticker": "KXTOPMODEL",
+   "events": 54
+  },
+  {
+   "category": "Science and Technology",
+   "series_ticker": "KXTSAW",
+   "events": 53
+  },
+  {
+   "category": "Elections",
+   "series_ticker": "KXTXPRIMARY",
+   "events": 53
+  },
+  {
+   "category": "Transportation",
+   "series_ticker": "KXFLIGHTLAX",
+   "events": 51
+  },
+  {
+   "category": "Politics",
+   "series_ticker": "KXEOWEEK",
+   "events": 51
+  },
+  {
+   "category": "Transportation",
+   "series_ticker": "KXFLIGHTORD",
+   "events": 50
+  },
+  {
+   "category": "Transportation",
+   "series_ticker": "KXFLIGHTJFK",
+   "events": 49
+  },
+  {
+   "category": "Transportation",
+   "series_ticker": "KXMTA",
+   "events": 47
+  },
+  {
+   "category": "Health",
+   "series_ticker": "KXVAXX",
+   "events": 45
+  },
+  {
+   "category": "Elections",
+   "series_ticker": "KXFLPRIMARY",
+   "events": 44
+  },
+  {
+   "category": "Health",
+   "series_ticker": "KXCASEW",
+   "events": 39
+  },
+  {
+   "category": "Politics",
+   "series_ticker": "KXVOTEHUBTRUMPUPDOWN",
+   "events": 38
+  },
+  {
+   "category": "Politics",
+   "series_ticker": "KXSECPRESSMENTION",
+   "events": 37
+  },
+  {
+   "category": "Politics",
+   "series_ticker": "KXTRUTHSOCIAL",
+   "events": 34
+  },
+  {
+   "category": "Politics",
+   "series_ticker": "KXTRUMPACT",
+   "events": 33
+  },
+  {
+   "category": "Science and Technology",
+   "series_ticker": "KXTECHRANKLISTAICODE",
+   "events": 32
+  },
+  {
+   "category": "Health",
+   "series_ticker": "KXBOOSTER",
+   "events": 29
+  },
+  {
+   "category": "World",
+   "series_ticker": "KXRAINNY",
+   "events": 29
+  },
+  {
+   "category": "Elections",
+   "series_ticker": "KXGENERICBALLOTVOTEHUB",
+   "events": 26
+  },
+  {
+   "category": "Science and Technology",
+   "series_ticker": "KXH100W",
+   "events": 24
+  },
+  {
+   "category": "Science and Technology",
+   "series_ticker": "KXRTX5090W",
+   "events": 24
+  },
+  {
+   "category": "Elections",
+   "series_ticker": "KXILPRIMARY",
+   "events": 24
+  },
+  {
+   "category": "Science and Technology",
+   "series_ticker": "KXA100W",
+   "events": 24
+  },
+  {
+   "category": "Science and Technology",
+   "series_ticker": "KXB200W",
+   "events": 24
+  },
+  {
+   "category": "World",
+   "series_ticker": "KXHIGHNY0",
+   "events": 20
+  },
+  {
+   "category": "Elections",
+   "series_ticker": "KXOHPRIMARY",
+   "events": 20
+  },
+  {
+   "category": "Health",
+   "series_ticker": "KXCASEWCN",
+   "events": 15
+  },
+  {
+   "category": "World",
+   "series_ticker": "KXPMLA",
+   "events": 12
+  },
+  {
+   "category": "Health",
+   "series_ticker": "KXCASE7D",
+   "events": 11
+  },
+  {
+   "category": "Transportation",
+   "series_ticker": "KXPORTLA",
+   "events": 11
+  },
+  {
+   "category": "Companies",
+   "series_ticker": "KXSPACEXCOUNT",
+   "events": 11
+  },
+  {
+   "category": "Companies",
+   "series_ticker": "KXSPACEXSTARSHIP",
+   "events": 10
+  },
+  {
+   "category": "Companies",
+   "series_ticker": "KXTESLA",
+   "events": 9
+  },
+  {
+   "category": "Social",
+   "series_ticker": "KXPMKICKINGCONTEST",
+   "events": 9
+  },
+  {
+   "category": "Companies",
+   "series_ticker": "KXMETADAP",
+   "events": 8
+  },
+  {
+   "category": "Companies",
+   "series_ticker": "KXTESLAPROD",
+   "events": 8
+  },
+  {
+   "category": "Social",
+   "series_ticker": "KXMETGALAFITS",
+   "events": 8
+  },
+  {
+   "category": "Companies",
+   "series_ticker": "KXCBVOLUME",
+   "events": 8
+  },
+  {
+   "category": "Companies",
+   "series_ticker": "KXRHGOLD",
+   "events": 7
+  },
+  {
+   "category": "Companies",
+   "series_ticker": "KXSPOTIFYSUBS",
+   "events": 7
+  },
+  {
+   "category": "Transportation",
+   "series_ticker": "KXDIESEL",
+   "events": 7
+  },
+  {
+   "category": "World",
+   "series_ticker": "KXCBDECISIONCANADA",
+   "events": 7
+  },
+  {
+   "category": "World",
+   "series_ticker": "KXDONDA",
+   "events": 7
+  },
+  {
+   "category": "Health",
+   "series_ticker": "KXCASEWDE",
+   "events": 7
+  },
+  {
+   "category": "Health",
+   "series_ticker": "KXCASEWFR",
+   "events": 7
+  },
+  {
+   "category": "Social",
+   "series_ticker": "KXMUSKTAGDJT",
+   "events": 5
+  },
+  {
+   "category": "World",
+   "series_ticker": "KXFLIGHTJFK",
+   "events": 4
+  },
+  {
+   "category": "World",
+   "series_ticker": "KXHAPPIER",
+   "events": 4
+  },
+  {
+   "category": "World",
+   "series_ticker": "KXUSADEALCOUNT",
+   "events": 4
+  },
+  {
+   "category": "Social",
+   "series_ticker": "KXPROFILECHANGEMUSK",
+   "events": 2
+  },
+  {
+   "category": "Social",
+   "series_ticker": "KXTRUMPMEET",
+   "events": 2
+  },
+  {
+   "category": "Social",
+   "series_ticker": "KXTRUMPAPOLOGY",
+   "events": 2
+  },
+  {
+   "category": "Social",
+   "series_ticker": "KXKIMMELAPOLOGY",
+   "events": 2
+  },
+  {
+   "category": "Social",
+   "series_ticker": "KXCOMMENTSWIFTRUMP",
+   "events": 2
+  },
+  {
+   "category": "AI",
+   "series_ticker": "KXANTHROPICMILLENNIUM",
+   "events": 1
+  },
+  {
+   "category": "COVID-19",
+   "series_ticker": "KXVAXX",
+   "events": 1
+  },
+  {
+   "category": "Education",
+   "series_ticker": "KXSTUDENTBAN",
+   "events": 1
+  },
+  {
+   "category": "Education",
+   "series_ticker": "KXCOLLEGEDROP",
+   "events": 1
+  },
+  {
+   "category": "AI",
+   "series_ticker": "KXOPENAIMILLENNIUM",
+   "events": 1
+  }
+ ]
+}
