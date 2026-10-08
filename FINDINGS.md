@@ -1028,3 +1028,33 @@ market (bids floored at 0.5¢, renormalised), 16:00 day before, 95% date-block C
 Secondary: 3 of 4 reads on the same comparison. The original §40 comparison (against the mid
 market) is still computed and reported (`verdict_original_s40`). Frozen exponents and window
 unchanged.
+
+## 42 · Exploration: gas prices, where the crowd already knows (2026-10-08)
+
+Two candidates for a second domain were checked first. Kalshi's hourly temperature ladders
+(KXTEMPNYCH and others, settled on The Weather Company's hourly reading) were discontinued on
+2026-09-10 and the median NYC event never traded: dropped. Kalshi's daily AAA national gas
+average (KXAAAGASD) is live and liquid: 221 settled events (24 in 2023, then daily from late
+March 2026), 17 "above $x" strikes 0.5¢ apart, median volume about 140,000 contracts a day, and the
+exact AAA value recorded at settlement.
+
+`scripts/gas/`, `results/gas/gas_model.json`. At 16:00 ET the day before (AAA's previous value and
+that day's RBOB settle both public), a walk-forward ridge regression forecasts the change in AAA
+from RBOB futures moves over 1 to 20 trading days, the last two AAA changes and the
+retail-minus-wholesale spread, as a Gaussian; refit daily on earlier days only, first forecast
+after 60 days. 153 ladders scored, 2026-05-09 to 2026-10-08:
+
+| | Δ log score vs market | 95% CI |
+|---|---|---|
+| Model alone | −0.931 | [−1.095, −0.745] |
+| Log pool of market and model (weights fit on earlier days) | −0.025 | [−0.081, +0.013] |
+
+The model does carry signal: its forecast misses AAA's change by 1.15¢ on average, against 1.41¢
+for "no change". But the market is far sharper, putting nearly all its mass on two or three
+0.5¢ buckets, and the pool gives the model a weight of 0.17. By 16:00 the crowd can watch
+real-time station-price trackers that are close to the next morning's AAA figure, and that is
+neither free nor something daily futures can match.
+
+This sharpens the thesis behind isotherm. Weather works because the useful public information
+(NWS model output, calibrated) takes skill to use and the crowd under-uses it. Where the decisive
+information is real-time and easy to read, the crowd prices it. Not pursued further.
