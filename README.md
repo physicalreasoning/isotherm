@@ -91,7 +91,8 @@ curl -s -X POST localhost:8000/decide -H 'content-type: application/json' \
   -d '{"city": "NY", "questions": [{"kind": "noul", "set": {"lo": 70}}]}'
 ```
 
-Or let an agent ask. isotherm is an [MCP](https://modelcontextprotocol.io) server with four tools:
+Or let an agent ask (full reference: [docs/API.md](docs/API.md)). isotherm is an
+[MCP](https://modelcontextprotocol.io) server with four tools:
 `cities`, `ladder`, `probability` (P(high in a range)) and `decide` (any typed questions at once).
 Every answer for a city-day comes from the same distribution, so an agent's answers never
 contradict each other.
