@@ -1,0 +1,8 @@
+.venv
+data
+results
+shadow/forward
+.git
+docs
+scripts
+tests
