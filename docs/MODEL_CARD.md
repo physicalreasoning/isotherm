@@ -13,7 +13,7 @@ probabilities, not yet frozen or live.
 | Form | log pool: p ∝ p_market^1.073 · p_EMOS-GFS^0.294, renormalised over the ladder |
 | EMOS | per city, high ~ N(a + b · GFS MOS max, σ(day of year)), fit by interval likelihood on NWS CLI highs 2015 to 2026-06-29 |
 | Read time | 16:00 local the day before |
-| Serving | `uv run uvicorn isotherm.serve:app` (`/health`, `/ladder/{city}`, `/decide`) |
+| Serving | live at https://isotherm.onrender.com (`/health`, `/ladder/{city}`, `/decide`, MCP at `/mcp`); locally `uv run uvicorn isotherm.app:app` |
 
 ### Intended use
 

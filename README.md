@@ -6,6 +6,7 @@
 [[Model card]](docs/MODEL_CARD.md)
 [[Evaluation protocol]](docs/EVALS.md)
 [[DOI]](https://doi.org/10.5281/zenodo.23167633)
+[[API]](https://isotherm.onrender.com/docs)
 
 isotherm is a calibrated decision model for prediction markets. Given a market state, it returns one
 probability distribution over the outcome and answers typed questions from it. We evaluate it on
@@ -95,8 +96,12 @@ Or let an agent ask. isotherm is an [MCP](https://modelcontextprotocol.io) serve
 Every answer for a city-day comes from the same distribution, so an agent's answers never
 contradict each other.
 
+It is live at `https://isotherm.onrender.com` (REST docs at `/docs`, MCP at `/mcp`; free hosting,
+so the first request after a quiet spell takes up to a minute):
+
 ```bash
-claude mcp add isotherm -- uv run --directory /path/to/isotherm isotherm-mcp   # stdio
+claude mcp add --transport http isotherm https://isotherm.onrender.com/mcp      # hosted
+claude mcp add isotherm -- uv run --directory /path/to/isotherm isotherm-mcp   # local, stdio
 ```
 
 The same server speaks streamable HTTP at `/mcp` when run with `uvicorn isotherm.app:app`, and the
