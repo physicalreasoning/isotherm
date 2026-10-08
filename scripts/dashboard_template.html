@@ -168,6 +168,7 @@ footer a { color: var(--model); }
   <section class="panel" id="research" role="tabpanel" aria-labelledby="tab-research" hidden>
     <div class="grid">
       <div class="card wide"><h3>Everything tried against the MLP</h3><p class="note">Log score gain over the per-read MLP, last 12 months before the lockbox, 95% date-block CI; highlighted where the CI is above zero. <b>gate</b>: written down before it ran, needs 3 of 4 reads. <b>explore</b>: found by looking, so only the forward test can confirm it. The weather model (§35) covers 16:00 day before only; its gate is that one read.</p><div class="tablewrap"><table class="arms" id="t-arms"></table></div><div class="src">results/transformer_large_gate.json · data_scaling.json · nbm_spread.json · explore_*.json</div></div>
+      <div class="card wide" id="card-signals" hidden><h3>The market alone: sharpen it</h3><p class="note">Market-only signals, log score gain over the market's own price, test rows from 2026, 95% date-block CI (§39, exploration). Raising each bucket's price to a power of about 1.17 and renormalising beats the raw market: the crowd overprices long shots. Sealed test from 2026-10-10 (§40).</p><div class="tablewrap"><table class="arms" id="t-signals"></table></div><div class="src">results/alpha/weather_signals.json</div></div>
       <div class="card wide" id="card-typed" hidden><h3>The typed answers: better calibrated, not better located</h3><p class="note">What an API user receives, read off one integer distribution, last 12 months before the lockbox (§38). Noul: calibration error of P(high ≥ t) at every integer within 6°F of the forecast. Score: how much more often the 80% interval holds the high than its own probability says, and Δ CRPS against the market (positive is better).</p><div class="tablewrap"><table class="arms" id="t-typed"></table></div><div class="src">results/typed_eval.json</div></div>
       <div class="card wide" id="card-cities" hidden><h3>Twelve newer cities, each as a city of its own</h3><p class="note">Training on all nineteen cities instead of seven, each with its own city input: Δ log score, test 2026-07-01 to 2026-10-04, 95% date-block CI (§36). Exploration only; the pre-registered test is on January to April 2027 (§37).</p><div class="tablewrap"><table class="arms" id="t-cities"></table></div><div class="src">results/explore_cities.json</div></div>
       <div class="card" id="card-wx" hidden><h3>One weather model across 576 stations</h3><p class="note">A network trained on 1.16 million station-days of NBM and GFS MOS forecasts against NWS climate reports, scored at 16:00 day before on the seven cities' ladders (§35).</p><table class="stats" id="t-wx"></table><div class="src">results/wx_gate.json</div></div>
@@ -225,7 +226,7 @@ function header() {
     ["bad", "Lows sealed test: flat"],
     ["bad", "MLB: no edge"],
     ["warn", "G3 pretraining: fails the gate"],
-    ["warn", "Transformer: still learning, fails its gate"], ["good", "Weather model: passes both gates"], ["warn", "Forward test: 5 arms, scored Apr 2027"], ["warn", "19 cities: retest Jan to Apr 2027"],
+    ["warn", "Transformer: still learning, fails its gate"], ["good", "Weather model: passes both gates"], ["warn", "Forward tests: 6 arms, scored Apr 2027"], ["warn", "19 cities: retest Jan to Apr 2027"],
     [sh.decay && sh.decay.status === "STOP" ? "bad" : (sh.decay && sh.decay.status === "OK" ? "good" : "warn"),
      "Live: " + (sh.decay ? sh.decay.status.replace("_", " ").toLowerCase() : "collecting, " + (sh.settled_ladders || 0) + " settled")],
   ];
@@ -391,6 +392,13 @@ function research() {
       .map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("");
   }
 
+  if (R.signals) {
+    $("card-signals").hidden = false;
+    $("t-signals").innerHTML = "<tr><th>Signal</th>" + order.map((r) => `<th>${LBL[r]}</th>`).join("") + "</tr>" +
+      R.signals.map((a) => "<tr><td>" + a.name + "</td>" + order.map((r) => { const v = a.reads[r]; if (!v) return "<td>–</td>";
+        return `<td class="${v.ci[0] > 0 ? "hit" : ""}">${fmt.nats(v.d)}<small>[${fmt.nats(v.ci[0])}, ${fmt.nats(v.ci[1])}]</small></td>`; }).join("") + "</tr>").join("");
+  }
+
   if (R.typed) {
     const T = R.typed;
     $("card-typed").hidden = false;
@@ -435,6 +443,8 @@ function research() {
     }
     return [`${a.name} <span class="kind">${a.sha}</span>`, a.name.startsWith("MLP") ? "reference" : st];
   });
+  if (R.sharpen) { const sr = R.sharpen.result, x = sr && sr.reads && sr.reads.d1_16;
+    rows.push([`Market sharpened, 19 cities, from 2026-10-10 <span class="kind">${R.sharpen.sha}</span>`, x ? `${fmt.nats(x.diff)} [${fmt.nats(x.ci[0])}, ${fmt.nats(x.ci[1])}] vs market` + (sr.complete ? "" : " · interim") : "collecting"]); }
   rows.push(["Ladders scored", res ? `${res.ladders} through ${res.through}` : "none yet"]);
   $("t-forward").innerHTML = rows.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("");
 }
