@@ -1,3 +1,29 @@
 {
-  "settled_ladders": 0
+  "by_city": {
+    "DEN": 1.9999999999999998,
+    "LAX": -17.639999999999997
+  },
+  "by_month": {
+    "2026-10": -15.639999999999997
+  },
+  "by_regime": {
+    "twc": -15.639999999999997
+  },
+  "decay": {
+    "status": "INSUFFICIENT_DATA",
+    "window_days": 30,
+    "windows": [
+      {
+        "days": 1,
+        "from": "2026-09-08",
+        "gain": -0.09860186122237269,
+        "to": "2026-10-07"
+      }
+    ]
+  },
+  "hit_rate": 0.6666666666666666,
+  "log_score_gain_vs_market": -0.09860186122237269,
+  "pnl": -15.639999999999999,
+  "settled_ladders": 2,
+  "trades": 6
 }
