@@ -964,6 +964,7 @@ timestamp, 95% date-block CI:
   (§3: tempering the market gained +0.002 then), and whether the stronger exponent adds to the MLP is untested.
   Recomputed on the project's own market probabilities, 2026 rows: +0.011 [+0.005, +0.016] at
   16:00 day before, matching.
+  *Corrected in §41: most of this gain is the mid-price convention, not the crowd.*
 - **Stale quotes and bucket shape faded** with 2024's thin books (9¢ median spread then, 1¢
   now): a data repair, not a signal.
 - **Order flow alone does nothing**; §30's gain needs the forecasts beside it.
@@ -988,3 +989,42 @@ reads, from the same point-in-time panel (`scripts/sharpen_test.py`).
 PASS if the CI is above zero. Secondary: CI above zero at 3 of 4 reads. Reported, not gated: the
 seven and the twelve cities separately, and the frozen §25 MLP minus the sharpened market at 16:00
 day before (does isotherm already hold this edge?). Looks before 2027-04-05 are descriptive only.
+
+## 41 · Correction: the sharpening gain is mostly how the market price is built (2026-10-08)
+
+Written before any ladder in the §40 window opened (first opens 14:00 UTC 2026-10-09).
+
+**Cross-category test** (`scripts/alpha_xcat/`, `results/alpha_xcat/sharpen_xcat.json`, an agent's
+exploration). The newest 280 settled events of four daily numeric ladders (S&P 500, Nasdaq 100,
+EUR/USD, USD/JPY; 1,120 clean partition ladders, August 2025 to October 2026), priced 1 hour
+before close. Sharpening the mid-price market wins by +0.08 to +0.15 pooled, ten times weather's
+gain, with fitted exponents of 1.5 to 3.5. The reason: 70 to 86% of those buckets have no bid and
+an ask of a few cents, and the mid counts that unbid ask as probability. Pricing each bucket at
+its bid (floored at 0.5¢, renormalised) beats the mid market by +0.15 to +0.31, more than any
+sharpening; sharpening on top of the bid-priced market then loses out of sample (pooled −0.055
+[−0.078, −0.032]). Market sharpening does not generalise as a crowd bias across categories.
+
+**The same check on weather**, 2026 rows, seven cities:
+
+| Read | Buckets with no bid | Bid-priced minus mid market | Sharpened minus mid (§39) | Sharpened minus bid-priced |
+|---|---|---|---|---|
+| 08:00 | 23% | +0.004 [+0.002, +0.007] | +0.007 | +0.002 [−0.002, +0.006] |
+| 12:00 | 38% | +0.004 [+0.002, +0.007] | +0.007 | +0.002 [−0.002, +0.006] |
+| 14:00 | 53% | +0.003 [+0.000, +0.006] | +0.015 | **+0.012 [+0.006, +0.018]** |
+| 16:00 day before | 6% | +0.007 [+0.005, +0.010] | +0.011 | +0.003 [−0.001, +0.007] |
+
+Pricing at the bid takes most of §39's gain with no parameters; beyond it, sharpening still wins
+only at 14:00. §39's reading ("the crowd overprices long shots") was too strong: mostly, the mid
+price overstates buckets nobody is bidding on.
+
+**isotherm against the stricter baseline.** Every result in this file compares with the mid
+market, so the MLP was rechecked against the bid-priced market, last 12 months before the
+lockbox: 08:00 +0.009 [+0.001, +0.018], 12:00 +0.005 [−0.002, +0.011], 14:00 +0.014 [+0.007,
++0.020], 16:00 day before +0.013 [+0.004, +0.021] (against the mid: +0.009, +0.010, +0.017,
++0.014). The edge survives at three of four reads; it comes from the forecasts, not the pricing.
+
+**§40 corrected, beside the original.** Primary gate: sharpened market minus the **bid-priced**
+market (bids floored at 0.5¢, renormalised), 16:00 day before, 95% date-block CI above zero.
+Secondary: 3 of 4 reads on the same comparison. The original §40 comparison (against the mid
+market) is still computed and reported (`verdict_original_s40`). Frozen exponents and window
+unchanged.
