@@ -1,0 +1,205 @@
+{
+ "series": {
+  "KXNBAGAME": {
+   "category": "Sports",
+   "events_listed": 1465,
+   "events_sampled": 36,
+   "obs": 111,
+   "first_listed": "KXNBAGAME-25APR15ATLORL",
+   "last_listed": "KXNBAGAME-26OCT07GSWPOR"
+  },
+  "KXNFLGAME": {
+   "category": "Sports",
+   "events_listed": 445,
+   "events_sampled": 36,
+   "obs": 144,
+   "first_listed": "KXNFLGAME-25JUL31LACDET",
+   "last_listed": "KXNFLGAME-26OCT05ATLNO"
+  },
+  "KXNHLGAME": {
+   "category": "Sports",
+   "events_listed": 1652,
+   "events_sampled": 36,
+   "obs": 120,
+   "first_listed": "KXNHLGAME-25APR19STLWPG",
+   "last_listed": "KXNHLGAME-26OCT07EDMANA"
+  },
+  "KXEPLGAME": {
+   "category": "Sports",
+   "events_listed": 437,
+   "events_sampled": 36,
+   "obs": 288,
+   "first_listed": "KXEPLGAME-25MAY11NEWCHE",
+   "last_listed": "KXEPLGAME-26SEP20FULMUN"
+  },
+  "KXUFCFIGHT": {
+   "category": "Sports",
+   "events_listed": 732,
+   "events_sampled": 36,
+   "obs": 128,
+   "first_listed": "KXUFCFIGHT-25MAY10SAIPRE",
+   "last_listed": "KXUFCFIGHT-26OCT05ONLBIE"
+  },
+  "KXATPMATCH": {
+   "category": "Sports",
+   "events_listed": 2000,
+   "events_sampled": 36,
+   "obs": 97,
+   "first_listed": "KXATPMATCH-26MAY06BASMER",
+   "last_listed": "KXATPMATCH-26OCT08NORSVR"
+  },
+  "KXCPIYOY": {
+   "category": "Economics",
+   "events_listed": 46,
+   "events_sampled": 36,
+   "obs": 264,
+   "first_listed": "CPIYOY-22NOV",
+   "last_listed": "KXCPIYOY-26AUG"
+  },
+  "KXPAYROLLS": {
+   "category": "Economics",
+   "events_listed": 43,
+   "events_sampled": 36,
+   "obs": 287,
+   "first_listed": "PROLLS-23MAR",
+   "last_listed": "KXPAYROLLS-26SEP"
+  },
+  "KXFEDDECISION": {
+   "category": "Economics",
+   "events_listed": 28,
+   "events_sampled": 28,
+   "obs": 199,
+   "first_listed": "FEDDECISION-23MAY",
+   "last_listed": "KXFEDDECISION-26SEP"
+  },
+  "KXGDP": {
+   "category": "Economics",
+   "events_listed": 21,
+   "events_sampled": 21,
+   "obs": 110,
+   "first_listed": "GDP-21JUN30",
+   "last_listed": "KXGDP-26JUL30"
+  },
+  "KXAAAGASD": {
+   "category": "Economics",
+   "events_listed": 221,
+   "events_sampled": 36,
+   "obs": 132,
+   "first_listed": "AAAGASD-23SEP18-US",
+   "last_listed": "KXAAAGASD-26OCT08"
+  },
+  "KXTSAW": {
+   "category": "Economics",
+   "events_listed": 273,
+   "events_sampled": 36,
+   "obs": 220,
+   "first_listed": "TSAW-21JUL17",
+   "last_listed": "KXTSAW-26OCT04"
+  },
+  "KXINX": {
+   "category": "Financials",
+   "events_listed": 1132,
+   "events_sampled": 36,
+   "obs": 192,
+   "first_listed": "INX-22APR28",
+   "last_listed": "KXINX-26OCT07H1600"
+  },
+  "KXNASDAQ100": {
+   "category": "Financials",
+   "events_listed": 1147,
+   "events_sampled": 36,
+   "obs": 182,
+   "first_listed": "NASDAQ100-22APR26",
+   "last_listed": "KXNASDAQ100-26OCT07H1600"
+  },
+  "KXEURUSD": {
+   "category": "Financials",
+   "events_listed": 1233,
+   "events_sampled": 36,
+   "obs": 113,
+   "first_listed": "EURUSD-22AUG11--18",
+   "last_listed": "KXEURUSD-26OCT0810"
+  },
+  "KXBTCD": {
+   "category": "Crypto",
+   "events_listed": 2000,
+   "events_sampled": 36,
+   "obs": 76,
+   "first_listed": "KXBTCD-26JUL1423",
+   "last_listed": "KXBTCD-26OCT0810"
+  },
+  "KXETHD": {
+   "category": "Crypto",
+   "events_listed": 2000,
+   "events_sampled": 36,
+   "obs": 76,
+   "first_listed": "KXETHD-26JUL1423",
+   "last_listed": "KXETHD-26OCT0810"
+  },
+  "KXWTI": {
+   "category": "Commodities",
+   "events_listed": 853,
+   "events_sampled": 36,
+   "obs": 126,
+   "first_listed": "WTI-22SEP09",
+   "last_listed": "KXWTI-26OCT0714"
+  },
+  "KXTRUMPMENTION": {
+   "category": "Mentions",
+   "events_listed": 234,
+   "events_sampled": 36,
+   "obs": 23,
+   "first_listed": "KXTRUMPMENTION-25APR02",
+   "last_listed": "KXTRUMPMENTION-26OCT06"
+  },
+  "KXTRUMPSAY": {
+   "category": "Mentions",
+   "events_listed": 57,
+   "events_sampled": 36,
+   "obs": 40,
+   "first_listed": "KXTRUMPSAY-25SEP",
+   "last_listed": "KXTRUMPSAY-26OCT12"
+  },
+  "KXRT": {
+   "category": "Entertainment",
+   "events_listed": 76,
+   "events_sampled": 36,
+   "obs": 278,
+   "first_listed": "KXRT-MER",
+   "last_listed": "KXRT-VER"
+  },
+  "KXNETFLIXRANKMOVIE": {
+   "category": "Entertainment",
+   "events_listed": 91,
+   "events_sampled": 36,
+   "obs": 288,
+   "first_listed": "KXNETFLIXRANKMOVIE-25JAN13",
+   "last_listed": "KXNETFLIXRANKMOVIE-26OCT05"
+  },
+  "KXSPOTIFYD": {
+   "category": "Entertainment",
+   "events_listed": 592,
+   "events_sampled": 36,
+   "obs": 198,
+   "first_listed": "KXSPOTIFYD-24OCT28",
+   "last_listed": "KXSPOTIFYD-26JUL01"
+  },
+  "KXRAINNYC": {
+   "category": "Climate",
+   "events_listed": 869,
+   "events_sampled": 36,
+   "obs": 9,
+   "first_listed": "RAINNYC-21SEP08",
+   "last_listed": "KXRAINNYC-26JUL15"
+  }
+ },
+ "drops": {
+  "markets_zero_volume": 17599,
+  "markets_not_yes_no (voided/scalar/odd)": 35,
+  "event_no_settled_markets": 3,
+  "market_no_candles": 12,
+  "candle_error": 4,
+  "event_outcome_dependent_close": 111
+ },
+ "new_requests": 2778
+}

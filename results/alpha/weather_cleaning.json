@@ -1,0 +1,46 @@
+{
+ "filters": {
+  "panel rows (start)": 256888,
+  "duplicate (ticker, read) rows": 0,
+  "events with unparseable strikes": 0,
+  "events with a failed candle fetch": 7,
+  "(event, read) book empty / not yet open": 46,
+  "(event, read) sum of mids outside [0.8, 1.5] (flagged bad_sum, kept)": 3061,
+  "(event, read) not a partition ladder": 2040,
+  "ladders kept (event x read)": 42806
+ },
+ "trades": {
+  "big print threshold (contracts, p90 of pre-2024 prints)": 100.0,
+  "identical trade rows kept (genuine fills)": 878508,
+  "trade rows with count<=0 or price outside (0,1)": 0
+ },
+ "buckets_kept": 253160,
+ "buckets_one_sided_or_empty (kept, bid=0 / ask=1 imputed)": 88399,
+ "ladders_by_city": {
+  "ATL": 967,
+  "AUS": 4948,
+  "BOS": 960,
+  "CHI": 6481,
+  "DAL": 943,
+  "DC": 1026,
+  "DEN": 2735,
+  "LAX": 2546,
+  "LV": 1052,
+  "MIA": 4954,
+  "MIN": 972,
+  "NOLA": 1055,
+  "NY": 6474,
+  "OKC": 935,
+  "PHIL": 2734,
+  "PHX": 972,
+  "SATX": 944,
+  "SEA": 1056,
+  "SFO": 1052
+ },
+ "ladders_settled_under_twc": 3936,
+ "ladders_with_zero_cum_volume_at_read (kept, flagged)": 106,
+ "date_range": [
+  "2022-04-27",
+  "2026-10-04"
+ ]
+}

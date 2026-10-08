@@ -51,3 +51,7 @@ ignore = ["E731"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff.lint.per-file-ignores]
+# Exploratory research code (FINDINGS §39), kept as run.
+"scripts/alpha/*" = ["E501", "B905", "F841"]
