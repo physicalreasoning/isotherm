@@ -10,27 +10,37 @@ requires-python = ">=3.11"
 dependencies = [
     "cryptography>=50.0.2",
     "fastapi>=0.142.2",
+    "mcp>=1.20",
     "numpy>=2.4.6",
     "pandas>=3.0.6",
     "pyarrow>=25.0.1",
     "pydantic>=2.13.5",
-    "scikit-learn>=1.9.1",
     "scipy>=1.17.1",
-    "torch>=2.14.1",
     "uvicorn>=0.54.0",
 ]
+
+[project.scripts]
+isotherm-mcp = "isotherm.mcp_server:main"
 
 [build-system]
 requires = ["uv_build>=0.11.28,<0.12.0"]
 build-backend = "uv_build"
 
 [dependency-groups]
+# Training and research only; the API and MCP server run without them (see Dockerfile).
+ml = [
+    "scikit-learn>=1.9.1",
+    "torch>=2.14.1",
+]
 dev = [
     "httpx2>=2.13.1",
     "matplotlib>=3.11.2",
     "pytest>=9.1.1",
     "ruff>=0.16.10",
 ]
+
+[tool.uv]
+default-groups = ["dev", "ml"]
 
 [tool.ruff]
 line-length = 110
