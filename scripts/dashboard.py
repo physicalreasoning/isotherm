@@ -330,6 +330,31 @@ def research():
             }
             for r, x in te["reads"].items()
         }
+    al = load("alpha/weather_signals.json")
+    if al:
+        rows = (
+            ("Sharpening, seven cities", "holdout7", "temper"),
+            ("Sharpening, twelve newer cities", "holdout12", "temper"),
+            ("De-overrounding (no parameters)", "holdout7", "power"),
+            ("Stale quotes and shape, on top", "holdout7", "temper_state-minus-temper"),
+            ("Order flow, on top", "holdout7", "flow_dir-minus-temper"),
+        )
+        out["signals"] = []
+        for name, split, arm in rows:
+            reads = {}
+            for r in ("d1_16", "d0_08", "d0_12", "d0_14"):
+                v = al.get(split, {}).get("{}|{}".format(arm, r))
+                if v:
+                    g = v["logscore_gain"]
+                    reads[r] = {"d": round(g["mean"], 4), "ci": [round(g["lo"], 4), round(g["hi"], 4)]}
+            if reads:
+                out["signals"].append({"name": name, "reads": reads})
+    sh = pathlib.Path("shadow/forward/sharpen.json")
+    if sh.exists():
+        out["sharpen"] = {
+            "sha": json.loads(sh.read_text())["sha256"][:12],
+            "result": load("sharpen_test.json"),
+        }
     ec = load("explore_cities.json")
     if ec:
         cols = {
