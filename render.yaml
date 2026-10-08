@@ -1,0 +1,11 @@
+# Render Blueprint: the isotherm API and MCP server on Render's free plan (no card needed).
+# render.com -> New -> Blueprint -> physicalreasoning/isotherm. Redeploys on every push to main.
+# Free instances sleep after 15 idle minutes; the first request then takes 30-60 s.
+services:
+  - type: web
+    name: isotherm
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
