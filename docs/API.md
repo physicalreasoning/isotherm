@@ -82,6 +82,12 @@ is one of:
    {"kind": "score", "value": [73.0, 75.0, 77.0]}]}
 ```
 
+`disagreement` (on `decide`, `probability` and `ladder`) is the KL divergence of isotherm's
+ladder from the market's, in nats. Near 0, isotherm is repeating the market; larger values mark the
+answers most likely to carry information beyond the price (FINDINGS §46, measured on the research
+model). It is a guide to which answers to weigh, not a trading signal: §46 found it does not sort
+trading profit.
+
 `confidence` is the probability of the answer given; `uncovered_mass` is the probability that
 falls outside every `choice` option (zero when the options cover every temperature).
 
