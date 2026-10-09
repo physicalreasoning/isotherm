@@ -97,6 +97,7 @@ def problems(series, df):
                     "lead": lead,
                     "day": day.tz_localize(None),
                     "read_ts": int(g["close_ts"].max()) - {"24h": 86400, "6h": 21600, "1h": 3600}[lead],
+                    "close_ts": int(g["close_ts"].max()),
                     "kind": kind,
                     "lo": g["lo"].to_numpy(float),
                     "hi": g["hi"].to_numpy(float),
@@ -173,18 +174,29 @@ def outside_prices(symbol):
     return px
 
 
+def price_at(ts_arr, close_arr, t):
+    i = np.searchsorted(ts_arr, t - 3600, side="right") - 1  # last hourly bar closed by t
+    return close_arr[i] if i >= 0 else np.nan
+
+
 def outside_dist(pr, px):
-    """Lognormal at the read: last hourly close, trailing 20-day daily volatility, no drift."""
-    hist = px[px["ts"] + 3600 <= pr["read_ts"]]  # bar must have closed by the read
-    if len(hist) < 200:
+    """Lognormal at the read: last hourly close, and the spread of log moves over the same clock
+    window (read to close) on the previous 60 days, so trading sessions and weekends are handled
+    empirically. No drift."""
+    ts, cl = px["ts"].to_numpy(), px["close"].to_numpy(float)
+    s = price_at(ts, cl, pr["read_ts"])
+    if not np.isfinite(s) or s <= 0:
         return None
-    s = float(hist["close"].iloc[-1])
-    daily = hist.assign(d=pd.to_datetime(hist["ts"], unit="s").dt.date).groupby("d")["close"].last()
-    r = np.diff(np.log(daily.to_numpy()[-21:]))
-    if len(r) < 10 or s <= 0:
+    lead = pr["close_ts"] - pr["read_ts"]
+    moves = []
+    for k in range(1, 61):
+        end = pr["close_ts"] - k * 86400
+        a, b = price_at(ts, cl, end - lead), price_at(ts, cl, end)
+        if np.isfinite(a) and np.isfinite(b) and a > 0 and b > 0 and a != b:
+            moves.append(np.log(b / a))
+    if len(moves) < 15:
         return None
-    sig = r.std() * np.sqrt({"24h": 1.0, "6h": 0.25, "1h": 1 / 24}[pr["lead"]])
-    sig = max(sig, 1e-4)
+    sig = max(float(np.std(moves)), 1e-4)
     z = lambda x: norm.cdf((np.log(np.clip(x, 1e-12, None)) - np.log(s)) / sig)  # noqa: E731
     if pr["kind"] == "threshold":
         return to_buckets(1 - z(pr["lo"]))
@@ -200,8 +212,8 @@ def pool(pm, po, w):
     return p / p.sum()
 
 
-def fit_pool(train):
-    f = lambda w: np.mean([logscore(pool(market(pr), pr["out"], w), pr) for pr in train])  # noqa: E731
+def fit_pool(train, use="mid"):
+    f = lambda w: np.mean([logscore(pool(market(pr, use), pr["out"], w), pr) for pr in train])  # noqa: E731
     return minimize(f, np.array([1.0, 0.0]), method="Nelder-Mead").x
 
 
@@ -224,6 +236,7 @@ def evaluate(series, probs):
             a = fit_exponent(train)
             tr_out = [p for p in train if p.get("out") is not None]
             w = fit_pool(tr_out) if len(tr_out) >= 30 else None
+            wb = fit_pool(tr_out, "bid") if len(tr_out) >= 30 else None
             for pr in test:
                 pm = market(pr)
                 r = {
@@ -235,8 +248,22 @@ def evaluate(series, probs):
                 }
                 if pr.get("out") is not None:
                     r["outside"] = logscore(pr["out"], pr)
+                    # The market at its most favourable price within each quote (rain, §43): what
+                    # the outside model could not beat without paying the spread.
+                    if pr["kind"] == "binary":
+                        r["clip"] = logscore(
+                            np.clip(pr["out"], np.maximum(pr["bid"], EPS), np.minimum(pr["ask"], 1 - EPS)), pr
+                        )
+                    elif pr["kind"] == "threshold":
+                        # Quotes price P(above strike): clip the outside model's survival curve.
+                        above = 1 - np.cumsum(pr["out"])[:-1]
+                        r["clip"] = logscore(to_buckets(np.clip(above, pr["bid"], pr["ask"])), pr)
+                    else:
+                        c = np.clip(np.clip(pr["out"], pr["bid"], pr["ask"]), EPS, None)
+                        r["clip"] = logscore(c / c.sum(), pr)
                     if w is not None:
                         r["pool"] = logscore(pool(pm, pr["out"], w), pr)
+                        r["pool_bid"] = logscore(pool(market(pr, "bid"), pr["out"], wb), pr)
                 rows.append(r)
         if not rows:
             continue
@@ -247,6 +274,17 @@ def evaluate(series, probs):
             "months": int(R["day"].dt.to_period("M").nunique()),
             "mid_logloss": float(R["mid"].mean()),
         }
+        # §41: against the mid every repair of dead quotes looks like skill, so the outside model
+        # and its pool are also scored against the bid-priced market.
+        for k, ref in (("outside", "bid"), ("pool_bid", "bid"), ("outside", "clip")):
+            if k in R and R[k].notna().sum() >= 20:
+                sel = R[k].notna().to_numpy()
+                d = (R[ref] - R[k]).to_numpy()[sel]
+                out[k + "_minus_" + ref] = {
+                    "diff": float(d.mean()),
+                    "ci": metrics.date_bootstrap_mean(days[sel], d, 2000),
+                    "n": int(sel.sum()),
+                }
         for k in ("bid", "sharp", "outside", "pool"):
             if k in R and R[k].notna().sum() >= 20:
                 sel = R[k].notna().to_numpy()
@@ -276,10 +314,18 @@ def main():
         allres[series] = evaluate(series, probs)
         for lead, r in allres[series].items():
             line = "{:16s} {:3s} n={:4d} mid {:.3f}".format(series, lead, r["problems"], r["mid_logloss"])
-            for k in ("bid", "sharp", "outside", "pool"):
-                if k + "_minus_mid" in r:
-                    v = r[k + "_minus_mid"]
-                    line += "  {} {:+.3f} [{:+.3f},{:+.3f}]".format(k, v["diff"], *v["ci"])
+            for k in (
+                "bid_minus_mid",
+                "sharp_minus_mid",
+                "outside_minus_bid",
+                "pool_bid_minus_bid",
+                "outside_minus_clip",
+            ):
+                if k in r:
+                    v = r[k]
+                    line += "  {} {:+.3f} [{:+.3f},{:+.3f}]".format(
+                        k.replace("_minus_", "-"), v["diff"], *v["ci"]
+                    )
             print(line, flush=True)
     (RESULTS / "baselines.json").write_text(
         json.dumps({"counts": counts, "results": allres}, indent=1, default=str)
