@@ -109,7 +109,7 @@ footer a { color: var(--model); }
   __NAV__
   <header>
     <canvas id="iso" aria-hidden="true"></canvas>
-    <div class="brand"><h1>isotherm</h1><span class="tag">calibrated decision model · Kalshi temperature ladders · 7 cities</span></div>
+    <div class="brand"><h1>isotherm</h1><span class="tag">calibrated decision model · Kalshi weather markets · temperature and rain</span></div>
     <p class="lede">An open, Jev-style decision model: typed questions in, calibrated probabilities out, all read off one distribution over tomorrow's high. Every chart here is scored out of sample against the market's own price at the same timestamp. Code and raw results: <a href="https://github.com/physicalreasoning/isotherm">physicalreasoning/isotherm</a>. Ask it yourself: <a href="https://isotherm.onrender.com/docs">API</a> or <a href="https://github.com/physicalreasoning/isotherm/blob/main/docs/API.md">MCP for agents</a>.</p>
     <div class="pills" id="pills"></div>
   </header>
@@ -226,7 +226,7 @@ function header() {
     ["bad", "Lows sealed test: flat"],
     ["bad", "MLB: no edge"],
     ["warn", "G3 pretraining: fails the gate"],
-    ["warn", "Transformer: still learning, fails its gate"], ["good", "Weather model: passes both gates"], ["warn", "Forward tests: 6 arms, scored Apr 2027"], ["warn", "19 cities: retest Jan to Apr 2027"],
+    ["warn", "Transformer: still learning, fails its gate"], ["good", "Weather model: passes both gates"], ["warn", "Forward tests: 7 arms, scored Apr 2027"], ["good", "Rain: beats the market the day before"], ["bad", "Gas: the crowd already knows"], ["warn", "19 cities: retest Jan to Apr 2027"],
     [sh.decay && sh.decay.status === "STOP" ? "bad" : (sh.decay && sh.decay.status === "OK" ? "good" : "warn"),
      "Live: " + (sh.decay ? sh.decay.status.replace("_", " ").toLowerCase() : "collecting, " + (sh.settled_ladders || 0) + " settled")],
   ];
@@ -445,6 +445,8 @@ function research() {
   });
   if (R.sharpen) { const sr = R.sharpen.result, x = sr && sr.reads && sr.reads.d1_16;
     rows.push([`Market sharpened, 19 cities, from 2026-10-10 <span class="kind">${R.sharpen.sha}</span>`, x ? `${fmt.nats(x.diff)} [${fmt.nats(x.ci[0])}, ${fmt.nats(x.ci[1])}] vs market` + (sr.complete ? "" : " · interim") : "collecting"]); }
+  if (R.rain) { const rr = R.rain.result, x = rr && rr.primary_stack_minus_mid;
+    rows.push([`Rain stack, KXRAIN 25 cities, from 2026-10-11 <span class="kind">${R.rain.sha}</span>`, x && x.ci ? `${fmt.nats(x.mean)} [${fmt.nats(x.ci[0])}, ${fmt.nats(x.ci[1])}] vs market` + (rr.complete ? "" : " · interim") : "collecting"]); }
   rows.push(["Ladders scored", res ? `${res.ladders} through ${res.through}` : "none yet"]);
   $("t-forward").innerHTML = rows.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("");
 }

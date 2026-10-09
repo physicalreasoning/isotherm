@@ -349,6 +349,12 @@ def research():
                     reads[r] = {"d": round(g["mean"], 4), "ci": [round(g["lo"], 4), round(g["hi"], 4)]}
             if reads:
                 out["signals"].append({"name": name, "reads": reads})
+    rn = pathlib.Path("shadow/forward/frozen_rain.json")
+    if rn.exists():
+        out["rain"] = {
+            "sha": json.loads(rn.read_text())["sha256"][:12],
+            "result": load("rain/forward_test.json"),
+        }
     sh = pathlib.Path("shadow/forward/sharpen.json")
     if sh.exists():
         out["sharpen"] = {
