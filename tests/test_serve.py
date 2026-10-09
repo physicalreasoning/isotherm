@@ -62,6 +62,7 @@ def test_decide_answers_typed_questions_coherently(client):
     assert np.allclose(a[0]["probabilities"], P)
     assert np.isclose(a[1]["probabilities"][0], 0.4)  # 70-71 bucket + >71 tail
     assert a[2]["value"][0] <= a[2]["value"][1] <= a[2]["value"][2]
+    assert r.json()["disagreement"] == 0.0  # the fake model equals the market
 
 
 def test_ladder_and_health(client):

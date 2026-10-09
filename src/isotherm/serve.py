@@ -75,6 +75,11 @@ class DecideResponse(BaseModel):
     event: str
     model_hash: str
     answers: List[Answer]
+    disagreement: float = Field(
+        description="KL divergence of the model's ladder from the market's, nats. The best single "
+        "indicator that an answer carries information beyond the price (FINDINGS §46); near 0, "
+        "the model is repeating the market."
+    )
 
 
 app = FastAPI(
@@ -122,6 +127,12 @@ def health_payload() -> dict:
     }
 
 
+def disagreement(out: dict) -> float:
+    """KL(model || market) over the ladder's buckets, nats."""
+    p, q = np.clip(out["p_model"], 1e-9, 1), np.clip(out["p_market"], 1e-9, 1)
+    return round(float(np.sum(p * (np.log(p) - np.log(q)))), 5)
+
+
 def ladder_payload(city: str, day: Optional[str] = None) -> dict:
     d, out = _predict(city, day)
     buckets = []
@@ -144,6 +155,7 @@ def ladder_payload(city: str, day: Optional[str] = None) -> dict:
         "event": out["event"],
         "gfs_fcst": out["gfs_fcst"],
         "gfs_runtime": out["gfs_runtime"],
+        "disagreement": disagreement(out),
         "buckets": buckets,
     }
 
@@ -177,10 +189,16 @@ def decide_payload(city: str, questions: List[Choice | Noul | Score], day: Optio
             "questions": [q.model_dump() for q in questions],
             "answers": [a.model_dump() for a in answers],
             "dist": {"lo": dist.lo, "p": [round(float(x), 6) for x in dist.p]},
+            "disagreement": disagreement(out),
         }
     )
     return DecideResponse(
-        city=city, day=str(d.date()), event=out["event"], model_hash=model_hash, answers=answers
+        city=city,
+        day=str(d.date()),
+        event=out["event"],
+        model_hash=model_hash,
+        answers=answers,
+        disagreement=disagreement(out),
     )
 
 
