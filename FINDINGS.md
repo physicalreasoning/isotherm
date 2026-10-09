@@ -1123,3 +1123,43 @@ two-sided books only (`scripts/rain/forward_test.py`).
 **Secondary gate:** the model minus the market at its most favourable price within [bid, ask]
 (information beyond the spread), CI above zero. Reported, not gated: model minus mid, by month,
 by city. Looks before 2027-04-05 are descriptive only.
+
+## 45 · Two controls from financial representation learning (2026-10-09)
+
+Merchant, Guthrie, Mahns, Balestriero and Levy, "Towards Financial World Modeling" (arXiv
+2610.09048), compare 18 encoder-training strategies on a trillion one-second US equity
+observations. They find a random, untrained encoder with a fitted probe is a strong baseline,
+supervised training beats self-supervised, and the test month explains 97 to 99.9% of the variance
+in results against the seed. Their two controls, applied to isotherm (`src/isotherm/controls.py`,
+`scripts/controls.py`, `results/controls.json`), last 12 months before the lockbox, 95% date-block CI:
+
+**Random encoder.** Transformer-L with its encoder frozen at random initialisation; only the log
+pool and the output head are trained (five seeds, as for every isotherm model).
+
+| Read | Random encoder − market | Trained − random encoder | MLP − random encoder |
+|---|---|---|---|
+| 08:00 | +0.008 [+0.002, +0.015] | +0.007 [−0.000, +0.015] | +0.001 [−0.003, +0.005] |
+| 12:00 | +0.007 [+0.003, +0.011] | +0.004 [−0.001, +0.009] | +0.003 [−0.001, +0.006] |
+| 14:00 | +0.014 [+0.007, +0.021] | +0.004 [−0.002, +0.009] | +0.003 [−0.001, +0.007] |
+| 16:00 day before | +0.016 [+0.009, +0.022] | **+0.008 [+0.004, +0.013]** | −0.002 [−0.006, +0.003] |
+
+Most of isotherm's gain over the market needs no learned representation: random features over the
+same inputs, with a trained head and log pool, already beat the market at every read and tie the
+MLP. Training the attention adds only at 16:00 the day before, where it is also the read at which
+the transformer beat the MLP (§19). This is the paper's finding at a smaller scale: the inputs
+and the supervised head carry the edge.
+
+**Regime against seed.** Five single-seed MLPs (one network each, different initialisation),
+monthly gain over the market across every out-of-sample month (36), two-way decomposition:
+
+| Read | Month | Seed | Residual | Months positive | Monthly gain range |
+|---|---|---|---|---|---|
+| 08:00 | 98.2% | 0.10% | 1.7% | 32 of 36 | −0.049 to +0.349 |
+| 12:00 | 96.9% | 0.34% | 2.7% | 32 of 36 | −0.013 to +0.146 |
+| 14:00 | 99.2% | 0.02% | 0.8% | 32 of 36 | −0.040 to +0.196 |
+| 16:00 day before | 99.1% | 0.02% | 0.9% | 32 of 36 | −0.037 to +0.294 |
+
+Seed noise is negligible; when isotherm wins or loses is decided by the month (§24: the market's
+sharpness and GFS's seasonal value). Results from a single short window, ours included, should be
+read as one draw from a highly variable regime, which is why every gate here uses a year of data
+and date-block intervals.

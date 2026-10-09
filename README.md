@@ -59,6 +59,7 @@ ladder over the market; intervals are 95% date-block bootstraps [14].
 | Market-only signals | sharpening the mid-price market beats it, but mostly because mids count unbid asks; against bid prices it wins only at 14:00. isotherm's edge survives the stricter baseline at 3 of 4 reads |
 | Rain (Kalshi KXRAIN, 25 cities) | calibrated NWS rain probabilities beat the market the day before, +0.032 (stack +0.015); mostly inside the spread; sealed test from 2026-10-11 |
 | Gas prices (AAA daily) | futures-based model far worse than the market (−0.93): the crowd watches real-time prices |
+| Controls from Merchant et al. 2026 | a frozen random encoder plus a trained head already beats the market and ties the MLP; the month explains 97 to 99% of the variance, the seed under 0.4% |
 | Sealed forward test | transformer-L, NBM spread, order flow and a three-way ensemble against the MLP, frozen 2026-10-06; the weather model from 2026-10-09; scored 2027-04 |
 
 The edge was large in 2023 and has mostly decayed: the market now prices the National Blend of
