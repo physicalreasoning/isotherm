@@ -1163,3 +1163,34 @@ Seed noise is negligible; when isotherm wins or loses is decided by the month (�
 sharpness and GFS's seasonal value). Results from a single short window, ours included, should be
 read as one draw from a highly variable regime, which is why every gate here uses a year of data
 and date-block intervals.
+
+## 46 · Exploration: when isotherm wins is predictable, but not where the money is (2026-10-09)
+
+The month explains 97 to 99% of isotherm's gain (§45), so the useful question is whether today
+has an edge. `scripts/edge_model.py`, `results/edge_model.json`: a ridge regression, refit monthly
+on earlier months only (12 months of warm-up), predicts each ladder's out-of-sample gain of the
+MLP over the market from what is known at the read: KL(isotherm || market) and the largest bucket
+difference, NBM-GFS disagreement and NBM spread, book spread, overround and volume, season, and
+the mean gain and market log loss over the 30 days settled by D-2. Evaluated 2024-07 to 2026-06,
+about 4,600 ladders per read:
+
+| Read | Rank correlation, predicted vs realised | Realised gain by predicted quintile (low to high) | Gated (market where predicted ≤ 0) − isotherm |
+|---|---|---|---|
+| 08:00 | +0.25 | +0.010, +0.007, +0.012, +0.018, **+0.095** | −0.004 [−0.007, −0.001] |
+| 12:00 | +0.17 | +0.007, +0.010, +0.006, +0.016, **+0.041** | −0.004 [−0.006, −0.002] |
+| 14:00 | +0.26 | +0.000, +0.022, +0.020, +0.025, **+0.040** | −0.008 [−0.011, −0.004] |
+| 16:00 day before | +0.21 | +0.001, +0.010, +0.006, +0.030, **+0.047** | −0.002 [−0.005, +0.002] |
+
+- **The size of the edge is predictable.** The top predicted fifth gains 4 to 10 times the bottom.
+  Disagreement with the market (KL) carries most of it: isotherm is most right where it departs
+  most from the price. A high overround and a thin book also predict more gain (the §41 effect).
+  Recent performance adds little, so the month effect is not forecast by the month before.
+- **Switching isotherm off never pays.** Even the lowest fifth is break-even or slightly positive,
+  so falling back to the market loses.
+- **It does not locate the money.** Quarter-Kelly taker paper P&L (the §6 engine) by predicted
+  fifth has no order at any read (for example 16:00 day before: +$1,021, +$1,778, +$777, +$2,781,
+  +$1,162; with one tick of slippage the top fifth turns negative). The extra log score on
+  high-disagreement ladders sits in buckets where spread and fees absorb it.
+
+Use: as a confidence measure for served answers (disagreement with the market is the best single
+indicator of an informative answer), not as a trading filter.
