@@ -292,6 +292,20 @@ def research():
                 if r != "d1_16"
             },
         )
+    ctl = load("controls.json")
+    if ctl:
+        arm(
+            "Transformer, random frozen encoder",
+            "control",
+            "§45",
+            {
+                r: {
+                    "d": round(-v["mlp_minus_random"]["diff"], 4),
+                    "ci": ci([-v["mlp_minus_random"]["ci"][1], -v["mlp_minus_random"]["ci"][0]]),
+                }
+                for r, v in ctl["random_encoder"].items()
+            },
+        )
     wx = load("wx_gate.json")
     if wx:
         v = wx["adoption"]["vs_mlp"]
