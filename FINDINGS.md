@@ -1058,3 +1058,68 @@ neither free nor something daily futures can match.
 This sharpens the thesis behind isotherm. Weather works because the useful public information
 (NWS model output, calibrated) takes skill to use and the crowd under-uses it. Where the decisive
 information is real-time and easy to read, the crowd prices it. Not pursued further.
+
+## 43 · Rain: the model adds information the day before, mostly inside the spread (2026-10-09)
+
+The §42 thesis says isotherm's edge lives where public information takes skill to use. Rain
+probability from NWS model output is that kind of signal. `scripts/rain/`, `results/rain/rain_eval.json`
+(an agent's build, reviewed here).
+
+**Markets.** KXRAIN, "will it rain in <city> today", daily since 2026-07-15 in about 25 cities,
+settling on NWS climate-report precipitation strictly above 0 (80 events, 1,815 markets to
+2026-10-07); and the NYC-only series, 2021 to 2026-07-15 (771 usable days; 98 early events with
+only amount thresholds dropped; none listed in 2023-24). Read at 16:00 local the day before
+(1,663 KXRAIN two-sided books; 127 one-sided, 25 unquoted dropped) and 08:00 on the day (1,265
+two-sided; the 545 one-sided books there are dropped, though they select on the outcome: a 99¢
+bid with no ask had always already rained).
+
+**Labels.** Non-trace days agree with the climate report 100% in both series. The two series
+settle a trace differently: KXRAIN as dry (198 of 198 trace days NO), the NYC series as wet (82
+of 82 YES); each model is trained on its own series' rule.
+
+**Model.** Logistic regression on NBM and GFS MOS precipitation probabilities (6- and 12-hour
+PoP aggregated over the climate day, amount categories, season), point in time at each read,
+trained on 2.33 million station-day-reads across the 576 corpus stations, refit quarterly from
+2021Q4 with a two-day embargo. Gradient boosting was chosen against on non-market stations only
+(it gained under the 0.005 bar set beforehand).
+
+**Results**, log score gain, 95% date-block CI:
+
+| Series, read | n | Model − mid | Model − market at its most favourable price in [bid, ask] | Stack (fit on earlier days) − mid |
+|---|---|---|---|---|
+| KXRAIN, 16:00 day before | 1,663 | **+0.032 [+0.014, +0.053]** | +0.010 [−0.002, +0.022] | **+0.015 [+0.002, +0.026]** |
+| KXRAIN, 08:00 | 1,265 | −0.018 [−0.037, +0.002] | −0.030 [−0.046, −0.015] | **+0.026 [+0.016, +0.036]** |
+| NYC, 16:00 day before | 484 | **+0.049 [+0.018, +0.079]** | +0.018 [−0.006, +0.041] | **+0.052 [+0.021, +0.083]** |
+| NYC, 08:00 | 402 | −0.001 [−0.042, +0.039] | −0.035 [−0.068, −0.005] | +0.030 [−0.003, +0.063] |
+
+- **The day before, the model knows something the price does not.** The market overprices rain
+  (mean mid 0.273 against 0.243 realised; its 45% bin rains 30% of the time), while the model is
+  calibrated (debiased calibration error 0.030 against the market's 0.041). 18 of 22 cities are
+  positive.
+- **Mostly inside the spread.** Against the market at its most favourable price within the
+  quote, the gain is +0.010 with a CI touching zero. A taker paper rule shows +4.4¢ a contract,
+  but §6 showed one tick of slippage can erase an edge this size.
+- **Decaying, like §3.** KXRAIN at 16:00: July +0.133 (the series' first weeks), August +0.021,
+  September +0.015, October +0.008. Without July, +0.016 [+0.003, +0.029]. NYC by year: 2021
+  +0.05, 2022 +0.05, 2025 +0.095, 2026 +0.006.
+- **On the day the price wins**: by 08:00 it knows whether it rained overnight, the model does
+  not, and only the stack helps.
+
+## 44 · Rain: sealed forward test (pre-registration, 2026-10-09)
+
+Committed before the first window market opens (KXRAIN opens about two days ahead; the
+2026-10-11 event opens around 09:10 UTC on 2026-10-09).
+
+**Frozen** (`shadow/forward/models_rain.pkl`, sha256 `5befac8ebd9542c5…`, full hash in
+`shadow/forward/frozen_rain.json`, checked on load; scikit-learn 1.9.1): the logistic PoP model
+fit on every labelled station-day through 2026-10-07, and the 16:00 stack
+p = σ(−0.097 + 0.359·logit(mid) + 0.755·logit(model)) fit on the 1,663 KXRAIN rows above.
+Nothing is refit.
+
+**Window:** KXRAIN target days **2026-10-11 to 2027-04-05**, read at 16:00 local the day before,
+two-sided books only (`scripts/rain/forward_test.py`).
+
+**Primary gate:** frozen stack minus mid, log score, 95% date-block CI above zero.
+**Secondary gate:** the model minus the market at its most favourable price within [bid, ask]
+(information beyond the spread), CI above zero. Reported, not gated: model minus mid, by month,
+by city. Looks before 2027-04-05 are descriptive only.

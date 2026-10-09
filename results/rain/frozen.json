@@ -1,0 +1,22 @@
+{
+ "file": "data/rain/frozen_rain.pkl",
+ "sha256": "5befac8ebd9542c5fb6fe53c1ef9afaf0ccbe1f81be9f69546fa2f95724eee79",
+ "fit_through": "2026-10-07",
+ "train_rows_per_read": 300000,
+ "stack_coefs": {
+  "d0_08": {
+   "intercept": -0.6005115034701356,
+   "mid": 0.6862766819113351,
+   "model": 0.6004871721060476
+  },
+  "d1_16": {
+   "intercept": -0.09703228990968697,
+   "mid": 0.3588909326991389,
+   "model": 0.7554899562866311
+  }
+ },
+ "stack_rows": {
+  "d0_08": 1265,
+  "d1_16": 1663
+ }
+}

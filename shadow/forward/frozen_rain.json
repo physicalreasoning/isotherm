@@ -1,0 +1,16 @@
+{
+  "sha256": "5befac8ebd9542c5fb6fe53c1ef9afaf0ccbe1f81be9f69546fa2f95724eee79",
+  "fit_through": "2026-10-07",
+  "read": "d1_16",
+  "series": "KXRAIN",
+  "window": [
+    "2026-10-11",
+    "2027-04-05"
+  ],
+  "stack_d1_16": {
+    "intercept": -0.09703228990968697,
+    "mid": 0.3588909326991389,
+    "model": 0.7554899562866311
+  },
+  "sklearn": "1.9.1"
+}
