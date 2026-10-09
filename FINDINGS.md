@@ -1134,7 +1134,7 @@ in results against the seed. Their two controls, applied to isotherm (`src/isoth
 `scripts/controls.py`, `results/controls.json`), last 12 months before the lockbox, 95% date-block CI:
 
 **Random encoder.** Transformer-L with its encoder frozen at random initialisation; only the log
-pool and the output head are trained (three seeds).
+pool and the output head are trained (five seeds, as for every isotherm model).
 
 | Read | Random encoder − market | Trained − random encoder | MLP − random encoder |
 |---|---|---|---|
