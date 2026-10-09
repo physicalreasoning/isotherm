@@ -1194,3 +1194,49 @@ about 4,600 ladders per read:
 
 Use: as a confidence measure for served answers (disagreement with the market is the best single
 indicator of an informative answer), not as a trading filter.
+
+## 47 · A prediction-market benchmark, v1: free outside data rarely beat the book (2026-10-09)
+
+The benchmark planned in `docs/research/benchmark_plan.md`. `scripts/bench/fetch.py` takes up to
+400 settled current-format events per series, spread evenly over each series' life, with bid,
+ask, volume and open interest per market at 24 h, 6 h and 1 h before close.
+`scripts/bench/evaluate.py` scores, by log loss per ladder, with monthly walk-forward refits
+(3 months of warm-up) and date-block bootstrap CIs:
+
+- **bid−mid**: the market priced at its bids (floored at 0.5¢, renormalised; §41) against the mid.
+- **sharp−mid**: the mid market sharpened by one exponent fitted on earlier months (§39).
+- **outside−bid**: a model built only from free outside data against the bid-priced market. It is
+  a lognormal at the last hourly Yahoo close before the read, with the volatility taken from log
+  moves over the same clock window on the previous 60 days, and no drift.
+- **pool−bid**: a log pool of the bid-priced market and the outside model, with weights fitted on
+  earlier months (isotherm's design).
+- **outside−clip**: the outside model against itself clipped into each quote, which is the market
+  at its most favourable price. Positive means the outside model is right where it disagrees with
+  the whole quote, which is information beyond the spread.
+
+Positive is better for the first-named model. Bold marks CIs that exclude zero.
+
+SERIES_TABLE
+
+- **The mid-price artifact is everywhere thin books are.** Pricing at the bid beats the mid by
+  +0.08 to +0.41 on the index and currency ladders, and sharpening the mid "wins" for the same
+  reason. Neither is skill. Every comparison that matters has to be against the bid-priced market.
+- **Against the bid-priced market, the pool always looks good and means little.** Its gains on
+  financial ladders (+0.05 to +0.41) come from the outside model repairing the same dead buckets.
+  The clipped comparison removes that.
+- **Outside data rarely carry information beyond the spread.** On the S&P 500 and Nasdaq 100 the
+  outside model loses to the market at its own quotes at 6 h and 1 h (−0.23 to −0.36). On EUR/USD
+  and USD/JPY it ties. Index and FX ladders are priced by people watching the same free feed.
+- **Oil is the exception, and only a candidate.** At 24 h, a lognormal on the front-month future
+  beats the WTI book at its most favourable prices (+0.17 [+0.02, +0.35], 104 ladders). The edge
+  fades at 6 h and is gone at 1 h, the same decay with lead as weather (§33). The WTI books are the
+  thinnest in the set (mid log loss 3.3 at 24 h). This was not pre-registered, so it is a candidate
+  for a sealed forward test, not a finding.
+- **Weather, with market-only baselines.** These ladders are the most efficient by the mid:
+  bid−mid and sharp−mid are within ±0.03. That is where isotherm adds +0.02 to +0.04 with the
+  forecast data (§35). KXRAIN gives only 9 two-sided yes/no problems here, because of how the
+  sample was drawn, so rain is scored in §43 instead.
+
+The thesis of §42 holds across families. Skill pays where public information takes work to use
+(weather forecasts, possibly a futures curve a day out). It does not pay where the information is
+a free real-time price.
