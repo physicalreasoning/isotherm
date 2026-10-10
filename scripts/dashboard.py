@@ -363,6 +363,29 @@ def research():
                     reads[r] = {"d": round(g["mean"], 4), "ci": [round(g["lo"], 4), round(g["hi"], 4)]}
             if reads:
                 out["signals"].append({"name": name, "reads": reads})
+    bm = load("bench/baselines.json")
+    if bm:
+        names = {
+            "KXINX": "S&P 500", "KXNASDAQ100": "Nasdaq 100", "KXEURUSD": "EUR/USD",
+            "KXUSDJPY": "USD/JPY", "KXWTI": "WTI oil",
+        }  # fmt: skip
+        out["bench"] = []
+        for sr, nm in names.items():
+            for lead in ("24h", "6h", "1h"):
+                v = bm["results"].get(sr, {}).get(lead)
+                if not v or v["problems"] < 20 or "outside_minus_clip" not in v:
+                    continue
+                out["bench"].append(
+                    {
+                        "name": nm,
+                        "lead": lead,
+                        "n": v["problems"],
+                        **{
+                            k: {"d": round(v[key]["diff"], 4), "ci": ci(v[key]["ci"])}
+                            for k, key in (("bid", "bid_minus_mid"), ("clip", "outside_minus_clip"))
+                        },
+                    }
+                )
     rn = pathlib.Path("shadow/forward/frozen_rain.json")
     if rn.exists():
         out["rain"] = {
