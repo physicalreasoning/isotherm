@@ -1194,3 +1194,82 @@ about 4,600 ladders per read:
 
 Use: as a confidence measure for served answers (disagreement with the market is the best single
 indicator of an informative answer), not as a trading filter.
+
+## 47 · A prediction-market benchmark, v1: free outside data rarely beat the book (2026-10-09)
+
+The benchmark planned in `docs/research/benchmark_plan.md`. `scripts/bench/fetch.py` takes up to
+400 settled current-format events per series, spread evenly over each series' life, with bid,
+ask, volume and open interest per market at 24 h, 6 h and 1 h before close.
+`scripts/bench/evaluate.py` scores, by log loss per ladder, with monthly walk-forward refits
+(3 months of warm-up) and date-block bootstrap CIs:
+
+- **bid−mid**: the market priced at its bids (floored at 0.5¢, renormalised; §41) against the mid.
+- **sharp−mid**: the mid market sharpened by one exponent fitted on earlier months (§39).
+- **outside−bid**: a model built only from free outside data against the bid-priced market. It is
+  a lognormal at the last hourly Yahoo close before the read, with the volatility taken from log
+  moves over the same clock window on the previous 60 days, and no drift.
+- **pool−bid**: a log pool of the bid-priced market and the outside model, with weights fitted on
+  earlier months (isotherm's design).
+- **outside−clip**: the outside model against itself clipped into each quote, which is the market
+  at its most favourable price. Positive means the outside model is right where it disagrees with
+  the whole quote, which is information beyond the spread.
+
+Positive is better for the first-named model. Bold marks CIs that exclude zero.
+
+| Series | Lead | Ladders | Mid log loss | bid−mid | sharp−mid | outside−bid | pool−bid | outside−clip |
+|---|---|---|---|---|---|---|---|---|
+| KXAAAGASD | 6h | 131 | 1.64 | −0.002 [−0.019, +0.014] | +0.004 [−0.031, +0.045] |  |  |  |
+| KXAAAGASD | 1h | 131 | 1.24 | −0.077 [−0.217, +0.012] | +0.011 [−0.006, +0.027] |  |  |  |
+| KXEURUSD | 6h | 120 | 1.98 | **+0.087 [+0.007, +0.166]** | +0.059 [−0.014, +0.123] | **+0.193 [+0.008, +0.357]** | **+0.198 [+0.088, +0.304]** | −0.002 [−0.130, +0.099] |
+| KXEURUSD | 1h | 126 | 1.79 | **+0.304 [+0.186, +0.413]** | +0.092 [−0.043, +0.219] | **+0.418 [+0.201, +0.608]** | **+0.410 [+0.256, +0.555]** | +0.041 [−0.088, +0.127] |
+| KXHIGHCHI | 24h | 346 | 1.22 | **+0.019 [+0.007, +0.030]** | +0.025 [−0.003, +0.050] |  |  |  |
+| KXHIGHCHI | 6h | 86 | 0.50 | +0.001 [−0.040, +0.032] | −0.007 [−0.019, +0.002] |  |  |  |
+| KXHIGHNY | 24h | 346 | 1.15 | +0.004 [−0.009, +0.015] | +0.009 [−0.000, +0.018] |  |  |  |
+| KXHIGHNY | 6h | 92 | 0.41 | +0.000 [−0.021, +0.017] | −0.026 [−0.081, +0.021] |  |  |  |
+| KXINX | 24h | 78 | 2.54 | +0.083 [−0.083, +0.241] | **+0.097 [+0.016, +0.171]** | +0.159 [−0.101, +0.399] | **+0.190 [+0.038, +0.338]** | −0.098 [−0.244, +0.024] |
+| KXINX | 6h | 333 | 2.08 | **+0.095 [+0.043, +0.150]** | **+0.156 [+0.104, +0.205]** | **−0.355 [−0.473, −0.237]** | **+0.056 [+0.033, +0.080]** | **−0.363 [−0.444, −0.286]** |
+| KXINX | 1h | 333 | 1.24 | **+0.098 [+0.072, +0.128]** | **+0.134 [+0.101, +0.166]** | **−0.208 [−0.342, −0.091]** | **+0.048 [+0.012, +0.080]** | **−0.304 [−0.424, −0.197]** |
+| KXJOBLESSCLAIMS | 24h | 23 | 2.33 | −0.533 [−1.361, +0.073] | +0.082 [−0.114, +0.365] |  |  |  |
+| KXJOBLESSCLAIMS | 6h | 28 | 2.01 | −0.521 [−1.344, +0.059] | −0.014 [−0.139, +0.184] |  |  |  |
+| KXJOBLESSCLAIMS | 1h | 28 | 2.05 | −0.705 [−1.584, +0.020] | +0.001 [−0.210, +0.314] |  |  |  |
+| KXLOWTNYC | 24h | 223 | 1.10 | −0.000 [−0.029, +0.026] | +0.012 [−0.024, +0.043] |  |  |  |
+| KXLOWTNYC | 6h | 120 | 0.70 | −0.006 [−0.041, +0.018] | −0.016 [−0.059, +0.014] |  |  |  |
+| KXLOWTNYC | 1h | 58 | 0.48 | −0.039 [−0.164, +0.048] | −0.023 [−0.116, +0.051] |  |  |  |
+| KXNASDAQ100 | 24h | 63 | 2.84 | +0.037 [−0.100, +0.197] | +0.011 [−0.047, +0.067] | +0.070 [−0.194, +0.320] | **+0.184 [+0.019, +0.341]** | −0.078 [−0.230, +0.048] |
+| KXNASDAQ100 | 6h | 330 | 2.28 | **+0.087 [+0.033, +0.138]** | **+0.136 [+0.083, +0.183]** | **−0.397 [−0.503, −0.286]** | **+0.052 [+0.029, +0.076]** | **−0.337 [−0.406, −0.272]** |
+| KXNASDAQ100 | 1h | 330 | 1.40 | **+0.085 [+0.046, +0.122]** | **+0.117 [+0.090, +0.142]** | −0.108 [−0.249, +0.017] | **+0.080 [+0.035, +0.122]** | **−0.229 [−0.356, −0.116]** |
+| KXUSDJPY | 6h | 124 | 2.08 | **+0.223 [+0.129, +0.317]** | +0.028 [−0.062, +0.111] | −0.030 [−0.163, +0.100] | +0.079 [−0.013, +0.159] | +0.007 [−0.053, +0.064] |
+| KXUSDJPY | 1h | 126 | 1.83 | **+0.407 [+0.280, +0.530]** | **+0.201 [+0.054, +0.331]** | **+0.244 [+0.085, +0.395]** | **+0.322 [+0.182, +0.446]** | +0.009 [−0.041, +0.058] |
+| KXWTI | 24h | 104 | 3.29 | −0.078 [−0.219, +0.026] | **+0.272 [+0.090, +0.472]** | **+0.578 [+0.279, +0.915]** | **+0.512 [+0.180, +0.878]** | **+0.170 [+0.020, +0.354]** |
+| KXWTI | 6h | 124 | 2.66 | −0.064 [−0.189, +0.009] | +0.042 [−0.076, +0.188] | **+0.431 [+0.189, +0.734]** | **+0.388 [+0.153, +0.675]** | +0.086 [−0.006, +0.180] |
+| KXWTI | 1h | 123 | 1.59 | +0.010 [−0.006, +0.030] | +0.028 [−0.086, +0.127] | −0.108 [−0.387, +0.120] | −0.036 [−0.223, +0.125] | −0.078 [−0.332, +0.130] |
+
+- **The mid-price artifact is everywhere thin books are.** Pricing at the bid beats the mid by
+  +0.08 to +0.41 on the index and currency ladders, and sharpening the mid "wins" for the same
+  reason. Neither is skill. Every comparison that matters has to be against the bid-priced market.
+- **Against the bid-priced market, the pool always looks good and means little.** Its gains on
+  financial ladders (+0.05 to +0.41) come from the outside model repairing the same dead buckets.
+  The clipped comparison removes that.
+- **Outside data rarely carry information beyond the spread.** On the S&P 500 and Nasdaq 100 the
+  outside model loses to the market at its own quotes at 6 h and 1 h (−0.23 to −0.36). On EUR/USD
+  and USD/JPY it ties. Index and FX ladders are priced by people watching the same free feed.
+- **Oil is the exception, and only a candidate.** At 24 h, a lognormal on the front-month future
+  beats the WTI book at its most favourable prices (+0.17 [+0.02, +0.35], 104 ladders). The edge
+  fades at 6 h and is gone at 1 h, the same decay with lead as weather (§33). The WTI books are the
+  thinnest in the set (mid log loss 3.3 at 24 h). This was not pre-registered, so it is a candidate
+  for a sealed forward test, not a finding.
+- **Weather, with market-only baselines.** These ladders are the most efficient by the mid:
+  bid−mid and sharp−mid are within ±0.03. That is where isotherm adds +0.02 to +0.04 with the
+  forecast data (§35). KXRAIN gives only 9 two-sided yes/no problems here, because of how the
+  sample was drawn, so rain is scored in §43 instead.
+
+- **Coverage.** 13 series and 3,860 events were fetched (`results/bench/baselines.json`); the
+  rows above are the leads with at least 20 scored ladders after warm-up. Bitcoin (KXBTC) is
+  missing: its hourly ladders open an hour before close, so the fixed reads see almost nothing,
+  and it needs an intra-hour design. CPI has 22 events, too few to score. Jobless claims (59
+  events, about 25 scored) and AAA gas show no market-only effect that clears noise; gas against
+  RBOB is §42.
+
+The thesis of §42 holds across families. Skill pays where public information takes work to use
+(weather forecasts, possibly a futures curve a day out). It does not pay where the information is
+a free real-time price.
