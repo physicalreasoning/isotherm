@@ -57,7 +57,7 @@ def interval(st, fl, cp):
     """Continuous [lo, hi) for any numeric strike (weather uses it for ordering only)."""
     if st == "less":
         return -np.inf, cp
-    if st == "greater":
+    if st in ("greater", "greater_or_equal"):
         return fl, np.inf
     if st == "between":
         return fl, cp
@@ -72,7 +72,11 @@ def problems(series, df):
         if g.empty:
             continue
         sts = set(g["strike_type"].dropna())
-        kind = "binary" if series == "KXRAIN" else ("threshold" if sts <= {"greater"} else "partition")
+        kind = (
+            "binary"
+            if series == "KXRAIN"
+            else ("threshold" if sts <= {"greater", "greater_or_equal"} else "partition")
+        )
         iv = [interval(s, f, c) for s, f, c in zip(g["strike_type"], g["floor"], g["cap"], strict=True)]
         if any(x is None for x in iv):
             continue
