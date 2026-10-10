@@ -1273,3 +1273,27 @@ Positive is better for the first-named model. Bold marks CIs that exclude zero.
 The thesis of §42 holds across families. Skill pays where public information takes work to use
 (weather forecasts, possibly a futures curve a day out). It does not pay where the information is
 a free real-time price.
+
+## 48 · Oil gets a sealed forward test (2026-10-10)
+
+§47 found one series where free outside data beat the market even at the market's most favourable
+in-quote prices: WTI oil, 24 hours before close. Found by looking, so it is frozen and tested once
+on events that have not happened. `scripts/bench/oil_forward.py`, spec in `shadow/forward/oil.json`
+(sha256 `383a62e1…`), frozen 2026-10-10 18:39 UTC:
+
+- **Model.** A lognormal at the last hourly close of the front-month future (Yahoo `CL=F`) before
+  the read, with volatility from log moves over the same clock window on the previous 60 days and
+  no drift. It has no fitted parameters. Its code, `scripts/bench/evaluate.py`, is hashed
+  (`15d95b25…`) and checked on scoring.
+- **Window.** KXWTI events closing 2026-10-12 to 2027-04-05. Since March 2026 Kalshi has listed
+  about 20 a month with two-sided quotes a day out, so about 115 ladders are expected. If fewer
+  than 80 have settled by 2027-04-05, the window runs on to 80 ladders or 2027-10-05.
+- **Primary.** 24 h before close: the outside model's log loss against the market at its most
+  favourable price inside each quote. PASS if the 95% date-block CI lower bound is above zero.
+- **Secondary.** The same comparison at 6 h, and a log pool of the bid-priced market and the
+  outside model with frozen weights, against the bid-priced market. The fitted pool puts almost no
+  weight on the market a day out (0.03, against 0.59 on the outside model).
+
+If it passes, Kalshi's oil ladders a day out are mispriced against a free futures feed, the first
+non-weather case of the §42 thesis. If it fails, §47's exception was noise and the benchmark's
+answer is uniform: free real-time prices are already in the book.

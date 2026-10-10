@@ -1,0 +1,30 @@
+{
+  "frozen": "2026-10-10T18:38:59.342986+00:00",
+  "series": "KXWTI",
+  "outside": "CL=F",
+  "code": "scripts/bench/evaluate.py",
+  "code_sha256": "15d95b258592d4ae64ead356d266ff3f6b59c8d8730b0a3ee41af424141cb340",
+  "window": {
+    "from_close": "2026-10-12",
+    "to_close": "2027-04-05"
+  },
+  "extension": "if fewer than 80 ladders at 24h by 2027-04-05, continue to 80 ladders or 2027-10-05",
+  "primary": "24h: outside minus in-quote market, log loss; PASS if the 95% date-block CI lower bound > 0",
+  "secondary": [
+    "6h: the same comparison",
+    "24h: log pool (frozen weights) of bid-priced market and outside, minus bid-priced market"
+  ],
+  "pool_bid_weights": {
+    "24h": [
+      0.03324715073473969,
+      0.5894735271460784
+    ],
+    "6h": [
+      0.14820654854052925,
+      0.7061979977665144
+    ]
+  },
+  "history": {
+    "ladders_24h": 147
+  }
+}

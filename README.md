@@ -61,7 +61,7 @@ ladder over the market; intervals are 95% date-block bootstraps [14].
 | Gas prices (AAA daily) | futures-based model far worse than the market (−0.93): the crowd watches real-time prices |
 | Controls from Merchant et al. 2026 | a frozen random encoder plus a trained head already beats the market and ties the MLP; the month explains 97 to 99% of the variance, the seed under 0.4% |
 | Predicting when isotherm wins | predictable (rank correlation 0.17 to 0.26, driven by disagreement with the market), but it does not sort trading profit |
-| Benchmark v1, 13 Kalshi series | free index and FX prices add nothing beyond the spread (S&P, Nasdaq lose −0.23 to −0.36 to the market at its own quotes); oil futures a day out beat it, +0.17 (candidate, not pre-registered) |
+| Benchmark v1, 13 Kalshi series | free index and FX prices add nothing beyond the spread (S&P, Nasdaq lose −0.23 to −0.36 to the market at its own quotes); oil futures a day out beat it, +0.17 (not pre-registered; sealed test from 2026-10-12) |
 | Sealed forward test | transformer-L, NBM spread, order flow and a three-way ensemble against the MLP, frozen 2026-10-06; the weather model from 2026-10-09; scored 2027-04 |
 
 The edge was large in 2023 and has mostly decayed: the market now prices the National Blend of
