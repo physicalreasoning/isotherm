@@ -210,6 +210,19 @@ def outside_dist(pr, px):
     return p / p.sum()
 
 
+def in_quote(pr):
+    """The outside model moved inside each quote: the market at its most favourable price (rain,
+    §43). What the outside model could not beat without paying the spread."""
+    if pr["kind"] == "binary":
+        return np.clip(pr["out"], np.maximum(pr["bid"], EPS), np.minimum(pr["ask"], 1 - EPS))
+    if pr["kind"] == "threshold":
+        # Quotes price P(above strike): clip the outside model's survival curve.
+        above = 1 - np.cumsum(pr["out"])[:-1]
+        return to_buckets(np.clip(above, pr["bid"], pr["ask"]))
+    c = np.clip(np.clip(pr["out"], pr["bid"], pr["ask"]), EPS, None)
+    return c / c.sum()
+
+
 def pool(pm, po, w):
     z = w[0] * np.log(pm) + w[1] * np.log(po)
     p = np.exp(z - z.max())
@@ -252,19 +265,7 @@ def evaluate(series, probs):
                 }
                 if pr.get("out") is not None:
                     r["outside"] = logscore(pr["out"], pr)
-                    # The market at its most favourable price within each quote (rain, §43): what
-                    # the outside model could not beat without paying the spread.
-                    if pr["kind"] == "binary":
-                        r["clip"] = logscore(
-                            np.clip(pr["out"], np.maximum(pr["bid"], EPS), np.minimum(pr["ask"], 1 - EPS)), pr
-                        )
-                    elif pr["kind"] == "threshold":
-                        # Quotes price P(above strike): clip the outside model's survival curve.
-                        above = 1 - np.cumsum(pr["out"])[:-1]
-                        r["clip"] = logscore(to_buckets(np.clip(above, pr["bid"], pr["ask"])), pr)
-                    else:
-                        c = np.clip(np.clip(pr["out"], pr["bid"], pr["ask"]), EPS, None)
-                        r["clip"] = logscore(c / c.sum(), pr)
+                    r["clip"] = logscore(in_quote(pr), pr)
                     if w is not None:
                         r["pool"] = logscore(pool(pm, pr["out"], w), pr)
                         r["pool_bid"] = logscore(pool(market(pr, "bid"), pr["out"], wb), pr)
