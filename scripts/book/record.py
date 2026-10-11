@@ -6,8 +6,9 @@ model needs books we record ourselves. This keeps one authenticated connection, 
 `orderbook_delta` (a full snapshot per market, then every change) and `trade` for every open
 market of the series below, and adds markets as new events list (checked every 10 minutes).
 
-Raw messages, unchanged, plus our receive time, go to data/book/raw/YYYY-MM-DD/HH.jsonl.gz
-(UTC; gzip members appended, so a crash loses at most the open buffer). Anything that breaks
+Raw messages, unchanged, plus our receive time, go to
+data/book/raw/YYYY-MM-DD/HH-<run start>.jsonl.gz (UTC hour; one file per hour per run, flushed
+every minute, so a crash loses at most a minute and never corrupts earlier data). Anything that breaks
 the record is logged to data/book/gaps.jsonl: disconnects (with how long we were down) and
 sequence jumps. After either, every market is resubscribed, which sends fresh snapshots.
 
@@ -26,8 +27,10 @@ import gzip
 import json
 import pathlib
 import shutil
+import signal
 import sys
 import time
+import zlib
 
 import websockets
 
@@ -47,6 +50,7 @@ SERIES = (
 )
 REFRESH_S = 600
 MIN_FREE = 25 * 2**30  # stop before the disk fills
+FLUSH_S = 60
 CHANNELS = ["orderbook_delta", "trade"]
 
 
@@ -74,24 +78,34 @@ def log_gap(rec: dict) -> None:
 
 
 class Sink:
-    """Appends lines to the current UTC hour's gzip file; rolls over on the hour."""
+    """Writes lines to this run's file for the current UTC hour; rolls over on the hour.
+
+    Each run writes its own files (HH-<run start>.jsonl.gz) and never appends to an older one:
+    a killed process leaves an unfinished gzip stream, and anything appended after it would be
+    unreadable. The stream is sync-flushed every FLUSH_S seconds, so a crash loses at most that.
+    """
 
     def __init__(self):
-        self.key, self.f, self.n = None, None, 0
+        self.key, self.f, self.n, self.run = None, None, 0, int(time.time())
+        self.flushed = time.time()
 
     def write(self, line: str) -> None:
         now = dt.datetime.now(dt.UTC)
         key = now.strftime("%Y-%m-%d/%H")
         if key != self.key:
             self.close()
-            p = ROOT / "raw" / "{}.jsonl.gz".format(key)
+            p = ROOT / "raw" / f"{key}-{self.run}.jsonl.gz"
             p.parent.mkdir(parents=True, exist_ok=True)
-            self.f, self.key = gzip.open(p, "at"), key
+            self.f, self.key = gzip.open(p, "wt"), key
         self.f.write(line + "\n")
         self.n += 1
+        if time.time() - self.flushed > FLUSH_S:
+            self.f.flush()
+            self.f.buffer.flush(zlib.Z_SYNC_FLUSH)
+            self.flushed = time.time()
         if self.n % 20000 == 0 and shutil.disk_usage(ROOT).free < MIN_FREE:
             log_gap({"kind": "disk_low", "free_gb": shutil.disk_usage(ROOT).free // 2**30})
-            raise SystemExit("stopping: under {} GB free".format(MIN_FREE // 2**30))
+            raise SystemExit(f"stopping: under {MIN_FREE // 2**30} GB free")
 
     def close(self) -> None:
         if self.f:
@@ -141,6 +155,8 @@ async def session(sink: Sink, deadline: float | None) -> None:
 
 async def main(once: float | None) -> None:
     sink = Sink()
+    # launchd stops us with SIGTERM: cancel, so the finally below closes the open file.
+    asyncio.get_running_loop().add_signal_handler(signal.SIGTERM, asyncio.current_task().cancel)
     deadline = time.time() + once if once else None
     backoff, down_since = 1, None
     try:
