@@ -59,7 +59,9 @@ def open_tickers() -> set[str]:
             log_gap({"kind": "list_failed", "series": s, "error": str(ex)[:200]})
             continue
         for e in r.get("events", []):
-            out.update(m["ticker"] for m in e.get("markets", []) if m.get("status") in (None, "active", "open"))
+            out.update(
+                m["ticker"] for m in e.get("markets", []) if m.get("status") in (None, "active", "open")
+            )
     return out
 
 
@@ -97,28 +99,23 @@ class Sink:
             self.f = None
 
 
+async def send(ws, cmd_id: int, cmd: str, params: dict) -> None:
+    await ws.send(json.dumps({"id": cmd_id, "cmd": cmd, "params": params}))
+
+
 async def session(sink: Sink, deadline: float | None) -> None:
     headers = kalshi.auth_headers("GET", URL)
     async with websockets.connect(URL, additional_headers=headers, open_timeout=20, max_size=2**24) as ws:
         tickers = await asyncio.to_thread(open_tickers)
-        await ws.send(
-            json.dumps({"id": 1, "cmd": "subscribe", "params": {"channels": CHANNELS, "market_tickers": sorted(tickers)}})
-        )
+        await send(ws, 1, "subscribe", {"channels": CHANNELS, "market_tickers": sorted(tickers)})
         print("subscribed", len(tickers), "markets", flush=True)
         sids, last_seq, next_refresh, cmd_id = [], {}, time.time() + REFRESH_S, 2
         while deadline is None or time.time() < deadline:
             if time.time() >= next_refresh and sids:
                 new = await asyncio.to_thread(open_tickers) - tickers
                 if new:
-                    await ws.send(
-                        json.dumps(
-                            {
-                                "id": cmd_id,
-                                "cmd": "update_subscription",
-                                "params": {"sids": sids, "market_tickers": sorted(new), "action": "add_markets"},
-                            }
-                        )
-                    )
+                    params = {"sids": sids, "market_tickers": sorted(new), "action": "add_markets"}
+                    await send(ws, cmd_id, "update_subscription", params)
                     cmd_id += 1
                     tickers |= new
                     print("added", len(new), "markets, now", len(tickers), flush=True)
