@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Shadow-score the frozen strategy live. Run hourly by .github/workflows/shadow.yml.
 
-uv run scripts/shadow.py score settle report       # what CI runs
+uv run scripts/shadow.py unpack score settle report pack   # what CI runs (needs SHADOW_STATE_KEY)
+uv run scripts/shadow.py score settle report       # locally, on a ledger with the full CSVs
 uv run scripts/shadow.py score --force --root /tmp/x  # test outside the 16:00 window
 """
 
@@ -14,7 +15,7 @@ import shutil
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
-from isotherm import shadow  # noqa: E402
+from isotherm import shadow, shadow_state  # noqa: E402
 
 
 def write_report(root: pathlib.Path, r: dict):
@@ -65,7 +66,7 @@ def write_report(root: pathlib.Path, r: dict):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("steps", nargs="+", choices=["score", "settle", "report"])
+    ap.add_argument("steps", nargs="+", choices=["unpack", "score", "settle", "report", "pack"])
     ap.add_argument("--root", default="shadow")
     ap.add_argument("--force", action="store_true", help="score now, ignoring the 16:00 window")
     a = ap.parse_args()
@@ -77,6 +78,11 @@ def main():
         if step == "score":
             for r in shadow.score_all(root, force=a.force):
                 print("score", r.get("city"), r.get("event"), r["status"])
+        elif step == "unpack":
+            print("unpack:", "restored the full state" if shadow_state.unpack(root) else "no state yet")
+        elif step == "pack":
+            shadow_state.pack(root)
+            print("pack: state encrypted; market columns dropped from the public CSVs")
         elif step == "settle":
             print("settle: {} market outcomes recorded".format(shadow.settle(root)))
         else:
