@@ -30,7 +30,11 @@ jobs:
             git -C ledger rm -rfq .
           fi
           cp shadow/frozen.json ledger/frozen.json
-      - run: uv run --no-sync scripts/shadow.py score settle report --root ledger
+      # Kalshi's quotes stay encrypted in ledger/state.enc; the public CSVs carry only our columns
+      # (src/isotherm/shadow_state.py).
+      - run: uv run --no-sync scripts/shadow.py unpack score settle report pack --root ledger
+        env:
+          SHADOW_STATE_KEY: ${{ secrets.SHADOW_STATE_KEY }}
       - name: Commit ledger
         run: |
           cd ledger
