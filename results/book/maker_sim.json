@@ -1,0 +1,27 @@
+{
+ "series": "KXRAIN",
+ "by_size": {
+  "50": {
+   "fills": 19764,
+   "contracts_filled": 206378.57993088348,
+   "markets_filled": 91,
+   "fill_pnl_usd": 703.9857170161872,
+   "maker_fees_usd": 580.798576201567,
+   "mean_edge_per_contract": 0.003411137518496121,
+   "rewards_usd": 557.6892354351671,
+   "programs": 201,
+   "net_usd": 680.8763762497873
+  },
+  "200": {
+   "fills": 22605,
+   "contracts_filled": 346317.50459573686,
+   "markets_filled": 91,
+   "fill_pnl_usd": 19.682852422506926,
+   "maker_fees_usd": 868.4604639821146,
+   "mean_edge_per_contract": 5.6834702725994465e-05,
+   "rewards_usd": 1955.3428544228918,
+   "programs": 201,
+   "net_usd": 1106.5652428632843
+  }
+ }
+}
