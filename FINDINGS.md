@@ -1419,7 +1419,7 @@ test), the gain is +0.0007 [−0.008, +0.009]. The pattern is the usual one: rea
 ## 51 · AIFS pool frozen as a sealed forward arm (2026-10-15)
 
 As §50 registered on a pass. `scripts/aifs_forward.py --freeze` wrote `shadow/forward/aifs.json`:
-the weights of both pools fit on all 2,573 d1_16 ladders from 2025-06-01 through 2026-10-13
+the weights of both pools fit on all 3,422 d1_16 ladders from 2025-06-01 through 2026-10-04
 (three-source: market 1.055, GFS 0.228, AIFS 0.174; two-source: market 1.145, GFS 0.251) and the
 sha256 of `scripts/aifs_test.py` and `scripts/aifs_forward.py`, checked before scoring. The
 EMOS-AIFS source keeps its monthly refit; the pool weights do not move.
