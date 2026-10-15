@@ -1,0 +1,14 @@
+{
+ "frozen_at": "2026-10-15T16:46:47+00:00",
+ "window": [
+  "2026-11-01",
+  "2027-04-05"
+ ],
+ "weights_from": "shadow/forward/aifs.json",
+ "weights_sha256": "1f1b2dd4f1e1d0fb41557a49cc7ed97af9ba119e024579871dbdacf654daf8eb",
+ "code_sha256": {
+  "scripts/aifs_test.py": "1ac8616c5c7066fb0b98b911d92d839c254099f4e49c4e42f4aaec8ec108d3c6",
+  "scripts/aifs_forward.py": "037a12fb1aee0e18c6c15ebb6c43ee022a514dc950b682aa09512de35ace1e84",
+  "scripts/aifs_live_forward.py": "cddfc9df0a1fd3463365a27fa26aa6851319d72caa5ae04bc7d79be4daf92255"
+ }
+}
