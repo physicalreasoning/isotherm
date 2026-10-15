@@ -128,9 +128,10 @@ async def session(sink: Sink, deadline: float | None) -> None:
             if time.time() >= next_refresh and sids:
                 new = await asyncio.to_thread(open_tickers) - tickers
                 if new:
-                    params = {"sids": sids, "market_tickers": sorted(new), "action": "add_markets"}
-                    await send(ws, cmd_id, "update_subscription", params)
-                    cmd_id += 1
+                    for sid in sids:  # Kalshi takes exactly one subscription id per update
+                        params = {"sid": sid, "market_tickers": sorted(new), "action": "add_markets"}
+                        await send(ws, cmd_id, "update_subscription", params)
+                        cmd_id += 1
                     tickers |= new
                     print("added", len(new), "markets, now", len(tickers), flush=True)
                 next_refresh = time.time() + REFRESH_S
