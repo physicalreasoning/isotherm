@@ -1391,3 +1391,43 @@ we have seen; nothing from the window below.
   before any adoption; nothing changes in the live strategy on this test alone.
 
 `scripts/aifs_test.py`, output `results/aifs_test.json`.
+
+**Result (2026-10-15): PASS.** Pool of market, EMOS-GFS and EMOS-AIFS minus the live strategy's
+pool, d1_16, 2025-10-01 to 2026-06-30: **+0.0090 [+0.0020, +0.0156]** per ladder, 1,898 ladders,
+272 days. Secondary, as registered:
+
+| Comparison | Gain per ladder [95% CI] |
+|---|---|
+| (a) EMOS-AIFS minus EMOS-GFS, no market | +0.053 [−0.008, +0.107] |
+| (a) EMOS-AIFS minus EMOS-NBM, no market | −0.081 [−0.138, −0.026] |
+| (b) three-source pool minus the bid-priced market | **+0.019 [+0.009, +0.029]** |
+| (context) live two-source pool minus the bid-priced market | +0.010 [+0.002, +0.018] |
+| (c) six-source MLP minus five-source MLP | **+0.016 [+0.008, +0.023]** |
+| (d) exact 12z run of D-1 minus the day-2 input, May to June 2026 | **+0.038 [+0.010, +0.068]**, 427 ladders |
+
+AIFS alone is worse than NBM and level with GFS, yet the market has not priced it: adding it to
+the pool or to the MLP gains in both. (d) says the conservative day-2 timing understates it; the
+run actually public at the read is clearly better.
+
+Checks made after the result, not registered: the gain is positive in every quarter but shrinking
+(+0.020 in 2025Q4, +0.004 in 2026Q1 and Q2), and positive in four of seven cities (Philadelphia
++0.048, Austin +0.019, New York +0.015, Denver +0.010; Los Angeles −0.017, Miami −0.009, Chicago
+−0.002). Weights fit through June 2026: market 1.04, GFS 0.24, AIFS 0.19. On 2026-07-01 to
+2026-10-10, scored with weights that saw those months (a rehearsal of the forward scorer, not a
+test), the gain is +0.0007 [−0.008, +0.009]. The pattern is the usual one: real, and decaying.
+
+## 51 · AIFS pool frozen as a sealed forward arm (2026-10-15)
+
+As §50 registered on a pass. `scripts/aifs_forward.py --freeze` wrote `shadow/forward/aifs.json`:
+the weights of both pools fit on all 2,573 d1_16 ladders from 2025-06-01 through 2026-10-13
+(three-source: market 1.055, GFS 0.228, AIFS 0.174; two-source: market 1.145, GFS 0.251) and the
+sha256 of `scripts/aifs_test.py` and `scripts/aifs_forward.py`, checked before scoring. The
+EMOS-AIFS source keeps its monthly refit; the pool weights do not move.
+
+- **Window.** Target days 2026-11-01 to 2027-04-05.
+- **Primary.** Three-source pool minus two-source pool, log score per ladder. **PASS if the 95%
+  date-block CI lower bound is above zero.**
+- **Secondary.** Three-source pool minus the bid-priced market.
+- **Score.** `uv run scripts/aifs_forward.py` after the window settles (it refetches the archive).
+
+Nothing changes in the live strategy before this verdict.
