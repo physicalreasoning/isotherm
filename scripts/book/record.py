@@ -41,12 +41,68 @@ from isotherm.weather import CITIES, NEW_CITIES  # noqa: E402
 
 URL = "wss://api.elections.kalshi.com/trade-api/ws/v2"
 ROOT = pathlib.Path(__file__).resolve().parents[2] / "data" / "book"
+GAS_STATES = [
+    "AK",
+    "AL",
+    "AR",
+    "AZ",
+    "CA",
+    "CO",
+    "CT",
+    "DE",
+    "FL",
+    "GA",
+    "HI",
+    "IA",
+    "ID",
+    "IL",
+    "IN",
+    "KS",
+    "KY",
+    "LA",
+    "MA",
+    "MD",
+    "ME",
+    "MI",
+    "MN",
+    "MO",
+    "MS",
+    "MT",
+    "NC",
+    "ND",
+    "NE",
+    "NH",
+    "NJ",
+    "NM",
+    "NV",
+    "NY",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UT",
+    "VA",
+    "VT",
+    "WA",
+    "WI",
+    "WV",
+    "WY",
+]
 SERIES = (
     [c.series for c in CITIES.values()]
     + [c.series for c in NEW_CITIES.values()]
     + list(LOW_SERIES.values())
     + ["KXRAIN"]
     + ["KXWTI", "KXGOLDD", "KXSILVERD", "KXCOPPERD", "KXBRENTD", "KXNATGASD"]
+    # Series with Kalshi liquidity rewards (scripts/book/lip_estimate.py): Miami's hourly
+    # temperature and AAA gas prices, national and by state.
+    + ["KXTEMPMIAH", "KXAAAGASD"]
+    + ["KXAAAGASD" + st for st in GAS_STATES]
 )
 REFRESH_S = 600
 MIN_FREE = 25 * 2**30  # stop before the disk fills
