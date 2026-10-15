@@ -1356,3 +1356,38 @@ So the §47 effect is real and general across Kalshi's daily commodity ladders a
 books are stale enough that a free futures feed scores better. But, as on weather (§46), the
 better score sits where spread and fees absorb it. The oil sealed test (§48) still runs; it
 measures the score, not a trading edge.
+
+## 50 · Pre-registered: does ECMWF's learned model (AIFS) add to the live pool? (2026-10-15)
+
+Written and pushed before any AIFS forecast for the test window was fetched or scored. §35
+concluded that a third forecast source would likely matter more than more stations. In
+physicalreasoning/forward's dry run (19 stations, 2026-07-01 to 2026-10-09, after this test's
+window), calibrated AIFS was the best single model, ahead of calibrated IFS by +0.133 log score per
+station-day, and still lost to the bid-priced market. That is the only AIFS-against-outcome result
+we have seen; nothing from the window below.
+
+- **Source.** `emos_aifs`: ECMWF AIFS 2 m temperature from Open-Meteo's Previous Runs API,
+  `temperature_2m_previous_day2` (each hour from the run started 48 h before it; checked against
+  the exact-run archive on 2026-07-10: day1 and day2 values match the runs exactly 24 h and 48 h
+  earlier). Maximum over the station's local day D (at least 20 hours), at each settlement
+  station's coordinates. ECMWF publishes each AIFS run 5 h 52 min after it starts (data.ecmwf.int,
+  checked 2026-10-15), so every run behind a day-2 value was public before 16:00 local on D-1.
+  Day-1 values are not (the 18z run of D-1 appears at 23:52 UTC) and are not used. EMOS on it with
+  the same form, monthly refit and 2-day embargo as `emos_gfs`. The archive starts in February
+  2025, so the source exists from June 2025 (at least 90 days of fit).
+- **Read and cities.** 16:00 local the day before (`d1_16`), the seven scored cities.
+- **Test window.** Target days 2025-10-01 to 2026-06-30 (before the lockbox, which stays closed).
+  Walk-forward, quarterly refits, 2-day embargo, training on rows from 2025-06-01.
+- **Primary.** Log pool of market, EMOS-GFS and EMOS-AIFS minus the live strategy's log pool of
+  market and EMOS-GFS (weights per read, fit on training rows only), log score per ladder.
+  **PASS if the 95% date-block CI lower bound is above zero.**
+- **Secondary, reported whatever the primary says.** (a) EMOS-AIFS minus EMOS-GFS and minus
+  EMOS-NBM, no market. (b) The three-source pool minus the market priced at its bids. (c) The
+  IsothermNet MLP with `emos_aifs` as a sixth source minus the five-source MLP, both trained only
+  on rows from 2025-06-01. (d) Live timing: on May to June 2026, EMOS-AIFS built from the exact
+  12z run of D-1 (public 17:52 UTC) minus the day-2 version, to show how much the conservative
+  timing understates AIFS.
+- **Then.** If the primary passes, the three-source pool is frozen as a new sealed forward arm
+  before any adoption; nothing changes in the live strategy on this test alone.
+
+`scripts/aifs_test.py`, output `results/aifs_test.json`.
