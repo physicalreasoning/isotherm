@@ -1431,3 +1431,28 @@ EMOS-AIFS source keeps its monthly refit; the pool weights do not move.
 - **Score.** `uv run scripts/aifs_forward.py` after the window settles (it refetches the archive).
 
 Nothing changes in the live strategy before this verdict.
+
+## 52 · Pre-registered: the AIFS pool with the live run (2026-10-15)
+
+§50's secondary (d) found the AIFS run actually public at the read clearly better than the
+conservative day-2 input (+0.038 [+0.010, +0.068] on May to June 2026, 427 ladders). Live use
+would feed that run. physicalreasoning/forward already captures each model's forecast for tomorrow
+at about 20:00 UTC on D-1 and commits it to its public `ledger` branch. At that time the latest
+AIFS run is the 12z run of D-1, public from 17:52 UTC: before isotherm's 16:00 local read in every
+city, though the capture itself lands a few minutes after the Eastern read in summer.
+
+- **Arm.** §51's three-source pool with its frozen weights, but EMOS-AIFS evaluated on the
+  captured live value (the EMOS fit on the day-2 history, as in §50 (d)). A captured value counts
+  only if it was taken before the 18z run of D-1 appeared (23:52 UTC), so it is the 12z run.
+- **Window.** As §51: target days 2026-11-01 to 2027-04-05, d1_16, the seven cities, ladders with
+  a live capture.
+- **Primary.** This pool minus §51's two-source pool. **PASS if the 95% date-block CI lower bound
+  is above zero.**
+- **Secondary.** This pool minus §51's three-source pool on day-2 input.
+- **Frozen.** `scripts/aifs_live_forward.py --freeze` writes `shadow/forward/aifs_live.json` with
+  the sha256 of the three AIFS scripts and of §51's weights file, all checked before scoring.
+- **Score.** `uv run scripts/build_weather_panel.py && uv run scripts/aifs_live_forward.py`.
+
+A note on the capture: on 2026-10-14 a GitHub backup run started four hours late, after midnight
+UTC, and filed a late capture under the next day's name, so the 20:00 UTC capture for 2026-10-15
+was skipped. The backup now acts only between 20:00 and 22:00 UTC. That day is before the window.
