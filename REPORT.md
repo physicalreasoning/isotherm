@@ -6,21 +6,21 @@ Frozen strategy from FINDINGS §9, scored live at 16:00 local the day before. Pa
 
 | | |
 |---|---|
-| Settled ladders | 207 |
-| Log score gain vs market | +0.0161 [-0.0077, +0.0368] |
-| Paper PnL | $629 over 520 trades |
+| Settled ladders | 208 |
+| Log score gain vs market | +0.0162 [-0.0075, +0.0368] |
+| Paper PnL | $636 over 522 trades |
 | Hit rate | 85.2% |
 
 | Month | PnL |
 |---|---:|
 | 2026-10 | $378 |
-| 2026-11 | $251 |
+| 2026-11 | $259 |
 
 | Settlement source | PnL |
 |---|---:|
-| twc | $629 |
+| twc | $636 |
 
 | Window | Settled days | Log score gain vs market [95% CI] |
 |---|---:|---|
-| 2026-10-10 to 2026-11-08 | 29 | +0.0163 [-0.0094, +0.0370] |
+| 2026-10-10 to 2026-11-08 | 29 | +0.0164 [-0.0093, +0.0371] |
 | 2026-09-10 to 2026-10-09 | 3 | +0.0138 |
